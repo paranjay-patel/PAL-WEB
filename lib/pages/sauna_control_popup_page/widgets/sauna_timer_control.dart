@@ -20,6 +20,7 @@ class SaunaTimerControl extends StatelessWidget {
         final targetDuration = store.targetDuration ?? 20;
         final annotationValue = targetDuration.toInt();
         return Expanded(
+          key: const Key('timer_radial_gauge_expanded_key'),
           child: Padding(
             padding: EdgeInsets.only(bottom: screenSize.getHeight(min: 8, max: 12)),
             child: SfRadialGauge(
@@ -67,28 +68,29 @@ class SaunaTimerControl extends StatelessWidget {
                   annotations: <GaugeAnnotation>[
                     GaugeAnnotation(
                       widget: RichText(
+                          key: const Key('display_timer_value'),
                           text: TextSpan(
-                        children: <TextSpan>[
-                          TextSpan(
-                            text: '$annotationValue',
-                            style: TextStyle(
-                              color: theme.titleTextColor,
-                              fontSize: screenSize.getFontSize(min: 50, max: 60),
-                              fontWeight: FontWeight.bold,
-                              fontFamily: ThemeFont.defaultFontFamily,
-                            ),
-                          ),
-                          TextSpan(
-                            text: targetDuration > 1.0 ? 'mins' : 'min',
-                            style: TextStyle(
-                              color: theme.titleTextColor,
-                              fontSize: screenSize.getFontSize(min: 20, max: 28),
-                              fontWeight: FontWeight.w600,
-                              fontFamily: ThemeFont.defaultFontFamily,
-                            ),
-                          ),
-                        ],
-                      )),
+                            children: <TextSpan>[
+                              TextSpan(
+                                text: '$annotationValue',
+                                style: TextStyle(
+                                  color: theme.titleTextColor,
+                                  fontSize: screenSize.getFontSize(min: 50, max: 60),
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: ThemeFont.defaultFontFamily,
+                                ),
+                              ),
+                              TextSpan(
+                                text: targetDuration > 1.0 ? 'mins' : 'min',
+                                style: TextStyle(
+                                  color: theme.titleTextColor,
+                                  fontSize: screenSize.getFontSize(min: 20, max: 28),
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: ThemeFont.defaultFontFamily,
+                                ),
+                              ),
+                            ],
+                          )),
                       positionFactor: 0.10,
                       angle: 0,
                     )

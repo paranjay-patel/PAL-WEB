@@ -178,26 +178,6 @@ mixin _$SaunaWifiStore on _SaunaWifiStoreBase, Store {
     });
   }
 
-  late final _$_showWifiConnectStatusPopupAtom = Atom(
-      name: '_SaunaWifiStoreBase._showWifiConnectStatusPopup',
-      context: context);
-
-  bool get showWifiConnectStatusPopup {
-    _$_showWifiConnectStatusPopupAtom.reportRead();
-    return super._showWifiConnectStatusPopup;
-  }
-
-  @override
-  bool get _showWifiConnectStatusPopup => showWifiConnectStatusPopup;
-
-  @override
-  set _showWifiConnectStatusPopup(bool value) {
-    _$_showWifiConnectStatusPopupAtom
-        .reportWrite(value, super._showWifiConnectStatusPopup, () {
-      super._showWifiConnectStatusPopup = value;
-    });
-  }
-
   late final _$_selectedSwitchModeAtom =
       Atom(name: '_SaunaWifiStoreBase._selectedSwitchMode', context: context);
 
@@ -306,17 +286,6 @@ mixin _$SaunaWifiStore on _SaunaWifiStoreBase, Store {
         name: '_SaunaWifiStoreBase.setIsIncorrectPassword');
     try {
       return super.setIsIncorrectPassword(value);
-    } finally {
-      _$_SaunaWifiStoreBaseActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void setWifiConnectStatusPopup(bool status) {
-    final _$actionInfo = _$_SaunaWifiStoreBaseActionController.startAction(
-        name: '_SaunaWifiStoreBase.setWifiConnectStatusPopup');
-    try {
-      return super.setWifiConnectStatusPopup(status);
     } finally {
       _$_SaunaWifiStoreBaseActionController.endAction(_$actionInfo);
     }

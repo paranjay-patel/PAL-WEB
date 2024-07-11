@@ -60,4 +60,34 @@ extension SaunaStatusExtension on SaunaStatus {
     if (ambience.isEmpty) return [];
     return ambience.map((sound) => enumFromString(sound)).toList();
   }
+
+  SaunaStatus copyWith({
+    String? saunaIdentifier,
+    SaunaState? state,
+    String? firmwareVersion,
+    String? modelName,
+    double? targetTemperature,
+    List<dynamic>? currentTemperature,
+    int? targetTimer,
+    int? remainingTimer,
+    List<Light>? lights,
+    List<Heater>? heaters,
+    Program? program,
+    String? modelId,
+  }) {
+    return SaunaStatus(
+      saunaIdentifier: saunaIdentifier ?? this.saunaIdentifier,
+      state: state ?? this.state,
+      firmwareVersion: firmwareVersion ?? this.firmwareVersion,
+      modelName: modelName ?? this.modelName,
+      targetTemperature: targetTemperature ?? this.targetTemperature,
+      currentTemperature: currentTemperature ?? this.currentTemperature,
+      targetTimer: targetTimer ?? this.targetTimer,
+      remainingTimer: remainingTimer ?? this.remainingTimer,
+      lights: lights ?? this.lights,
+      heaters: heaters ?? this.heaters,
+      program: program ?? this.program,
+      modelId: modelId ?? this.modelId,
+    );
+  }
 }

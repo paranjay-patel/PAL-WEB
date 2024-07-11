@@ -152,6 +152,7 @@ class _SaunaControlBottomBarState extends State<SaunaControlBottomBar> with Tick
     return Observer(
       builder: (context) {
         return FeedbackSoundWrapper(
+          key: Key(saunaBottomButton.name),
           onTap: () {
             final onTap = widget.onButtonTap;
             if (onTap == null) return;
@@ -253,6 +254,7 @@ class _SaunaControlBottomBarState extends State<SaunaControlBottomBar> with Tick
                         final isTransitoryState =
                             _saunaStore.isTransitoryState && saunaBottomButton == SaunaBottomButton.light;
                         return Text(
+                          key: Key('subtitle_${saunaBottomButton.name}'),
                           subtitleText(
                             isAudioPlaying: isAudioPlaying,
                             buttonType: saunaBottomButton,

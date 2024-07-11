@@ -443,6 +443,7 @@ class _SaunaControlPopupPageState extends State<SaunaControlPopupPage> {
       top: _screenSize.getHeight(min: 20, max: 30),
       right: _screenSize.getWidth(min: 16, max: 20),
       child: FeedbackSoundWrapper(
+        key: const Key('close_button'),
         onTap: () {
           Navigator.pop(context);
         },
@@ -522,6 +523,7 @@ class _IncreaseDecreaseButton extends StatelessWidget {
     final theme = Theme.of(context).colorScheme;
     final screenSize = Utils.getScreenSize(context);
     return FeedbackSoundWrapper(
+      key: Key(type == IncrementDecrementButtonType.decrement ? 'minus_button' : 'plus_button'),
       onTap: () {
         onButtonTap.call(type);
       },

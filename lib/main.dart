@@ -22,7 +22,7 @@ final rootNavigationKey = GlobalKey<NavigatorState>();
 
 final fToast = FToast();
 
-late final String _initialRoute;
+String _initialRoute = "splash";
 
 final providers = [
   MobxProvider<AudioPlayerStore>(

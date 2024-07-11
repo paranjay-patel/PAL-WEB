@@ -37,13 +37,16 @@ dependencies:
   fluttertoast: ^8.2.2
   tuple: ^2.0.2
   crypto: ^3.0.3
+  mockito: ^5.4.2
   found_space_flutter_rest_api:
     git:
-      url: git@github.com:paranjay-patel/PAL-REST-APIs.git
-      ref: master
+      url: git@github.com:Healtech-Pty-Ltd/S1-REST-APIs.git
+      ref: vishal_automation_experiment
 
 dev_dependencies:
   flutter_test:
+    sdk: flutter
+  integration_test:
     sdk: flutter
 
   flutter_lints: ^2.0.1

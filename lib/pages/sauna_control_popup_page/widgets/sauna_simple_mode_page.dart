@@ -89,6 +89,7 @@ class _SaunaSimpleModePageState extends State<SaunaSimpleModePage> with Automati
                               splashColor: Colors.transparent,
                               highlightColor: Colors.transparent,
                               child: Text(
+                                key: Key(saunaDeviceState.name),
                                 saunaDeviceState.subtitleText,
                                 style: TextStyle(
                                   color: ThemeColors.dark20,
@@ -161,6 +162,7 @@ class _Tile extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _Button(
+                    key: Key(type == SaunaSimpleModeType.time ? 'time_minus_button' : 'temperature_minus_button'),
                     assetImage: Assets.minus,
                     isEnabled: isEnabledMinusButton,
                     onTap: () {
@@ -192,6 +194,7 @@ class _Tile extends StatelessWidget {
                     ),
                   SizedBox(width: screenSize.getWidth(min: 24, max: 36)),
                   _Button(
+                    key: Key(type == SaunaSimpleModeType.time ? 'time_plus_button' : 'temperature_plus_button'),
                     assetImage: Assets.plus,
                     isEnabled: isEnabledPlusButton,
                     onTap: () {
@@ -212,6 +215,7 @@ class _Tile extends StatelessWidget {
               ),
               SizedBox(height: screenSize.getHeight(min: 4, max: 10)),
               Text(
+                key: Key(type == SaunaSimpleModeType.time ? 'target_session_text' : 'target_temperature_text'),
                 type == SaunaSimpleModeType.time ? targetTimer : targetTemperature,
                 style: TextStyle(
                   color: ThemeColors.dark10,
@@ -341,6 +345,7 @@ class _ProgramModifiedSection extends StatelessWidget {
                 SizedBox(width: screenSize.getHeight(min: 14, max: 24)),
                 Text(
                   'Program has been modified',
+                  key: const Key('program_modified'),
                   style: TextStyle(
                     fontSize: screenSize.getFontSize(min: 14, max: 20),
                     fontWeight: FontWeight.w600,
@@ -350,6 +355,7 @@ class _ProgramModifiedSection extends StatelessWidget {
                 ),
                 const Spacer(),
                 _ProgramButton(
+                  key: const Key('button_reset_key'),
                   buttonText: 'Reset',
                   height: height,
                   width: height + screenSize.getHeight(min: 6, max: 10),
@@ -360,6 +366,7 @@ class _ProgramModifiedSection extends StatelessWidget {
                 ),
                 SizedBox(width: screenSize.getHeight(min: 2, max: 6)),
                 _ProgramButton(
+                  key: const Key('button_save_key'),
                   buttonText: 'Save',
                   height: height,
                   width: height + screenSize.getHeight(min: 6, max: 10),
@@ -385,6 +392,7 @@ class _ProgramButton extends StatelessWidget {
   final Function() onTap;
 
   const _ProgramButton({
+    Key? key,
     required this.buttonText,
     required this.height,
     required this.width,

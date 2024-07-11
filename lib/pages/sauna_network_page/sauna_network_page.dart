@@ -7,7 +7,6 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:found_space_flutter_rest_api/models/src/network.dart';
 import 'package:found_space_flutter_web_application/assets.dart';
 import 'package:found_space_flutter_web_application/common/composite_reaction_disposer.dart';
-import 'package:found_space_flutter_web_application/common/model_extensions/wifi_state_extension.dart';
 import 'package:found_space_flutter_web_application/common/themed_activity_indicator.dart';
 import 'package:found_space_flutter_web_application/common/ui/feedback_sound_wrapper.dart';
 import 'package:found_space_flutter_web_application/common/ui/found_space_theme_colors.dart';
@@ -17,7 +16,6 @@ import 'package:found_space_flutter_web_application/common/virtual_keyboard/virt
 import 'package:found_space_flutter_web_application/pages/sauna_control_page/store/sauna_control_popup_page.store.dart';
 import 'package:found_space_flutter_web_application/pages/sauna_control_popup_page/store/sauna_wifi.store.dart';
 import 'package:found_space_flutter_web_application/pages/sauna_network_page/widgets/sauna_join_wifi.dart';
-import 'package:found_space_flutter_web_application/pages/sauna_network_page/widgets/sauna_wifi_connect_status_popup.dart';
 import 'package:found_space_flutter_web_application/pages/sauna_network_page/widgets/sauna_wifi_section.dart';
 import 'package:mobx/mobx.dart';
 
@@ -96,7 +94,6 @@ class _SaunaNetworkPageState extends State<SaunaNetworkPage> with TickerProvider
             child: Observer(
               builder: (_) {
                 final showConnectWifiPopup = _saunaWifiStore.showConnectWifiPopup;
-                final showWifiConnectStatusPopup = _saunaWifiStore.showWifiConnectStatusPopup;
 
                 if (showConnectWifiPopup) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -140,12 +137,6 @@ class _SaunaNetworkPageState extends State<SaunaNetworkPage> with TickerProvider
                                               saunaControlPopupPageStore: _store,
                                               textEditingController: _textEditingController,
                                               focusNode: _focusNode,
-                                            ),
-                                          ),
-                                        ] else if (showWifiConnectStatusPopup) ...[
-                                          Expanded(
-                                            child: SaunaWifiConnectStatusPopup(
-                                              store: _saunaWifiStore,
                                             ),
                                           ),
                                         ] else ...[
@@ -231,10 +222,6 @@ class _SaunaNetworkPageState extends State<SaunaNetworkPage> with TickerProvider
   }
 
   void _resetTimer() {
-    if (_saunaWifiStore.showConnectWifiPopup || _saunaWifiStore.showWifiConnectStatusPopup) {
-      _store.cancelTimer();
-      return;
-    }
     _store.cancelTimer();
     _store.startTimer();
   }
@@ -251,19 +238,15 @@ class _SaunaNetworkPageState extends State<SaunaNetworkPage> with TickerProvider
               width: _screenSize.getWidth(min: 40, max: 60),
             ),
             const Spacer(),
-            Observer(builder: (context) {
-              final showWifiConnectStatusPopup = _saunaWifiStore.showWifiConnectStatusPopup;
-
-              return Text(
-                showWifiConnectStatusPopup ? _saunaWifiStore.wifiState.wifiConnectionStatusText : 'Network connection',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.titleTextColor,
-                  fontSize: _screenSize.getFontSize(min: 18, max: 24),
-                  fontWeight: FontWeight.w500,
-                ),
-                textAlign: TextAlign.center,
-              );
-            }),
+            Text(
+              'Network connection',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.titleTextColor,
+                fontSize: _screenSize.getFontSize(min: 18, max: 24),
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+            ),
             const Spacer(),
             FeedbackSoundWrapper(
               onTap: () {

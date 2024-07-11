@@ -302,6 +302,11 @@ abstract class _SaunaStoreBase with Store, Disposable {
   @computed
   String? get saunaEntityName => _saunaProperties?.entity?.name;
 
+  bool get isAutomationBuild => AppComponentBase.isAutomationBuild;
+
+  Timer? sessionExpirationChecker;
+  int _counter = 0;
+
   final _compositeReaction = CompositeReactionDisposer();
 
   _SaunaStoreBase() {
@@ -366,8 +371,11 @@ abstract class _SaunaStoreBase with Store, Disposable {
     } catch (error, stackTrace) {
       _logger.e('Error loading fetchPodcasts', error, stackTrace);
     }
-    await Future.delayed(const Duration(seconds: 3));
-    _fetchSaunaStatus();
+
+    if (!isAutomationBuild) {
+      await Future.delayed(const Duration(seconds: 3));
+      _fetchSaunaStatus();
+    }
   }
 
   @action
@@ -394,9 +402,10 @@ abstract class _SaunaStoreBase with Store, Disposable {
     } catch (error, stackTrace) {
       _logger.e('Error loading _fetchSaunaSystem', error, stackTrace);
     }
-
-    await Future.delayed(const Duration(seconds: 3));
-    _fetchSaunaSystem();
+    if (!isAutomationBuild) {
+      await Future.delayed(const Duration(seconds: 3));
+      _fetchSaunaSystem();
+    }
   }
 
   Future<void> _fetchSystemProperties() async {
@@ -416,6 +425,19 @@ abstract class _SaunaStoreBase with Store, Disposable {
 
   @action
   Future<void> updateTargetTime({required int targetTime, bool convertToSecond = true}) async {
+    if (isAutomationBuild) {
+      final updatedProgram = _saunaStatus?.program?.copyWith(
+        active: _saunaStatus?.program?.active?.copyWith(
+          targetTimer: convertToSecond ? targetTime * 60 : targetTime,
+        ),
+      );
+      _saunaStatus = _saunaStatus?.copyWith(
+        program: updatedProgram,
+      );
+      updateSaunaStatus(_saunaStatus);
+      return;
+    }
+
     try {
       final credentials = fetchCredentials;
       if (credentials == null) return;
@@ -432,6 +454,22 @@ abstract class _SaunaStoreBase with Store, Disposable {
 
   @action
   Future<void> updateTargetTemperature({required double targetTemperature}) async {
+    if (isAutomationBuild) {
+      final activeProgram = _saunaStatus?.program?.active?.copyWith(
+        targetTemperature: targetTemperature,
+      );
+
+      // Now, update the 'active' field of the 'program' with the new 'activeProgram'
+      final updatedProgram = _saunaStatus?.program?.copyWith(
+        active: activeProgram,
+      );
+      _saunaStatus = _saunaStatus?.copyWith(
+        program: updatedProgram,
+      );
+      updateSaunaStatus(_saunaStatus);
+      return;
+    }
+
     try {
       final credentials = fetchCredentials;
       if (credentials == null) return;
@@ -490,8 +528,45 @@ abstract class _SaunaStoreBase with Store, Disposable {
     }
   }
 
+  void startSessionExpirationChecker(SaunaState state) {
+    final targetTimer = this.targetTimer;
+    _counter = 0;
+    if (state == SaunaState.insession) {
+      sessionExpirationChecker = Timer.periodic(const Duration(minutes: 1), (Timer timer) {
+        // If the session is not in progress, cancel the timer
+        _counter++;
+        updateTargetTime(targetTime: targetTimer - _counter);
+        if (_counter >= targetTimer) {
+          sessionExpirationChecker?.cancel();
+          updateTargetTime(targetTime: targetTimer);
+          setSaunaState(SaunaState.standby);
+        }
+      });
+    } else {
+      sessionExpirationChecker?.cancel();
+      setSaunaState(SaunaState.standby);
+    }
+  }
+
   @action
   Future<void> setSaunaState(SaunaState state) async {
+    if (isAutomationBuild) {
+      final currentTemperature = _saunaStatus?.currentTemperature?.first;
+      final targetTemperature = _saunaStatus?.temperature;
+
+      if (targetTemperature! < currentTemperature && state == SaunaState.heating) {
+        _saunaStatus = _saunaStatus?.copyWith(state: SaunaState.ready);
+        updateSaunaStatus(_saunaStatus);
+        return;
+      } else {
+        _saunaStatus = _saunaStatus?.copyWith(state: state);
+        updateSaunaStatus(_saunaStatus);
+        if (state == SaunaState.insession) {
+          startSessionExpirationChecker(state);
+        }
+        return;
+      }
+    }
     try {
       final credentials = fetchCredentials;
       if (credentials == null) return;
@@ -632,8 +707,19 @@ abstract class _SaunaStoreBase with Store, Disposable {
       assert(activeProgram != null, 'activeProgram can\'t be null');
       if (activeProgram == null) return;
 
-      setSelectedProgram(activeProgram, customName: FoundSpaceConstants.customProgram);
-      locator<SaunaLocalStorageStore>().setCustomProgram(activeProgram: activeProgram);
+      if (isAutomationBuild) {
+        _selectedProgram = activeProgram;
+        final updatedProgram = _saunaStatus?.program?.copyWith(set: _saunaStatus?.program?.active);
+        _saunaStatus = _saunaStatus?.copyWith(
+          program: updatedProgram,
+        );
+        updateSaunaStatus(_saunaStatus);
+        _selectedProgram = _selectedProgram?.apiValue(customName: FoundSpaceConstants.customProgram);
+        await locator<SaunaProgramPageStore>().fetchSuggestedPrograms();
+      } else {
+        setSelectedProgram(activeProgram, customName: FoundSpaceConstants.customProgram);
+        locator<SaunaLocalStorageStore>().setCustomProgram(activeProgram: activeProgram);
+      }
     } catch (error, stackTrace) {
       _logger.e('Error loading saveModifiedProgram', error, stackTrace);
     }
@@ -726,7 +812,6 @@ abstract class _SaunaStoreBase with Store, Disposable {
 
   void _startSaunaAutoUpdate() {
     if (saunaUpdateState == SaunaUpdateState.downloading ||
-        saunaUpdateState == SaunaUpdateState.refresh ||
         saunaUpdateState == SaunaUpdateState.writing ||
         saunaUpdateState == SaunaUpdateState.success) {
       return;

@@ -13,6 +13,7 @@ import 'package:found_space_flutter_web_application/common/ui/found_space_theme_
 import 'package:found_space_flutter_web_application/common/ui/measurer.dart';
 import 'package:found_space_flutter_web_application/common/ui/theme_colors.dart';
 import 'package:found_space_flutter_web_application/common/utils.dart';
+import 'package:found_space_flutter_web_application/di/app_component_interface.dart';
 import 'package:found_space_flutter_web_application/pages/sauna_control_page/widgets/sauna_control_menu_button.dart';
 import 'package:found_space_flutter_web_application/pages/sauna_control_page/widgets/sauna_control_page_common.dart';
 import 'package:found_space_flutter_web_application/pages/sauna_security_pin/store/sauna_security_pin_page.store.dart';
@@ -102,67 +103,70 @@ class _SaunaDeviceControlState extends State<SaunaDeviceControl> with TickerProv
                 child: Column(
                   children: [
                     _buildFirmwareUpdateInfoSection(),
-                    Expanded(
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          if (panelImage.isNotEmpty && deviceToken != null && deviceToken.isNotEmpty)
-                            AnimatedBuilder(
-                              animation: _animationController,
-                              builder: (_, child) {
-                                return Container(
-                                  width: _imageSize.width <= 0.0
-                                      ? 0.0
-                                      : _imageSize.width -
-                                          (_screenSize == ScreenSize.small
-                                              ? 160
-                                              : _screenSize.getWidth(min: 115, max: 124)),
-                                  height: _imageSize.height <= 0.0
-                                      ? 0.0
-                                      : _imageSize.height - _screenSize.getHeight(min: 70, max: 80),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(_screenSize.getHeight(min: 80, max: 100)),
-                                    boxShadow: saunaStateShadow.hasShadow
-                                        ? [
-                                            BoxShadow(
-                                              color: saunaStateShadow.color.withOpacity(
-                                                saunaStateShadow.canGlow
-                                                    ? _animation.value < 10
-                                                        ? _animation.value / 30
-                                                        : .6
-                                                    : .6,
+                    if (AppComponentBase.isAutomationBuild)
+                      const Expanded(child: SizedBox())
+                    else
+                      Expanded(
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            if (panelImage.isNotEmpty && deviceToken != null && deviceToken.isNotEmpty)
+                              AnimatedBuilder(
+                                animation: _animationController,
+                                builder: (_, child) {
+                                  return Container(
+                                    width: _imageSize.width <= 0.0
+                                        ? 0.0
+                                        : _imageSize.width -
+                                            (_screenSize == ScreenSize.small
+                                                ? 160
+                                                : _screenSize.getWidth(min: 115, max: 124)),
+                                    height: _imageSize.height <= 0.0
+                                        ? 0.0
+                                        : _imageSize.height - _screenSize.getHeight(min: 70, max: 80),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(_screenSize.getHeight(min: 80, max: 100)),
+                                      boxShadow: saunaStateShadow.hasShadow
+                                          ? [
+                                              BoxShadow(
+                                                color: saunaStateShadow.color.withOpacity(
+                                                  saunaStateShadow.canGlow
+                                                      ? _animation.value < 10
+                                                          ? _animation.value / 30
+                                                          : .6
+                                                      : .6,
+                                                ),
+                                                spreadRadius: saunaStateShadow.canGlow ? _animation.value / 2.25 : 30,
+                                                blurRadius: saunaStateShadow.canGlow ? _animation.value : 100,
+                                                offset: Offset.zero,
                                               ),
-                                              spreadRadius: saunaStateShadow.canGlow ? _animation.value / 2.25 : 30,
-                                              blurRadius: saunaStateShadow.canGlow ? _animation.value : 100,
-                                              offset: Offset.zero,
-                                            ),
-                                          ]
-                                        : null,
-                                  ),
-                                  child: Image.network(
-                                    panelImage,
-                                    fit: BoxFit.fill,
-                                    headers: {FoundSpaceConstants.authorizationHeaderKey: deviceToken},
-                                  ),
-                                );
-                              },
-                            ),
-                          if (panelImage.isNotEmpty && deviceToken != null && deviceToken.isNotEmpty)
-                            Measurer(
-                              onMeasure: (size, constraints) {
-                                setState(() {
-                                  _imageSize = size ?? const Size(200, 200);
-                                });
-                              },
-                              child: Image.network(
-                                panelImage,
-                                fit: BoxFit.contain,
-                                headers: {FoundSpaceConstants.authorizationHeaderKey: deviceToken},
+                                            ]
+                                          : null,
+                                    ),
+                                    child: Image.network(
+                                      panelImage,
+                                      fit: BoxFit.fill,
+                                      headers: {FoundSpaceConstants.authorizationHeaderKey: deviceToken},
+                                    ),
+                                  );
+                                },
                               ),
-                            ),
-                        ],
+                            if (panelImage.isNotEmpty && deviceToken != null && deviceToken.isNotEmpty)
+                              Measurer(
+                                onMeasure: (size, constraints) {
+                                  setState(() {
+                                    _imageSize = size ?? const Size(200, 200);
+                                  });
+                                },
+                                child: Image.network(
+                                  panelImage,
+                                  fit: BoxFit.contain,
+                                  headers: {FoundSpaceConstants.authorizationHeaderKey: deviceToken},
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
-                    ),
                     SizedBox(height: _screenSize.getHeight(min: 16, max: 24)),
                     _buildSaunaStatusText(),
                     SizedBox(height: _screenSize.getHeight(min: 20, max: 30)),
@@ -246,6 +250,7 @@ class _SaunaDeviceControlState extends State<SaunaDeviceControl> with TickerProv
                   SizedBox(width: _screenSize.getHeight(min: 14, max: 24)),
                   Text(
                     'Program has been modified',
+                    key: const Key('program_modified'),
                     style: TextStyle(
                       fontSize: _screenSize.getFontSize(min: 14, max: 20),
                       fontWeight: FontWeight.w600,
@@ -255,6 +260,7 @@ class _SaunaDeviceControlState extends State<SaunaDeviceControl> with TickerProv
                   ),
                   const Spacer(),
                   _Button(
+                    key: const Key('button_reset_key'),
                     buttonText: 'Reset',
                     height: height,
                     width: height + _screenSize.getHeight(min: 6, max: 10),
@@ -265,6 +271,7 @@ class _SaunaDeviceControlState extends State<SaunaDeviceControl> with TickerProv
                   ),
                   SizedBox(width: _screenSize.getHeight(min: 2, max: 6)),
                   _Button(
+                    key: const Key('button_save_key'),
                     buttonText: 'Save',
                     height: height,
                     width: height + _screenSize.getHeight(min: 6, max: 10),
@@ -343,6 +350,7 @@ class _SaunaDeviceControlState extends State<SaunaDeviceControl> with TickerProv
     final isSettingsMenuSelected = _saunaStore.selectedSaunaMenuType == SaunaMenuType.settings;
     final saunaSystem = _saunaStore.saunaSystem;
     return Text(
+      key: Key(saunaDeviceState.name),
       isSettingsMenuSelected ? saunaSystem?.modelName ?? '' : saunaDeviceState.subtitleText,
       style: TextStyle(
         fontSize: _textSize,
@@ -446,6 +454,7 @@ class _SaunaDeviceControlState extends State<SaunaDeviceControl> with TickerProv
     }
 
     return FeedbackSoundWrapper(
+      key: Key(hasStartSessionEarly ? 'start_session_early_button' : saunaDeviceStateButtonType.name),
       onTap: () {
         SaunaState state = SaunaState.ready;
         if (hasFinishSession) {
@@ -506,11 +515,12 @@ class _Button extends StatelessWidget {
   final Function() onTap;
 
   const _Button({
+    Key? key,
     required this.buttonText,
     required this.height,
     required this.width,
     required this.onTap,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

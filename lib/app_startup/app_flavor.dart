@@ -1,4 +1,5 @@
 enum AppFlavor {
   white, // Production
-  black, // Developement
+  black, // Development
+  red, // Automation
 }

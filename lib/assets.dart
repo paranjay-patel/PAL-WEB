@@ -7,11 +7,6 @@ class Fonts {
 }
 
 class Assets {
-  static const String connectingWifiDark = "assets/json/connecting_wifi_dark.json";
-  static const String connectingWifiLight = "assets/json/connecting_wifi_light.json";
-  static const String connectionFailedDark = "assets/json/connection_failed_dark.json";
-  static const String connectionFailedLight = "assets/json/connection_failed_light.json";
-  static const String connectionSuccess = "assets/json/connection_success.json";
   static const String lightBulb = "assets/json/light_bulb.json";
   static const String musicPlay = "assets/json/music_play.json";
   static const String overheadLightDark = "assets/json/overhead_light_dark.json";
@@ -115,7 +110,6 @@ class Assets {
   static const SvgAssetImage warning = SvgAssetImage("assets/svg/warning.svg");
   static const SvgAssetImage whiteNoise = SvgAssetImage("assets/svg/white_noise.svg");
   static const SvgAssetImage wifi = SvgAssetImage("assets/svg/wifi.svg");
-  static const SvgAssetImage wifiConnection = SvgAssetImage("assets/svg/wifi_connection.svg");
   static const SvgAssetImage wifiNoStrengthDark = SvgAssetImage("assets/svg/wifi_no_strength_dark.svg");
   static const SvgAssetImage wifiNoStrengthLight = SvgAssetImage("assets/svg/wifi_no_strength_light.svg");
   static const SvgAssetImage wifiOff = SvgAssetImage("assets/svg/wifi_off.svg");

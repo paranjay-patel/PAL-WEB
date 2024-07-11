@@ -4,6 +4,7 @@ import 'package:found_space_flutter_rest_api/models/models.dart';
 import 'package:found_space_flutter_web_application/common/composite_reaction_disposer.dart';
 import 'package:found_space_flutter_web_application/common/mobx_provider.dart';
 import 'package:found_space_flutter_web_application/common/store/sauna_local_storage.store.dart';
+import 'package:found_space_flutter_web_application/di/app_component_interface.dart';
 import 'package:found_space_flutter_web_application/pages/sauna_control_popup_page/utils/sauna_saver_sleep_mode_utils.dart';
 import 'package:found_space_flutter_web_application/services/service_locator.dart';
 import 'package:mobx/mobx.dart';
@@ -17,7 +18,7 @@ abstract class _ScreenSaverStoreBase with Store, Disposable {
   _ScreenSaverStoreBase();
 
   @readonly
-  SaunaSaverSleepModeType _saunaSaverSleepModeType = SaunaSaverSleepModeType.saverMode;
+  SaunaSaverSleepModeType _saunaSaverSleepModeType = SaunaSaverSleepModeType.keepScreenOn;
 
   @readonly
   SaunaSaverSleepDuration _saunaSaverSleepDuration = SaunaSaverSleepDuration.oneMin;
@@ -29,7 +30,12 @@ abstract class _ScreenSaverStoreBase with Store, Disposable {
   @readonly
   bool _moveToCorrespondingTab = false;
 
+  bool get isAutomationBuild => AppComponentBase.isAutomationBuild;
+
   Future<void> fetchSaunaSaverMode() async {
+    if (isAutomationBuild) {
+      return;
+    }
     _saunaSaverSleepModeType = _saunaLocalStorageStore.saunaSaverSleepModeType;
     _saunaSaverSleepDuration = _saunaLocalStorageStore.saunaSaverSleepDuration;
     setupScreenSaverTimer();
@@ -37,6 +43,9 @@ abstract class _ScreenSaverStoreBase with Store, Disposable {
 
   @action
   Future<void> setSaunaSaverSleepModeType(SaunaSaverSleepModeType saunaSaverSleepModeType) async {
+    if (isAutomationBuild) {
+      return;
+    }
     _saunaSaverSleepModeType = saunaSaverSleepModeType;
     _saunaLocalStorageStore.setAppSaunaSaverSettings(
       saunaSaverSleepModeType: saunaSaverSleepModeType,
@@ -46,6 +55,9 @@ abstract class _ScreenSaverStoreBase with Store, Disposable {
 
   @action
   Future<void> setSaunaSaverSleepDuration(SaunaSaverSleepDuration saunaSaverSleepDuration) async {
+    if (isAutomationBuild) {
+      return;
+    }
     _saunaSaverSleepDuration = saunaSaverSleepDuration;
     _saunaLocalStorageStore.setAppSaunaSaverSettings(
       saunaSaverSleepModeType: _saunaSaverSleepModeType,
@@ -54,6 +66,9 @@ abstract class _ScreenSaverStoreBase with Store, Disposable {
   }
 
   void setupScreenSaverTimer() {
+    if (isAutomationBuild) {
+      return;
+    }
     _screenSaverTimer?.cancel();
     _screenSaverTimer = null;
     _moveToCorrespondingTab = false;

@@ -106,7 +106,7 @@ abstract class _SaunaControlPopupPageStoreBase with Store, Disposable {
       if (_secondsRemaining > 0) {
         _secondsRemaining--;
       } else {
-        _secondsRemaining == 0;
+        _secondsRemaining = 0;
         cancelTimer();
       }
     });

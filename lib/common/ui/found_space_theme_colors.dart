@@ -142,8 +142,6 @@ extension ColorSchemeExtension on ColorScheme {
 
   Color get forgotButtonColor => isNightMode ? Colors.white : ThemeColors.primaryBlueColor;
 
-  Color get wifiIconColor => isNightMode ? Colors.white : ThemeColors.dark90;
-
   List<BoxShadow> get saunaControlPageButtonShadow => isNightMode
       ? [
           BoxShadow(
@@ -359,8 +357,4 @@ extension ColorSchemeExtension on ColorScheme {
 
   String get advancedSettings =>
       isNightMode ? Assets.advancedSettingsDark.assetName : Assets.advancedSettingsLight.assetName;
-
-  String get connectingWifi => isNightMode ? Assets.connectingWifiDark : Assets.connectingWifiLight;
-
-  String get connectingWifiFailed => isNightMode ? Assets.connectionFailedDark : Assets.connectionFailedLight;
 }

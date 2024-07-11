@@ -17,4 +17,6 @@ class AppComponentBase {
   }
 
   static bool get isReleaseBuild => AppComponentBase.flavor == AppFlavor.white;
+
+  static bool get isAutomationBuild => AppComponentBase.flavor == AppFlavor.red;
 }

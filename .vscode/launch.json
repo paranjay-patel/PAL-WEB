@@ -25,5 +25,17 @@
                 "flavor=black"
             ]
         },
+        {
+            "name": "FS Red",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "args": [
+                "--flavor",
+                "red",
+                "--dart-define",
+                "flavor=red"
+            ]
+        }
     ]
 }

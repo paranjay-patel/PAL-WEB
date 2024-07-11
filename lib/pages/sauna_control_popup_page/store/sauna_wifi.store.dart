@@ -54,9 +54,6 @@ abstract class _SaunaWifiStoreBase with Store, Disposable {
   @readonly
   bool _isForgetWifiLoading = false;
 
-  @readonly
-  bool _showWifiConnectStatusPopup = false;
-
   @computed
   NetworkMode get networkMode => _saunaStore.networkMode;
 
@@ -73,24 +70,6 @@ abstract class _SaunaWifiStoreBase with Store, Disposable {
   bool _isLoading = false;
 
   final wifiNetworks = ObservableList<Wifi>();
-
-  @computed
-  WifiState get wifiState {
-    if (_connectingWifi) {
-      return WifiState.activating;
-    }
-    switch (_saunaStore.wifiState) {
-      case WifiState.active:
-        return WifiState.active;
-      case WifiState.deactivated:
-      case WifiState.inactive:
-      case WifiState.neverActivated:
-        return WifiState.deactivated;
-      case WifiState.unknown:
-      case WifiState.activating:
-        return WifiState.activating;
-    }
-  }
 
   void refresh() {
     _clear();
@@ -162,11 +141,7 @@ abstract class _SaunaWifiStoreBase with Store, Disposable {
       if (_connectingWifi) return;
       _isIncorrectPassword = false;
       if (_selectedWifi == null) return;
-      setWifiConnectStatusPopup(true);
       _connectingWifi = true;
-      Future.delayed(const Duration(seconds: 5), () {
-        _connectingWifi = false;
-      });
       await _connectWifi(password: password);
     } catch (error) {
       _connectingWifi = false;
@@ -273,12 +248,6 @@ abstract class _SaunaWifiStoreBase with Store, Disposable {
 
   void setSelectSwitchMode(NetworkMode mode) {
     _selectedSwitchMode = mode;
-  }
-
-  @action
-  void setWifiConnectStatusPopup(bool status) {
-    _showConnectWifiPopup = false;
-    _showWifiConnectStatusPopup = status;
   }
 
   void _clear() {

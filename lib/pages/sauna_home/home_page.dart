@@ -186,6 +186,7 @@ class _SaunaTabBarPageState extends State<HomePage> with TickerProviderStateMixi
           },
           tabs: SaunaMode.values.map((tab) {
             return Tab(
+              key: Key(tab.toString()),
               icon: tab.icon.toSvgPicture(
                 width: _screenSize.getHeight(min: 24, max: 32),
                 height: _screenSize.getHeight(min: 24, max: 32),

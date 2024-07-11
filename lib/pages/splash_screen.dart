@@ -5,6 +5,7 @@ import 'package:found_space_flutter_web_application/common/found_space_router.da
 import 'package:found_space_flutter_web_application/common/store/audio_player.store.dart';
 import 'package:found_space_flutter_web_application/common/ui/found_space_theme_colors.dart';
 import 'package:found_space_flutter_web_application/common/utils.dart';
+import 'package:found_space_flutter_web_application/di/app_component_interface.dart';
 import 'package:found_space_flutter_web_application/services/service_locator.dart';
 import 'package:mobx/mobx.dart';
 
@@ -22,13 +23,21 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-
-    reaction((_) => audioPlayerStore.isBootUpFinished, (bool isBootUpFinished) async {
-      if (isBootUpFinished) {
+    if (AppComponentBase.isAutomationBuild) {
+      Future.delayed(const Duration(seconds: 1), () {
         Navigator.pushNamed(context, RouteGenerator.saunaHomePage);
-      }
-    }, fireImmediately: true)
-        .disposeWith(_reaction);
+      });
+    } else {
+      reaction<bool>(
+        (_) => audioPlayerStore.isBootUpFinished,
+        (isBootUpFinished) async {
+          if (isBootUpFinished) {
+            Navigator.pushNamed(context, RouteGenerator.saunaHomePage);
+          }
+        },
+        fireImmediately: true,
+      ).disposeWith(_reaction);
+    }
   }
 
   @override

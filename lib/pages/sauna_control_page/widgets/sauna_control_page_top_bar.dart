@@ -131,6 +131,7 @@ class _SaunaControlRightActions extends StatelessWidget {
           padding: const EdgeInsets.only(left: 12),
           child: FeedbackSoundWrapper(
             shouldPlay: isEnabled,
+            key: ValueKey(rightActionButton.name),
             onTap: () async {
               if (!isEnabled) return;
 

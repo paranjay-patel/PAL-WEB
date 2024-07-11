@@ -26,6 +26,7 @@ class SaunaTemperatureControl extends StatelessWidget {
         final displayableTemperatureValue = store.displayableTemperatureValue(targetTemperature.toInt());
 
         return Expanded(
+          key: const Key('tempreature_radial_gauge_expanded_key'),
           child: Padding(
             padding: EdgeInsets.only(bottom: screenSize.getHeight(min: 8, max: 12)),
             child: SfRadialGauge(
@@ -77,6 +78,7 @@ class SaunaTemperatureControl extends StatelessWidget {
                         children: <Widget>[
                           Text(
                             displayableTemperatureValue,
+                            key: const Key('display_temperature_value'),
                             style: TextStyle(
                               color: theme.titleTextColor,
                               fontSize: screenSize.getFontSize(min: 50, max: 60),

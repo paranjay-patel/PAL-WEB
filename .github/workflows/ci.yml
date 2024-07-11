@@ -1,9 +1,9 @@
 
-name: S1-Web-Static-Code-Analysis
+name: pal-Web-Static-Code-Analysis
 
 on:
   push:
-    branches: "master"
+    branches: "*"
   pull_request:
     branches:
       - master
