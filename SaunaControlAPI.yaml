@@ -1,0 +1,847 @@
+openapi: 3.0.0
+servers:
+  - url: http://127.0.0.1/
+info:
+  description: |
+    - This is an API for controlling Saunas.
+  version: "1.0.0"
+  title: Sauna Control API
+  contact:
+    email: kemalenver@gmail.com
+
+paths:
+  /sauna/{sauna_id}/status:
+    get:
+      summary: Returns the complete status of the sauna. Including current variable and program.
+      security:
+        - Device: [ReadOnly]
+      tags:
+        - Sauna Status
+      parameters:
+        - in: path
+          name: sauna_id
+          required: true
+          schema:
+            type: string
+      description: A detailed description of the saunas current state.
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+
+  /sauna/{sauna_id}/state:
+    post:
+      summary: Sets running state of sauna
+      security:
+        - Device: [ReadWrite]
+      tags:
+        - Sauna Control
+      parameters:
+        - in: path
+          name: sauna_id
+          required: true
+          schema:
+            type: string
+      description: Makes sauna execute program
+      requestBody:
+        description: Body is a JSON representation of the program component
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                state:
+                  description: Possible sauna state
+                  type: string
+                  enum:
+                    - standby
+                    - heating
+                    - ready
+                    - insession
+                    - paused
+
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+        "400":
+          description: Program was not accepted and won't start
+
+  /sauna/{sauna_id}/light:
+    post:
+      summary: Sends the status of a light
+      security:
+        - Device: [ReadWrite]
+      tags:
+        - Sauna Control
+      parameters:
+        - in: path
+          name: sauna_id
+          required: true
+          schema:
+            type: string
+      description: Updates a light object
+      requestBody:
+        description: Body is a JSON representation of the light object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Light"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+        "400":
+          description: Light status was not accepted and won't update
+
+  /sauna/{sauna_id}/temperature:
+    post:
+      summary: Sends target temperature to the sauna
+      security:
+        - Device: [ReadWrite]
+      tags:
+        - Sauna Control
+      parameters:
+        - in: path
+          name: sauna_id
+          required: true
+          schema:
+            type: string
+      description: Sets a new target temperature
+      requestBody:
+        description: Body is a JSON representation of the temperature in degrees celsius
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                target_temperature:
+                  type: number
+                  description: The temperature to set the sauna to
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+        "400":
+          description: Target temperature was not accepted and won't update
+
+  /sauna/{sauna_id}/target_timer:
+    post:
+      summary: Sends target timer duration to the sauna
+      security:
+        - Device: [ReadWrite]
+      tags:
+        - Sauna Control
+      parameters:
+        - in: path
+          name: sauna_id
+          required: true
+          schema:
+            type: string
+      description: Sets a new target timer. This value doesn't change the remaining time. It changes the current max time.
+      requestBody:
+        description: Body is a JSON representation of the timer in seconds i.e. 1min = 60
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                target_timer:
+                  type: number
+                  description: The timer to set the sauna to
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+        "400":
+          description: Target timer was not accepted and won't update
+
+  /sauna/{sauna_id}/program:
+    post:
+      summary: Sends a new program object to the sauna.
+      security:
+        - Device: [ReadWrite]
+      tags:
+        - Sauna Control
+      parameters:
+        - in: path
+          name: sauna_id
+          required: true
+          schema:
+            type: string
+      description: Sends a new program object to the sauna. Program will not start until state is set to "Heating" using the /state endpoint
+      requestBody:
+        description: Body is a JSON representation of the program component
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Program"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+        "400":
+          description: Program was not accepted and won't start
+
+  /sauna/{sauna_id}/schedules:
+    post:
+      summary: Sends a list of schedule objects to the sauna.
+      security:
+        - Device: [ReadWrite]
+      tags:
+        - Sauna Scheduling
+      description: Sends a schedule to the sauna that will set a program to run on a day of the week at a certain time.
+      parameters:
+        - in: path
+          name: sauna_id
+          required: true
+          schema:
+            type: string
+          description: "The ID of the sauna"
+      requestBody:
+        description: Body is a JSON representation of the schedule
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/Schedule"
+      responses:
+        "202":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Schedule"
+        "400":
+          description: Schedule was not accepted.
+
+    get:
+      summary: Returns a list of all the schedules currently set.
+      security:
+        - Device: [ReadOnly]
+      tags:
+        - Sauna Scheduling
+      description: Returns an array of all schedules for a given sauna.  Can be empty.
+      parameters:
+        - in: path
+          name: sauna_id
+          required: true
+          schema:
+            type: string
+          description: "The ID of the sauna"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Schedule"
+
+  /sauna/{sauna_id}/schedules/{schedule_id}:
+    delete:
+      summary: Deletes a single schedule from the sauna with a given ID.
+      security:
+        - Device: [ReadWrite]
+      tags:
+        - Sauna Scheduling
+      parameters:
+        - in: path
+          name: sauna_id
+          required: true
+          schema:
+            type: string
+          description: The ID of the sauna to work with
+        - in: path
+          name: schedule_id
+          required: true
+          schema:
+            type: string
+          description: The ID of the schedule to delete from the sauna
+      responses:
+        "202":
+          description: "Schedule was removed"
+        "404":
+          description: "Schedule with given ID was not found and therefore not removed"
+
+  /sauna/{sauna_id}/update:
+    get:
+      tags:
+        - Sauna Management
+      summary: Get Device Firmware Update (DFU) status
+      security:
+        - Device: [ReadOnly]
+      parameters:
+        - in: path
+          name: sauna_id
+          required: true
+          schema:
+            type: string
+          description: "The ID of the sauna"
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SystemUpdate"
+        default:
+          description: Unexpected error occurred
+    put:
+      tags:
+        - Sauna Management
+      summary: Perform Device Firmware Update (DFU) from file
+      security:
+        - Device: [ReadOnly]
+      parameters:
+        - in: query
+          schema:
+            type: string
+          required: true
+          name: sha256
+          description: SHA256 sum of the DFU update package
+        - in: path
+          name: sauna_id
+          required: true
+          schema:
+            type: string
+          description: "The ID of the sauna"
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              description: DFU update package
+              properties:
+                upload:
+                  type: string
+                  format: binary
+      responses:
+        200:
+          description: successful operation
+          content: {}
+        default:
+          description: Unexpected error occurred
+    post:
+      tags:
+        - Sauna Management
+      summary: "Start a new DFU or complete pending"
+      security:
+        - Device: [ReadOnly]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SystemUpdate"
+      responses:
+        200:
+          description: successful operation
+          content: {}
+        default:
+          description: Unexpected error occurred
+
+  /sauna/{sauna_id}/pair:
+    post:
+      summary: Send a pairing requests to the sauna
+      security:
+        - Device: [Full]
+      tags:
+        - Sauna Management
+      description: Sends a schedule to the sauna that will set a program to run on a day of the week at a certain time.
+      parameters:
+        - in: path
+          name: sauna_id
+          required: true
+          schema:
+            type: string
+          description: "The ID of the sauna"
+      requestBody:
+        description: Body is a JSON representation of the pairing request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Pair"
+      responses:
+        "202":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pair"
+        "400":
+          description: Pairing request was not accepted.
+  /sauna/{sauna_id}/wifi:
+    post:
+      summary: WiFi Network configuration and status
+      security:
+        - Device: [Full]
+      tags:
+        - Sauna Management
+      description: Configure the WiFi network
+      parameters:
+        - in: path
+          name: sauna_id
+          required: true
+          schema:
+            type: string
+          description: "The ID of the sauna"
+      requestBody:
+        description: Body is a JSON representation of the schedule
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WiFi"
+
+      responses:
+        "202":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WiFi"
+        "400":
+          description: Schedule was not accepted.
+
+    get:
+      summary: Get the WiFI Network configuration and status
+      security:
+        - Device: [Full]
+      tags:
+        - Sauna Management
+      description: Configure the WiFi network
+      parameters:
+        - in: path
+          name: sauna_id
+          required: true
+          schema:
+            type: string
+          description: "The ID of the sauna"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WiFi"
+
+  /sauna/{sauna_id}/wifi/scan:
+    get:
+      summary: Perform a WiFi Scan
+      security:
+        - Device: [Full]
+      tags:
+        - Sauna Management
+      description: Perform a WiFi Scan
+      parameters:
+        - in: path
+          name: sauna_id
+          required: true
+          schema:
+            type: string
+          description: "The ID of the sauna"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WiFiScan"
+
+  /sauna/{sauna_id}/bluetooth:
+    get:
+      summary: Get the status of the A2DP Bluetooth Pairing
+      security:
+        - Device: [Full]
+      tags:
+        - Sauna Management
+      description: Get the status of the A2DP Bluetooth Pairing
+      parameters:
+        - in: path
+          name: sauna_id
+          required: true
+          schema:
+            type: string
+          description: "The ID of the sauna"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Bluetooth"
+    post:
+      summary: Configure the Bluetooth connection
+      security:
+        - Device: [Full]
+      tags:
+        - Sauna Management
+      description: Accept / Reject new bluetooth connection
+      parameters:
+        - in: path
+          name: sauna_id
+          required: true
+          schema:
+            type: string
+          description: "The ID of the sauna"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Bluetooth"
+
+      responses:
+        "202":
+          description: Successful operation
+        "400":
+          description: Change was not accepted.
+  /sauna/{sauna_id}/action/restart:
+    post:
+      tags:
+        - Sauna Management
+      summary: "Restart device"
+      security:
+        - Device: [ReadWrite]
+      parameters:
+        - in: path
+          name: sauna_id
+          required: true
+          schema:
+            type: string
+          description: "The ID of the sauna"
+      responses:
+        200:
+          description: successful operation
+        # Definition of all error statuses
+        default:
+          description: Unexpected error occurred
+
+components:
+  securitySchemes:
+    Device:
+      type: apiKey
+      name: Device
+      in: header
+      description: 'Prefix the value with \"Device\" to indicate sauna authentication type'
+  schemas:
+    Color:
+      description: "RGB colour object."
+      type: object
+      required:
+        - r
+        - g
+        - b
+      properties:
+        r:
+          type: number
+          minimum: 0
+          maximum: 255
+        g:
+          type: number
+          minimum: 0
+          maximum: 255
+        b:
+          type: number
+          minimum: 0
+          maximum: 255
+
+    Status:
+      description: "An object representing the current state of the sauna."
+      type: object
+      required:
+        - state
+        - sauna_identifier
+        - firmware_version
+        - model_name
+        - target_temperature
+        - current_temperature
+        - target_timer
+        - remaining_timer
+        - lights
+      properties:
+        state:
+          description: Possible sauna state
+          type: string
+          enum:
+            - standby
+            - heating
+            - ready
+            - insession
+            - paused
+        sauna_identifier:
+          type: string
+        firmware_version:
+          type: number
+        model_name:
+          type: string
+        target_temperature:
+          type: number
+          minimum: 0
+          maximum: 100
+        current_temperature:
+          type: number
+        target_timer:
+          type: number
+          minimum: 15
+          maximum: 60
+        remaining_timer:
+          type: number
+        lights:
+          type: array
+          items:
+            $ref: "#/components/schemas/Light"
+        heaters:
+          type: array
+          items:
+            $ref: "#/components/schemas/Heater"
+        program:
+          $ref: "#/components/schemas/Program"
+
+    Light:
+      description: "An object representing the a light - RGB values are multiplied by the brightness to set the correct colour."
+      type: object
+      required:
+        - name
+        - state
+        - color
+        - brightness
+        - type
+      properties:
+        name:
+          type: string
+        id:
+          type: string
+          description: Unique Id for this light
+          format: uuid
+        type:
+          type: string
+          enum:
+            - rgb
+            - mono
+        state:
+          type: string
+          enum:
+            - on
+            - off
+        color:
+          $ref: "#/components/schemas/Color"
+        brightness:
+          type: number
+          minimum: 0
+          maximum: 1
+
+    Heater:
+      type: object
+      required:
+        - identifier
+        - state
+        - level
+      properties:
+        identifier:
+          description: "Specify which heater."
+          type: string
+        state:
+          type: string
+          enum:
+            - on
+            - off
+        level:
+          description: "Can be null if the sauna state is off"
+          type: number
+          enum:
+            - 0
+            - 1
+            - 2
+            - 3
+
+    Schedule:
+      description: |
+        'Wraps a program with a furst run date_time.  The program will run once on the first run date_time, then stop if set to once, or weekly at the same time if set to weekly_recurring.'
+      type: object
+      required:
+        - id
+        - dayOfWeek
+        - time
+        - frequency
+        - program
+      properties:
+        id:
+          type: string
+          example: "df67888a21123f123123ee123"
+        user:
+          type: string
+          example: "kemalenver@gmail.com"
+        first_fire_time:
+          description: "The time the program should fire for the first time - ISO 8601 date time"
+          example: "2021-06-27T05:03:15+11:00"
+          type: string
+          format: date_time
+        frequency:
+          description: "One time, or weekly recurring"
+          type: string
+          enum:
+            - once
+            - weekly_recurring
+        program:
+          $ref: "#/components/schemas/Program"
+
+    Program:
+      description: "An object representing a collection of variables the user would like to set on the sauna."
+      type: object
+      required:
+        - name
+        - target_temperature
+        - target_timer
+        - lights
+        - heaters
+      properties:
+        name:
+          type: string
+        target_temperature:
+          type: number
+          example: 50
+        target_timer:
+          description: "0 for no time limit"
+          type: number
+          example: 30
+        lights:
+          type: array
+          items:
+            $ref: "#/components/schemas/Light"
+        heaters:
+          type: array
+          items:
+            $ref: "#/components/schemas/Heater"
+    Pair:
+      description: "An object representing a pairing request"
+      type: object
+      properties:
+        token:
+          description: "JWT token to use for API authentication"
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+          readOnly: true
+        user_id:
+          type: string
+          description: "User cloud UUID - used to attach user to API requests"
+          example: "2de6c0ef-1c01-4015-8bde-e855e20b3559"
+          writeOnly: true
+        user_name:
+          type: string
+          description: "User friendly name for Logs"
+          example: "Joe Bloggs"
+          writeOnly: true
+    WiFi:
+      description: "An object representing a wifi connection"
+      type: object
+      properties:
+        ssid:
+          description: "SSID of the WiFi Network"
+          type: string
+          example: "test"
+        psk:
+          description: "Pre-Shared Key for the WiFi Network"
+          type: string
+          example: "password"
+          writeOnly: true
+        connected:
+          description: "The connected state of the WiFi network"
+          type: boolean
+          readOnly: true
+        address:
+          description: "The IP address assigned to the WiFi network"
+          type: string
+          format: ipv4
+          default: 192.51.100.2/24
+          readOnly: true
+        rssi:
+          description: "Received signal strength of the WiFi Network"
+          type: integer
+          example: -90
+          readOnly: true
+    WiFiScan:
+      description: "An object representing the results of a wifi scan"
+      type: array
+      items:
+        $ref: "#/components/schemas/WiFi"
+    Bluetooth:
+      description: "An object representing the Bluetooth connection with a phone"
+      type: object
+      properties:
+        displayPasskey:
+          description: Display a PIN code or Passkey for bluetooth device authentication
+          type: string
+          default: 123456
+          readOnly: true
+        acceptConnection:
+          description: Accept or reject new Bluetooth connection
+          type: boolean
+          writeOnly: true
+        discoverable:
+          description: Make Sauna BLE discoverable
+          type: boolean
+          default: false
+        timeout:
+          description: Timeout for the BLE discover In seconds
+          default: 0
+          type: integer
+    SystemUpdateState:
+      description: System Update State
+      type: string
+      enum:
+        - Standby
+        - Writing
+        - PendingReboot
+        - Success
+        - Failed
+    SystemUpdate:
+      description: "An object representing the system update configuration and status"
+      type: object
+      properties:
+        state:
+          $ref: "#/components/schemas/SystemUpdateState"
+        acceptUpdate:
+          type: boolean
+          description: Whether to accept a pending update (when state == Success)
+          writeOnly: true
+        updateURL:
+          type: string
+          description: Download and apply update DFU update package from URL (When state == Standby)
+          writeOnly: true
+        sha256:
+          type: string
+          description: SHA256 sum of the DFU update package
+          writeOnly: true

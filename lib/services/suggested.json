@@ -1,0 +1,405 @@
+[
+    {
+        "id": "KD6btiXPZNFVmtV1bwbO",
+        "name": "Detox",
+        "target_temperature": 50,
+        "timer_duration": 35,
+        "descriptions": [
+            "3+ sessions per week",
+            "Anytime",
+            "Green Light"
+        ],
+        "tags": [
+            "detox"
+        ],
+        "exclusions": [
+            "U18",
+            "PREGNANT",
+            "PACEMAKER"
+        ],
+        "heaters": [],
+        "lights": [
+            {
+                "name": "RGB_1",
+                "state": "on",
+                "brightness": 1,
+                "color": {
+                    "r": 0,
+                    "g": 255,
+                    "b": 0
+                }
+            },
+            {
+                "name": "RGB_2",
+                "state": "on",
+                "brightness": 1,
+                "color": {
+                    "r": 0,
+                    "g": 255,
+                    "b": 0
+                }
+            }
+        ]
+    },
+    {
+        "id": "bLFU2pHaOQz3Nl53WvTN",
+        "name": "Heart Problems",
+        "target_temperature": 45,
+        "timer_duration": 20,
+        "descriptions": [
+            "3+ sessions per week",
+            "Anytime"
+        ],
+        "tags": [
+            "heart"
+        ],
+        "exclusions": [
+            "U18",
+            "PREGNANT",
+            "PACEMAKER"
+        ],
+        "heaters": [],
+        "lights": [
+            {
+                "name": "RGB_1",
+                "state": "on",
+                "brightness": 1,
+                "color": {
+                    "r": 255,
+                    "g": 255,
+                    "b": 255
+                }
+            },
+            {
+                "name": "RGB_2",
+                "state": "on",
+                "brightness": 1,
+                "color": {
+                    "r": 255,
+                    "g": 255,
+                    "b": 255
+                }
+            }
+        ]
+    },
+    {
+        "id": "7MMBTIsjOIh7Afks6hRt",
+        "name": "Pain Relief",
+        "target_temperature": 50,
+        "timer_duration": 45,
+        "descriptions": [
+            "3+ sessions per week",
+            "Anytime"
+        ],
+        "tags": [
+            "pain_relief"
+        ],
+        "exclusions": [
+            "U18",
+            "PREGNANT",
+            "PACEMAKER"
+        ],
+        "heaters": [],
+        "lights": [
+            {
+                "name": "RGB_1",
+                "state": "on",
+                "brightness": 1,
+                "color": {
+                    "r": 255,
+                    "g": 215,
+                    "b": 0
+                }
+            },
+            {
+                "name": "RGB_2",
+                "state": "on",
+                "brightness": 1,
+                "color": {
+                    "r": 125,
+                    "g": 0,
+                    "b": 255
+                }
+            }
+        ]
+    },
+    {
+        "id": "RcT8AGgahRGkB3f6tuTB",
+        "name": "Performance",
+        "target_temperature": 60,
+        "timer_duration": 40,
+        "descriptions": [
+            "3+ sessions per week",
+            "Anytime"
+        ],
+        "tags": [
+            "performance"
+        ],
+        "exclusions": [
+            "U18",
+            "PREGNANT",
+            "PACEMAKER"
+        ],
+        "heaters": [],
+        "lights": [
+            {
+                "name": "RGB_1",
+                "state": "on",
+                "brightness": 1,
+                "color": {
+                    "r": 0,
+                    "g": 0,
+                    "b": 255
+                }
+            },
+            {
+                "name": "RGB_2",
+                "state": "on",
+                "brightness": 1,
+                "color": {
+                    "r": 0,
+                    "g": 0,
+                    "b": 255
+                }
+            }
+        ]
+    },
+    {
+        "id": "f7vs4jFBVtuIlBNVguyp",
+        "name": "Recovery",
+        "target_temperature": 50,
+        "timer_duration": 45,
+        "descriptions": [
+            "3+ sessions per week",
+            "Anytime"
+        ],
+        "tags": [
+            "recovery"
+        ],
+        "exclusions": [
+            "U18",
+            "PREGNANT",
+            "PACEMAKER"
+        ],
+        "heaters": [],
+        "lights": [
+            {
+                "name": "RGB_1",
+                "state": "on",
+                "brightness": 1,
+                "color": {
+                    "r": 255,
+                    "g": 0,
+                    "b": 0
+                }
+            },
+            {
+                "name": "RGB_2",
+                "state": "on",
+                "brightness": 1,
+                "color": {
+                    "r": 255,
+                    "g": 0,
+                    "b": 0
+                }
+            }
+        ]
+    },
+    {
+        "id": "yYsSO9SzgdbeeLbuV6gZ",
+        "name": "Relaxation",
+        "target_temperature": 50,
+        "timer_duration": 45,
+        "descriptions": [
+            "3+ sessions per week",
+            "Anytime",
+            "Light Blue Light"
+        ],
+        "tags": [
+            "relaxation"
+        ],
+        "exclusions": [
+            "U18",
+            "PREGNANT",
+            "PACEMAKER"
+        ],
+        "heaters": [],
+        "lights": [
+            {
+                "name": "RGB_1",
+                "state": "on",
+                "brightness": 1,
+                "color": {
+                    "r": 0,
+                    "g": 0,
+                    "b": 255
+                }
+            },
+            {
+                "name": "RGB_2",
+                "state": "on",
+                "brightness": 1,
+                "color": {
+                    "r": 0,
+                    "g": 0,
+                    "b": 255
+                }
+            }
+        ]
+    },
+    {
+        "id": "J3itwNcxMyU2OLoJu7m1",
+        "name": "Skin Improvements",
+        "target_temperature": 50,
+        "timer_duration": 35,
+        "descriptions": [
+            "3+ sessions per week",
+            "Anytime"
+        ],
+        "tags": [
+            "skin_improvements"
+        ],
+        "exclusions": [
+            "U18",
+            "PREGNANT",
+            "PACEMAKER"
+        ],
+        "heaters": [],
+        "lights": [
+            {
+                "name": "RGB_1",
+                "state": "on",
+                "brightness": 1,
+                "color": {
+                    "r": 0,
+                    "g": 255,
+                    "b": 0
+                }
+            },
+            {
+                "name": "RGB_2",
+                "state": "on",
+                "brightness": 1,
+                "color": {
+                    "r": 0,
+                    "g": 255,
+                    "b": 0
+                }
+            }
+        ]
+    },
+    {
+        "id": "0AycDYfBTXiJ8Bg80KVW",
+        "name": "Sleep",
+        "target_temperature": 47,
+        "timer_duration": null,
+        "descriptions": [
+            "3+ sessions per week",
+            "Evening",
+            "Red Light"
+        ],
+        "tags": [
+            "sleep"
+        ],
+        "exclusions": [
+            "U18",
+            "PREGNANT",
+            "PACEMAKER"
+        ],
+        "heaters": [],
+        "lights": [
+            {
+                "name": "Nice Name",
+                "state": "on",
+                "brightness": 1,
+                "color": {
+                    "r": 255,
+                    "g": 0,
+                    "b": 0
+                }
+            }
+        ]
+    },
+    {
+        "id": "LizMDZ7zGnexyzsGZFDf",
+        "name": "Under 18",
+        "target_temperature": 45,
+        "timer_duration": 20,
+        "descriptions": [
+            "3+ sessions per week",
+            "Anytime"
+        ],
+        "tags": [
+            "under18"
+        ],
+        "exclusions": [
+            "U18",
+            "PACEMAKER",
+            "PREGNANT"
+        ],
+        "heaters": [],
+        "lights": [
+            {
+                "name": "RGB_1",
+                "state": "on",
+                "brightness": 1,
+                "color": {
+                    "r": 255,
+                    "g": 255,
+                    "b": 255
+                }
+            },
+            {
+                "name": "RGB_2",
+                "state": "on",
+                "brightness": 1,
+                "color": {
+                    "r": 255,
+                    "g": 255,
+                    "b": 255
+                }
+            }
+        ]
+    },
+    {
+        "id": "YaK9iMUTlEJtd1BCUC15",
+        "name": "Weight Loss",
+        "target_temperature": 60,
+        "timer_duration": 20,
+        "descriptions": [
+            "3+ sessions per week",
+            "Anytime"
+        ],
+        "tags": [
+            "weight_loss"
+        ],
+        "exclusions": [
+            "U18",
+            "PREGNANT",
+            "PACEMAKER"
+        ],
+        "heaters": [],
+        "lights": [
+            {
+                "name": "RGB_1",
+                "state": "on",
+                "brightness": 1,
+                "color": {
+                    "r": 0,
+                    "g": 255,
+                    "b": 0
+                }
+            },
+            {
+                "name": "RGB_2",
+                "state": "on",
+                "brightness": 1,
+                "color": {
+                    "r": 0,
+                    "g": 255,
+                    "b": 0
+                }
+            }
+        ]
+    }
+]

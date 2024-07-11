@@ -1,0 +1,80 @@
+
+name: S1-Web-Static-Code-Analysis
+
+on:
+  push:
+    branches: "master"
+  pull_request:
+    branches:
+      - master
+      - release*
+      - develop
+      - main
+
+jobs:
+  static-code-analysis: 
+    runs-on: macos-latest
+    permissions: write-all
+    env:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    steps:
+    - name: notify slack      
+      uses: act10ns/slack@v2
+      with:
+        channel: 'test-notification-channel'
+        status: starting
+        steps: ${{ toJson(steps) }}
+      if: always()
+    
+    - name: Checkout code
+      id: Checkout-code
+      uses: actions/checkout@v1
+
+    - name: Setup SSH
+      id: Setup-SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+    - name: Set up Flutter
+      id: Setup-flutter
+      uses: subosito/flutter-action@v1
+      with:
+        flutter-version: '3.22.2'
+
+    - name: Install dependencies
+      id: Install-dependencies
+      run: flutter pub get
+
+    - name: Run linter
+      id: Run-linter
+      run: |
+        flutter --version
+        dart --version
+        flutter analyze
+        
+    - name: Flutter Enable Web
+      id: flutter-enable-web
+      run: flutter config --enable-web
+
+    - name: Start Safari Driver
+      id: start-driver
+      run: |
+        sudo safaridriver --enable
+        safaridriver --port 4444 &
+          
+    - name: Run Functional Test
+      id: run-functional-test
+      run: |
+        flutter drive --driver=test_driver/integration_test.dart --target=test/sauna_session_test.dart --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=safari
+
+    - name: notify slack      
+      uses: act10ns/slack@v2
+      with:
+        channel: 'test-notification-channel'
+        status: ${{ job.status }}
+        steps: ${{ toJson(steps) }}
+      if: always()

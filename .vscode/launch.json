@@ -1,0 +1,29 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "FS White",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "args": [
+                "--flavor",
+                "white",
+                "--dart-define",
+                "flavor=white"
+            ]
+        },
+        {
+            "name": "FS Black",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "args": [
+                "--flavor",
+                "black",
+                "--dart-define",
+                "flavor=black"
+            ]
+        },
+    ]
+}
