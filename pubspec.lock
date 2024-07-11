@@ -329,9 +329,9 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: vishal_automation_experiment
+      ref: master
       resolved-ref: "6b2dd090f1813789d66ca8862ecf374399c1ef4c"
-      url: "git@github.com:Healtech-Pty-Ltd/S1-REST-APIs.git"
+      url: "git@github.com:paranjay-patel/PAL-REST-APIs.git"
     source: git
     version: "0.0.1"
   freezed:
