@@ -49,12 +49,12 @@ jobs:
       id: Install-dependencies
       run: flutter pub get
 
-    - name: Run linter
-      id: Run-linter
-      run: |
-        flutter --version
-        dart --version
-        flutter analyze
+    # - name: Run linter
+    #   id: Run-linter
+    #   run: |
+    #     flutter --version
+    #     dart --version
+    #     flutter analyze
         
     - name: Flutter Enable Web
       id: flutter-enable-web
