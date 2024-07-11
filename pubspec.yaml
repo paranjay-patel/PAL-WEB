@@ -41,7 +41,7 @@ dependencies:
   found_space_flutter_rest_api:
     git:
       url: git@github.com:paranjay-patel/PAL-REST-APIs.git
-      ref: vishal_automation_experiment
+      ref: master
 
 dev_dependencies:
   flutter_test:
