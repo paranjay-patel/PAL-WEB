@@ -71,13 +71,13 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
     steps:
-      # - name: Notify Slack (Starting)
-      #   uses: act10ns/slack@v2
-      #   with:
-      #     channel: 'test-notification-channel'
-      #     status: starting
-      #     steps: ${{ toJson(steps) }}
-      #   if: always()
+      - name: Notify Slack (Starting)
+        uses: act10ns/slack@v2
+        with:
+          channel: 'test-notification-channel'
+          status: starting
+          steps: ${{ toJson(steps) }}
+        if: always()
 
       - name: Checkout code
         id: Checkout-code
