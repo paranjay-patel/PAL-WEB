@@ -82,13 +82,6 @@ jobs:
         status: starting
         steps: ${{ toJson(steps) }}
       if: always()
-    - name: notify slack      
-      uses: act10ns/slack@v2
-      with:
-        channel: 'test-notification-channel'
-        status: starting
-        steps: ${{ toJson(steps) }}
-      if: always()
     
     - name: Checkout code
       id: Checkout-code
@@ -126,7 +119,8 @@ jobs:
       id: integration-test
       # run: |
       #   flutter drive --driver=test_driver/integration_test.dart --target=${{ matrix.test-target }} --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=safari
-      rub: echo "test ${{ matrix.test-target }} "
+      run: echo "test ${{ matrix.test-target }} "
+      
     - name: notify slack      
       uses: act10ns/slack@v2
       with:
