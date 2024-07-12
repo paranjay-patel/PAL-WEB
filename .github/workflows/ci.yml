@@ -1,4 +1,4 @@
-name: PR Workflow
+name: Pull Request
 
 on:
   push:
@@ -11,7 +11,7 @@ on:
       - release*
       - develop
       - main
- 
+
 jobs:
   static-code-analysis:
     runs-on: macos-latest
@@ -66,25 +66,18 @@ jobs:
 
   integration-test:
     runs-on: macos-latest
-    strategy:
-      matrix:
-        test-target:
-          - test/sauna_session_test.dart
-          - test/sleep_mode_test.dart
-          - test/temperature_test.dart
-          - test/timer_test.dart
     permissions: write-all
     env:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
     steps:
-      - name: Notify Slack (Starting)
-        uses: act10ns/slack@v2
-        with:
-          channel: 'test-notification-channel'
-          status: starting
-          steps: ${{ toJson(steps) }}
-        if: always()
+      # - name: Notify Slack (Starting)
+      #   uses: act10ns/slack@v2
+      #   with:
+      #     channel: 'test-notification-channel'
+      #     status: starting
+      #     steps: ${{ toJson(steps) }}
+      #   if: always()
 
       - name: Checkout code
         id: Checkout-code
@@ -119,17 +112,12 @@ jobs:
           safaridriver --port 4444 &
 
       - name: Integration Test
-        id: integration-test
+        id: Integration-test
         run: |
-          flutter drive \
-            --driver=test_driver/integration_test.dart \
-            --target=${{ matrix.test-target }} \
-            --flavor=red \
-            --dart-define=flavor=red \
-            -d web-server \
-            --release \
-            --browser-name=safari
-
+          flutter drive --driver=test_driver/integration_test.dart --target=test/sauna_session_test.dart --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=safari
+          flutter drive --driver=test_driver/integration_test.dart --target=test/sleep_mode_test.dart --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=safari
+          flutter drive --driver=test_driver/integration_test.dart --target=test/temperature_test.dart --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=safari
+      
       - name: Notify Slack (Completed)
         uses: act10ns/slack@v2
         with:
