@@ -11,7 +11,7 @@ on:
       - release*
       - develop
       - main
-
+ 
 jobs:
   static-code-analysis:
     runs-on: macos-latest
