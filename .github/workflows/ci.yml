@@ -3,7 +3,7 @@ name: PR workflow
 on:
   push:
     branches: "pipeline-setup-HT-211, master"
-  pull_request:
+  pull_request: 
     branches:
       - master
       - release*
