@@ -1,9 +1,8 @@
-
-name: pal-Web-Static-Code-Analysis
+name: S1-Web-Static-Code-Analysis
 
 on:
   push:
-    branches: "*"
+    branches: "pipeline-setup-HT-211"
   pull_request:
     branches:
       - master
@@ -14,7 +13,6 @@ on:
 jobs:
   static-code-analysis: 
     runs-on: macos-latest
-    permissions: write-all
     env:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
@@ -43,18 +41,77 @@ jobs:
       id: Setup-flutter
       uses: subosito/flutter-action@v1
       with:
-        flutter-version: '3.22.2'
+        flutter-version: '3.22.0'
 
     - name: Install dependencies
       id: Install-dependencies
       run: flutter pub get
 
-    # - name: Run linter
-    #   id: Run-linter
-    #   run: |
-    #     flutter --version
-    #     dart --version
-    #     flutter analyze
+    - name: Run linter
+      id: Run-linter
+      run: |
+        flutter --version
+        dart --version
+        flutter analyze
+        
+    - name: notify slack      
+      uses: act10ns/slack@v2
+      with:
+        channel: 'test-notification-channel'
+        status: ${{ job.status }}
+        steps: ${{ toJson(steps) }}
+      if: always()
+
+
+
+name: S1-Web-Integration-Test
+
+on:
+  push:
+    branches: "pipeline-setup-HT-211"
+  pull_request:
+    branches:
+      - master
+      - release*
+      - develop
+      - main
+
+jobs:
+  integration-test: 
+    runs-on: macos-latest
+    env:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    steps:
+    - name: notify slack      
+      uses: act10ns/slack@v2
+      with:
+        channel: 'test-notification-channel'
+        status: starting
+        steps: ${{ toJson(steps) }}
+      if: always()
+
+    - name: Checkout code
+      id: Checkout-code
+      uses: actions/checkout@v1
+
+    - name: Setup SSH
+      id: Setup-SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+    - name: Set up Flutter
+      id: Setup-flutter
+      uses: subosito/flutter-action@v1
+      with:
+        flutter-version: '3.22.0'
+
+    - name: Install dependencies
+      id: Install-dependencies
+      run: flutter pub get
         
     - name: Flutter Enable Web
       id: flutter-enable-web
@@ -65,11 +122,10 @@ jobs:
       run: |
         sudo safaridriver --enable
         safaridriver --port 4444 &
-          
-    - name: Run Functional Test
-      id: run-functional-test
+
+    - name: Integration Test
       run: |
-        flutter drive --driver=test_driver/integration_test.dart --target=test/sauna_session_test.dart --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=safari
+        flutter drive --driver=test_driver/integration_test.dart --target=${{ matrix.test-target }} --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=safari
 
     - name: notify slack      
       uses: act10ns/slack@v2
@@ -78,3 +134,81 @@ jobs:
         status: ${{ job.status }}
         steps: ${{ toJson(steps) }}
       if: always()
+
+
+
+
+
+
+
+  integration-test: 
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        test-target:
+          - test/sauna_session_test.dart
+          - test/sleep_mode_test.dart
+          - test/temperature_test.dart
+          - test/timer_test.dart
+    permissions: write-all
+    env:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+    steps:
+    # - name: notify slack      
+    #   uses: act10ns/slack@v2
+    #   with:
+    #     channel: 'test-notification-channel'
+    #     status: starting
+    #     steps: ${{ toJson(steps) }}
+    #   if: always()
+    # - name: notify slack      
+    #   uses: act10ns/slack@v2
+    #   with:
+    #     channel: 'test-notification-channel'
+    #     status: starting
+    #     steps: ${{ toJson(steps) }}
+    #   if: always()
+    
+    - name: Checkout code
+      id: Checkout-code
+      uses: actions/checkout@v1
+
+    - name: Setup SSH
+      id: Setup-SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+    - name: Set up Flutter
+      id: Setup-flutter
+      uses: subosito/flutter-action@v1
+      with:
+        flutter-version: '3.22.0'
+
+    - name: Install dependencies
+      id: Install-dependencies
+      run: flutter pub get
+        
+    - name: Flutter Enable Web
+      id: flutter-enable-web
+      run: flutter config --enable-web
+
+    - name: Start Safari Driver
+      id: start-driver
+      run: |
+        sudo safaridriver --enable
+        safaridriver --port 4444 &
+
+    - name: Integration Test
+      run: |
+        flutter drive --driver=test_driver/integration_test.dart --target=${{ matrix.test-target }} --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=safari
+
+    # - name: notify slack      
+    #   uses: act10ns/slack@v2
+    #   with:
+    #     channel: 'test-notification-channel'
+    #     status: ${{ job.status }}
+    #     steps: ${{ toJson(steps) }}
+    #   if: always()
