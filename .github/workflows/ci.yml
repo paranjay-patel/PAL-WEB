@@ -1,8 +1,15 @@
 name: Pull Request
 
 on:
-  workflow_dispatch:
-
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches:
+      - master
+      - release*
+      - develop
+      - main
 jobs:
   static-code-analysis:
     runs-on: macos-latest
