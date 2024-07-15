@@ -25,7 +25,7 @@ jobs:
           status: starting
           steps: ${{ toJson(steps) }}
         if: always()
-      
+
       - name: Checkout code
         id: Checkout-code
         uses: actions/checkout@v3
@@ -47,9 +47,10 @@ jobs:
         if: always()
 
   integration-test:
-    # if: ${{ github.event_name == 'workflow_dispatch' && startsWith(github.ref, 'refs/heads/release/') }}  
+    # Trigger only on manual workflow dispatch for branches starting with "release/"
+    if: ${{ github.event_name == 'workflow_dispatch' && startsWith(github.event.ref, 'refs/heads/release/') }}
     runs-on: macos-latest
-    permissions: write-all
+    permissions: write-all  # Re-evaluate if specific permissions are needed
     env:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
     steps:
