@@ -52,7 +52,6 @@ jobs:
     permissions: write-all
     env:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-    if: startsWith(github.ref, 'refs/heads/release/')
     steps:
       - name: Notify Slack (Starting)
         uses: act10ns/slack@v2
