@@ -28,7 +28,7 @@ jobs:
         if: always()
 
   integration-test:
-    if: ${{ (github.event_name == 'pull_request' && github.event_name == 'workflow_dispatch' ) && (github.base_ref == 'main' || github.base_ref == 'master' || github.base_ref == 'develop') }}
+    if: ${{ (github.event_name == 'workflow_dispatch && github.event_name == 'pull_request' ) && (github.base_ref == 'feature' || github.base_ref == 'master' || github.base_ref == 'develop') }}
     runs-on: macos-latest
     permissions: write-all
     env:
