@@ -3,28 +3,28 @@ name: Pull Request
 on:
   push:
     branches:
-      - '*'
+      - "*"
   pull_request:
     branches:
       - master
       - release*
       - develop
       - main
+  workflow_dispatch:
 
 jobs:
   static-code-analysis:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     env:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
     steps:
-      # - name: Notify Slack (Starting)
-      #   uses: act10ns/slack@v2
-      #   with:
-      #     channel: 's1-panel'
-      #     status: starting
-      #     steps: ${{ toJson(steps) }}
-      #   if: always()
+      - name: Notify Slack (Starting)
+        uses: act10ns/slack@v2
+        with:
+          channel: 's1-panel'
+          status: starting
+          steps: ${{ toJson(steps) }}
+        if: always()
       
       - name: Checkout code
         id: Checkout-code
@@ -38,45 +38,29 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      - name: Set up Flutter
-        id: Setup-flutter
-        uses: subosito/flutter-action@v2  
+      - name: Notify Slack
+        uses: act10ns/slack@v2
         with:
-          flutter-version: '3.22.0'
-
-      - name: Install dependencies
-        id: Install-dependencies
-        run: flutter pub get
-
-      - name: Run linter
-        id: Run-linter
-        run: |
-          flutter --version
-          dart --version
-          flutter analyze
-
-      # - name: Notify Slack
-      #   uses: act10ns/slack@v2
-      #   with:
-      #     channel: 's1-panel'
-      #     status: ${{ job.status }}
-      #     steps: ${{ toJson(steps) }}
-      #   if: always()
+          channel: 's1-panel'
+          status: ${{ job.status }}
+          steps: ${{ toJson(steps) }}
+        if: always()
 
   integration-test:
-    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' && startsWith(github.ref, 'refs/heads/release/') }}  
+    runs-on: macos-latest
     permissions: write-all
     env:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
+    if: startsWith(github.ref, 'refs/heads/release/')
     steps:
-      # - name: Notify Slack (Starting)
-      #   uses: act10ns/slack@v2
-      #   with:
-      #     channel: 's1-panel'
-      #     status: starting
-      #     steps: ${{ toJson(steps) }}
-      #   if: always()
+      - name: Notify Slack (Starting)
+        uses: act10ns/slack@v2
+        with:
+          channel: 's1-panel'
+          status: starting
+          steps: ${{ toJson(steps) }}
+        if: always()
 
       - name: Checkout code
         id: Checkout-code
@@ -90,48 +74,10 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      - name: Set up Flutter
-        id: Setup-flutter
-        uses: subosito/flutter-action@v2 
+      - name: Notify Slack 
+        uses: act10ns/slack@v2
         with:
-          flutter-version: '3.22.0'
-
-      - name: Install dependencies
-        id: Install-dependencies
-        run: flutter pub get
-        
-      - name: Flutter Enable Web
-        id: flutter-enable-web
-        run: flutter config --enable-web
-
-      - name: Install Chrome Driver
-        run: |
-          wget https://storage.googleapis.com/chrome-for-testing-public/126.0.6478.126/linux64/chromedriver-linux64.zip
-          unzip chromedriver-linux64.zip -d /usr/bin/chromedriver
-          chown root:root /usr/bin/chromedriver
-          chmod +x /usr/bin/chromedriver
-          rm chromedriver-linux64.zip
-
-      - name: Start Chrome Driver 
-        run: |
-          chromedriver --port=4444 &
-
-      # - name: Integration Test
-      #   id: Integration-test
-      #   run: |
-      #     flutter drive --driver=test_driver/integration_test.dart --target=test/sauna_session_test.dart --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=safari
-      #     flutter drive --driver=test_driver/integration_test.dart --target=test/sleep_mode_test.dart --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=safari
-      #     flutter drive --driver=test_driver/integration_test.dart --target=test/temperature_test.dart --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=safari
-
-      - name: Integration Test
-        id: Integration-test
-        run: |
-          flutter drive --driver=test_driver/timer_test.dart --target=test/sauna_session_test.dart --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=safari
- 
-      # - name: Notify Slack 
-      #   uses: act10ns/slack@v2
-      #   with:
-      #     channel: 's1-panel'
-      #     status: ${{ job.status }}
-      #     steps: ${{ toJson(steps) }}
-      #   if: always()
+          channel: 's1-panel'
+          status: ${{ job.status }}
+          steps: ${{ toJson(steps) }}
+        if: always()
