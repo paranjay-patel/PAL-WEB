@@ -47,7 +47,7 @@ jobs:
         if: always()
 
   integration-test:
-    if: ${{ github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/heads/release/') }}
+    if:  github.event_name == 'workflow_dispatch'
   
     runs-on: macos-latest
     permissions: write-all
