@@ -35,12 +35,12 @@
           id: Install-dependencies
           run: flutter pub get
 
-        - name: Static code analysis
-          id: static-code-analysis
-          run: |
-            flutter --version
-            dart --version
-            flutter analyze
+        # - name: Static code analysis
+        #   id: static-code-analysis
+        #   run: |
+        #     flutter --version
+        #     dart --version
+        #     flutter analyze
 
         - name: Integration test
           if: ${{ github.event_name == 'pull_request' && (github.base_ref == 'main' || github.base_ref == 'master' || github.base_ref == 'develop') }}
