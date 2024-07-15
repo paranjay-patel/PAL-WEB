@@ -10,6 +10,8 @@ on:
       - release*
       - develop
       - main
+  workflow_dispatch:
+
 jobs:
   static-code-analysis:
     runs-on: macos-latest
@@ -29,6 +31,7 @@ jobs:
         if: always()
 
   integration-test:
+    if: ${{ github.event_name == 'workflow_dispatch' && (github.base_ref == 'main' || github.base_ref == 'master' || github.base_ref == 'develop') }}
     runs-on: macos-latest
     permissions: write-all
     env:
@@ -45,4 +48,3 @@ jobs:
           status: ${{ job.status }}
           steps: ${{ toJson(steps) }}
         if: always()
- 
