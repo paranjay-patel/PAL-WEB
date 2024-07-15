@@ -14,12 +14,12 @@ on:
 
 jobs:
   static-code-analysis:
-    if: ${{ github.event_name == 'pull_request' && (github.base_ref == 'main' || github.base_ref == 'master' || startsWith(github.base_ref, 'release/') || github.base_ref == 'develop') }}
     runs-on: macos-latest
     env:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
     steps:    
       - name: Checkout code
+        id: Checkout-code
         uses: actions/checkout@v3
 
       - name: Notify Slack
@@ -31,13 +31,14 @@ jobs:
         if: always()
 
   integration-test:
-    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && (github.base_ref == 'main' || github.base_ref == 'master' || github.base_ref == 'develop')) }}
+    if: ${{ github.event_name == 'workflow_dispatch' && (github.base_ref == 'main' || github.base_ref == 'master' || github.base_ref == 'develop') }}
     runs-on: macos-latest
     permissions: write-all
     env:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
     steps:
       - name: Checkout code
+        id: Checkout-code
         uses: actions/checkout@v3
 
       - name: Notify Slack 
