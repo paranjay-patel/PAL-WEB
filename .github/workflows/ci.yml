@@ -10,7 +10,6 @@ on:
       - release*
       - develop
       - main
-  workflow_dispatch:
 
 jobs:
   static-code-analysis:
