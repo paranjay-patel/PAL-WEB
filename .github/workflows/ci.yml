@@ -10,32 +10,17 @@ on:
       - release*
       - develop
       - main
+  workflow_dispatch:
 
 jobs:
   static-code-analysis:
     runs-on: macos-latest
     env:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-    steps:
-      - name: Notify Slack (Starting)
-        uses: act10ns/slack@v2
-        with:
-          channel: 's1-panel'
-          status: starting
-          steps: ${{ toJson(steps) }}
-        if: always()
-      
+    steps:    
       - name: Checkout code
         id: Checkout-code
         uses: actions/checkout@v3
-
-      - name: Setup SSH
-        id: Setup-SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
 
       - name: Notify Slack
         uses: act10ns/slack@v2
@@ -46,32 +31,15 @@ jobs:
         if: always()
 
   integration-test:
-    if:  github.event_name == 'workflow_dispatch'
-  
+    if: ${{ github.event_name == 'workflow_dispatch' }}
     runs-on: macos-latest
     permissions: write-all
     env:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
     steps:
-      - name: Notify Slack (Starting)
-        uses: act10ns/slack@v2
-        with:
-          channel: 's1-panel'
-          status: starting
-          steps: ${{ toJson(steps) }}
-        if: always()
-
       - name: Checkout code
         id: Checkout-code
         uses: actions/checkout@v3
-
-      - name: Setup SSH
-        id: Setup-SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
 
       - name: Notify Slack 
         uses: act10ns/slack@v2
