@@ -1,48 +1,55 @@
 name: Pull Request
 
 on:
-  push:
-    branches:
-      - "*"
   pull_request:
     branches:
       - master
       - release*
-      - develop
+      - develop 
       - main
-  workflow_dispatch:
 
 jobs:
-  static-code-analysis:
+  static-code-analysis-and-integration-test:
     runs-on: macos-latest
     env:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
     steps:    
       - name: Checkout code
-        id: Checkout-code
         uses: actions/checkout@v3
 
-      - name: Notify Slack
-        uses: act10ns/slack@v2
+      - name: Setup SSH
+        id: Setup-SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Set up Flutter
+        id: Setup-flutter
+        uses: subosito/flutter-action@v2 
         with:
-          channel: 's1-panel'
-          status: ${{ job.status }}
-          steps: ${{ toJson(steps) }}
-        if: always()
+          flutter-version: '3.22.0'
 
-  integration-test:
-    if: ${{ github.event_name == 'workflow_dispatch' && (github.base_ref == 'main' || github.base_ref == 'master' || github.base_ref == 'develop') }}
-    runs-on: macos-latest
-    permissions: write-all
-    env:
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-    steps:
-      - name: Checkout code
-        id: Checkout-code
-        uses: actions/checkout@v3
+      - name: Install dependencies
+        id: Install-dependencies
+        run: flutter pub get
+
+      - name: Static code analysis
+        id: Run-linter
+        run: |
+          flutter --version
+          dart --version
+          flutter analyze
+
+      - name: Integration test
+        if: ${{ github.event_name == 'pull_request' && (github.base_ref == 'main' || github.base_ref == 'master' || github.base_ref == 'develop') }}
+        id: Integration-test
+        run: |
+          flutter drive --driver=test_driver/integration_test.dart --target=test/sauna_session_test.dart --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=safari
 
       - name: Notify Slack 
-        uses: act10ns/slack@v2
+        uses: act10ns/slack@v2     
         with:
           channel: 's1-panel'
           status: ${{ job.status }}
