@@ -7,13 +7,12 @@ on:
       - release**
       - develop
       - main
-  workflow_dispatch: 
 
 jobs:
   static-code-analysis:
     runs-on: macos-latest
     env:
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} 
     steps:    
       - name: Checkout code
         id: Checkout-code
@@ -28,7 +27,7 @@ jobs:
         if: always()
 
   integration-test:
-    if: ${{ (github.event_name == 'pull_request' && github.event_name == 'workflow_dispatch' ) && (github.base_ref == 'main' || github.base_ref == 'master' || github.base_ref == 'develop') }}
+    if: ${{ (github.event_name == 'pull_request' && (startsWith(github.base_ref, 'release/') || github.base_ref == 'master' || github.base_ref == 'develop' || github.base_ref == 'main')) }}
     runs-on: macos-latest
     permissions: write-all
     env:
