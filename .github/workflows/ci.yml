@@ -7,10 +7,11 @@ on:
       - release**
       - develop
       - main
+      - sonarqube
   workflow_dispatch: 
 
 jobs:
-  static-code-analysis:
+  linting:
     runs-on: macos-latest
     env:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
@@ -27,6 +28,36 @@ jobs:
           steps: ${{ toJson(steps) }}
         if: always()
 
+  static-code-analysis:
+    runs-on: macos-latest
+    env:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+    steps:    
+      - name: Checkout code
+        id: Checkout-code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 
+
+      - uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      # If you wish to fail your job when the Quality Gate is red, uncomment the
+      # following lines. This would typically be used to fail a deployment.
+      - uses: sonarsource/sonarqube-quality-gate-action@master
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      
+      - name: Notify Slack
+        uses: act10ns/slack@v2
+        with:
+          channel: 's1-panel'
+          status: ${{ job.status }}
+          steps: ${{ toJson(steps) }}
+        if: always()
+        
   integration-test:
     if: ${{ (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' ) && (github.base_ref == 'main' || github.base_ref == 'master' || github.base_ref == 'develop') }}
     runs-on: macos-latest
