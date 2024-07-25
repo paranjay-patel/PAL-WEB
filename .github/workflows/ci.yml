@@ -17,16 +17,27 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-    steps:
-      - name: notify slack
-        #id: github-job-status
+    steps: 
+      - name: Notify Slack Start
+        id: slack-notify-start
         uses: slackapi/slack-github-action@v1.26.0
         with:
           channel-id: 'C07C0LDFMK6'
-          slack-message: "GitHub PR Workflow Strated: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+          slack-message: |
+            {
+              "text": "GitHub PR Workflow Started: ${{ job.status }}",
+              "attachments": [
+                {
+                  "title": "View on GitHub",
+                  "title_link": "${{ github.event.pull_request.html_url || github.event.head_commit.url }}",
+                  "text": "The workflow for *${{ github.repository }}* has started.",
+                  "color": "#36a64f"
+                }
+              ]
+            }
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-      
+
       - name: Checkout code
         id: Checkout-code
         uses: actions/checkout@v4
