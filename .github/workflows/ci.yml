@@ -112,7 +112,7 @@ jobs:
       - id: deployment_message
         uses: slackapi/slack-github-action@v1.26.0
         with:
-          channel-id: "CHANNEL_ID"
+          channel-id: "C07B6R6NYUW"
           payload: |
             {
               "text": "Deployment started (In Progress)"
@@ -123,7 +123,7 @@ jobs:
         with:
           # Unlike the step posting a new message, this step does not accept a channel name.
           # Please use a channel ID, not a name here.
-          channel-id: "CHANNEL_ID"
+          channel-id: "C07B6R6NYUW"
           payload: |
             {
               "thread_ts": "${{ steps.deployment_message.outputs.ts }}",
