@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@v3
         
       - name: permit to .sh
-        id: give permission
+        id: give-permission
         run: |
           chmod 777 ./notify_slack.sh   
 
@@ -51,7 +51,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: permit to .sh
-        id: give permission
+        id: give-permission
         run: |
           chmod 777 ./notify_slack.sh   
 
