@@ -23,10 +23,9 @@ jobs:
         id: slack-notify-start
         uses: slackapi/slack-github-action@v1.26.0
         with:
-          channel-id: 'C07B6R6NYUW'
-          slack-message: "GitHub build result" # ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          status: ${{ job.status }}
+          fields: repo,author,commit,ref,action,eventName,workflow,job
 
       - name: Checkout code
         id: Checkout-code
