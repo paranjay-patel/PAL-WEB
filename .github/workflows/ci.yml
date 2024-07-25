@@ -4,10 +4,10 @@ on:
   push:
     branches:
       - reply-notification
-  pull_request: 
+  pull_request:
     branches:
       - master
-      - release**
+      - release/**
       - develop
       - main
 
@@ -16,21 +16,29 @@ jobs:
     runs-on: macos-latest
     env:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} 
-    steps:    
+    steps:
       - name: Checkout code
         id: Checkout-code
         uses: actions/checkout@v3
 
-      - name: Notify Slack
-        uses: act10ns/slack@v2
-        with:
-          channel: 's1-panel'
-          status: ${{ job.status }}
-          steps: ${{ toJson(steps) }}
-        if: always()
+      - name: Send initial Slack notification
+        id: notify-slack-start
+        run: |
+          ./notify_slack.sh $SLACK_WEBHOOK_URL android-app "starting" "Static Code Analysis started"
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Perform static analysis
+        # Add steps for static analysis here
+
+      - name: Send final Slack notification
+        run: |
+          ./notify_slack.sh $SLACK_WEBHOOK_URL android-app "${{ job.status }}" "Static Code Analysis completed" ${{ steps.notify-slack-start.outputs.ts }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   integration-test:
-    if: ${{ github.event_name == 'pull_request' && (github.base_ref == 'master' || github.base_ref == 'main' || github.base_ref == 'develop' || startsWith(github.base_ref, 'release')) }} 
+    if: ${{ github.event_name == 'pull_request' && (github.base_ref == 'master' || github.base_ref == 'main' || github.base_ref == 'develop' || startsWith(github.base_ref, 'release')) }}
     runs-on: macos-latest
     permissions: write-all
     env:
@@ -40,10 +48,18 @@ jobs:
         id: Checkout-code
         uses: actions/checkout@v3
 
-      - name: Notify Slack 
-        uses: act10ns/slack@v2
-        with:
-          channel: 's1-panel'
-          status: ${{ job.status }}
-          steps: ${{ toJson(steps) }}
-        if: always()
+      - name: Send initial Slack notification
+        id: notify-slack-start
+        run: |
+          ./notify_slack.sh $SLACK_WEBHOOK_URL android-app "starting" "Integration Test started"
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Perform integration tests
+        # Add steps for integration tests here
+
+      - name: Send final Slack notification
+        run: |
+          ./notify_slack.sh $SLACK_WEBHOOK_URL android-app "${{ job.status }}" "Integration Test completed" ${{ steps.notify-slack-start.outputs.ts }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
