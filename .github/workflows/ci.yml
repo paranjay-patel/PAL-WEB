@@ -22,28 +22,10 @@ jobs:
         uses: slackapi/slack-github-action@v1.26.0
         with:
           channel-id: 'C07C0LDFMK6'
-          slack-message: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "GitHub PR Workflow Started: ${{ job.status }}"
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "<${{ github.event.pull_request.html_url || github.event.head_commit.url }}|View the PR or commit>"
-                  }
-                }
-              ]
-            }
+          slack-message: "GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-
+    
       - name: Checkout code
         id: Checkout-code
         uses: actions/checkout@v4
