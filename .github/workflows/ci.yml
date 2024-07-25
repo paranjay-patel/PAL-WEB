@@ -28,9 +28,6 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
-      - name: Perform static analysis
-        # Add steps for static analysis here
-
       - name: Send final Slack notification
         run: |
           ./notify_slack.sh $SLACK_WEBHOOK_URL android-app "${{ job.status }}" "Static Code Analysis completed" ${{ steps.notify-slack-start.outputs.ts }}
@@ -54,9 +51,6 @@ jobs:
           ./notify_slack.sh $SLACK_WEBHOOK_URL android-app "starting" "Integration Test started"
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-      - name: Perform integration tests
-        # Add steps for integration tests here
 
       - name: Send final Slack notification
         run: |
