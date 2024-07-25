@@ -1,6 +1,9 @@
 name: Pull Request
 
 on:
+  push:
+    branches:
+      - reply-notification
   pull_request: 
     branches:
       - master
