@@ -24,17 +24,20 @@ jobs:
           channel-id: 'C07C0LDFMK6'
           slack-message: |
             {
-              "text": "GitHub PR Workflow Started: ${{ job.status }}",
-              "attachments": [
+              "blocks": [
                 {
-                  "fallback": "View the PR or commit",
-                  "actions": [
-                    {
-                      "type": "button",
-                      "text": "View",
-                      "url": "${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
-                    }
-                  ]
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "GitHub PR Workflow Started: ${{ job.status }}"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "<${{ github.event.pull_request.html_url || github.event.head_commit.url }}|View the PR or commit>"
+                  }
                 }
               ]
             }
