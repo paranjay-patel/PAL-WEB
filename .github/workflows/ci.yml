@@ -109,31 +109,27 @@ jobs:
       
 
 
-      - name: Checkout code
-        id: Checkout-code
-        uses: actions/checkout@v4
+      - id: deployment_message
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: "CHANNEL_ID"
+          payload: |
+            {
+              "text": "Deployment started (In Progress)"
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      - uses: slackapi/slack-github-action@v1.26.0
+        with:
+          # Unlike the step posting a new message, this step does not accept a channel name.
+          # Please use a channel ID, not a name here.
+          channel-id: "CHANNEL_ID"
+          payload: |
+            {
+              "thread_ts": "${{ steps.deployment_message.outputs.ts }}",
+              "text": "Deployment finished (Completed)"
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
-      - name: Setup SSH
-        id: Setup-SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      # - name: Set up Flutter
-      #   id: Setup-flutter
-      #   uses: subosito/flutter-action@v2  
-      #   with:
-      #     flutter-version: '3.22.0'
-
-      # - name: Install dependencies
-      #   id: Install-dependencies
-      #   run: flutter pub get
-
-      # - name: Run linter
-      #   id: Run-linter
-      #   run: |
-      #     flutter --version
-      #     dart --version
-      #     flutter analyze
