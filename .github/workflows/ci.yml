@@ -20,6 +20,11 @@ jobs:
       - name: Checkout code
         id: Checkout-code
         uses: actions/checkout@v3
+        
+      - name: permit to .sh
+        id: give permission
+        run: |
+          chmod 777 ./notify_slack.sh   
 
       - name: Send initial Slack notification
         id: notify-slack-start
@@ -44,6 +49,11 @@ jobs:
       - name: Checkout code
         id: Checkout-code
         uses: actions/checkout@v3
+
+      - name: permit to .sh
+        id: give permission
+        run: |
+          chmod 777 ./notify_slack.sh   
 
       - name: Send initial Slack notification
         id: notify-slack-start
