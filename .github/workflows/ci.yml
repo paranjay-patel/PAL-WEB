@@ -20,39 +20,39 @@ jobs:
     #   SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
     steps: 
-      - name: Post to a Slack channel
-        id: slackdd
-        uses: slackapi/slack-github-action@v1.26.0
-        with:
-          # Slack channel id, channel name, or user id to post message.
-          # See also: https://api.slack.com/methods/chat.postMessage#channels
-          # You can pass in multiple channels to post to by providing a comma-delimited list of channel IDs.
-          channel-id: 'C07B6R6NYUW'
-          # For posting a simple plain text message
-          slack-message: "GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      # - name: Post to a Slack channel
+      #   id: slackdd
+      #   uses: slackapi/slack-github-action@v1.26.0
+      #   with:
+      #     # Slack channel id, channel name, or user id to post message.
+      #     # See also: https://api.slack.com/methods/chat.postMessage#channels
+      #     # You can pass in multiple channels to post to by providing a comma-delimited list of channel IDs.
+      #     channel-id: 'C07B6R6NYUW'
+      #     # For posting a simple plain text message
+      #     slack-message: "GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+      #   env:
+      #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           
-      - name: Notify Slack Start
-        id: slack-notify-start
-        uses: slackapi/slack-github-action@v1.26.0
-        with:
-          channel-id: 'C07B6R6NYUW'
-          payload: |
-            {
-              "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
-                  }
-                }
-              ]
-            }  
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      # - name: Notify Slack Start
+      #   id: slack-notify-start
+      #   uses: slackapi/slack-github-action@v1.26.0
+      #   with:
+      #     channel-id: 'C07B6R6NYUW'
+      #     payload: |
+      #       {
+      #         "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}",
+      #         "blocks": [
+      #           {
+      #             "type": "section",
+      #             "text": {
+      #               "type": "mrkdwn",
+      #               "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+      #             }
+      #           }
+      #         ]
+      #       }  
+      #   env:
+      #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
       - name: notify slack 
         id: sldack
@@ -80,8 +80,6 @@ jobs:
             }
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-
-
       
       - uses: slackapi/slack-github-action@v1.26.0
         with:
@@ -123,19 +121,19 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      - name: Set up Flutter
-        id: Setup-flutter
-        uses: subosito/flutter-action@v2  
-        with:
-          flutter-version: '3.22.0'
+      # - name: Set up Flutter
+      #   id: Setup-flutter
+      #   uses: subosito/flutter-action@v2  
+      #   with:
+      #     flutter-version: '3.22.0'
 
-      - name: Install dependencies
-        id: Install-dependencies
-        run: flutter pub get
+      # - name: Install dependencies
+      #   id: Install-dependencies
+      #   run: flutter pub get
 
-      - name: Run linter
-        id: Run-linter
-        run: |
-          flutter --version
-          dart --version
-          flutter analyze
+      # - name: Run linter
+      #   id: Run-linter
+      #   run: |
+      #     flutter --version
+      #     dart --version
+      #     flutter analyze
