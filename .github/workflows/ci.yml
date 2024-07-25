@@ -66,11 +66,3 @@ jobs:
           flutter --version
           dart --version
           flutter analyze
-
-      - name: Notify Slack
-        uses: act10ns/slack@v2
-        with:
-          channel: android-app
-          status: ${{ job.status }}
-          steps: ${{ toJson(steps) }}
-        if: always()
