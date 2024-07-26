@@ -1,166 +1,185 @@
-name: Pull Request
+  name: Pull Request
 
-on:
-  push:
-    branches:
-      - reply-notification
-  pull_request:
-    branches:
-      - master
-      - release/**
-      - develop
-      - main
-
-
-jobs:
-  static-code-analysis:
-    runs-on: ubuntu-latest
-    env:
-    #   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-    # env:
-    #   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-    #   SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-    steps: 
-      # - name: Post to a Slack channel
-      #   id: slackdd
-      #   uses: slackapi/slack-github-action@v1.26.0
-      #   with:
-      #     # Slack channel id, channel name, or user id to post message.
-      #     # See also: https://api.slack.com/methods/chat.postMessage#channels
-      #     # You can pass in multiple channels to post to by providing a comma-delimited list of channel IDs.
-      #     channel-id: 'C07B6R6NYUW'
-      #     # For posting a simple plain text message
-      #     slack-message: "GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
-      #   env:
-      #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-          
-      # - name: Notify Slack Start
-      #   id: slack-notify-start
-      #   uses: slackapi/slack-github-action@v1.26.0
-      #   with:
-      #     channel-id: 'C07B6R6NYUW'
-      #     payload: |
-      #       {
-      #         "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}",
-      #         "blocks": [
-      #           {
-      #             "type": "section",
-      #             "text": {
-      #               "type": "mrkdwn",
-      #               "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
-      #             }
-      #           }
-      #         ]
-      #       }  
-      #   env:
-      #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-
-      # - name: notify slack 
-      #   id: sldack
-      #   uses: slackapi/slack-github-action@v1.26.0
-      #   with:
-      #     # The following message update step does not accept a channel name.
-      #     # Setting a channel ID here for consistency is highly recommended.
-      #     channel-id: "C07B6R6NYUW"
-      #     payload: |
-      #       {
-      #         "text": "Deployment started (In Progress)",
-      #         "attachments": [
-      #           {
-      #             "pretext": "Deployment started",
-      #             "color": "dbab09",
-      #             "fields": [
-      #               {
-      #                 "title": "Status",
-      #                 "short": true,
-      #                 "value": "In Progress"
-      #               }
-      #             ]
-      #           }
-      #         ]
-      #       }
-      #   env:
-      #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-      
-      # - uses: slackapi/slack-github-action@v1.26.0
-      #   with:
-      #     # Unlike the step posting a new message, this step does not accept a channel name.
-      #     # Please use a channel ID, not a name here.
-      #     channel-id: "C07B6R6NYUW"
-      #     update-ts: ${{ steps.slack.outputs.ts }}
-      #     payload: |
-      #       {
-      #         "text": "Deployment finished (Completed)",
-      #         "attachments": [
-      #           {
-      #             "pretext": "Deployment finished",
-      #             "color": "28a745",
-      #             "fields": [
-      #               {
-      #                 "title": "Status",
-      #                 "short": true,
-      #                 "value": "Completed"
-      #               }
-      #             ]
-      #           }
-      #         ]
-      #       }
-      #   env:
-      #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-      
+  on:
+    push:
+      branches:
+        - reply-notification
+    pull_request:
+      branches:
+        - master
+        - release/**
+        - develop
+        - main
 
 
-      - name: Notify Slack 
-        id: workflow-started
-        uses: slackapi/slack-github-action@v1.26.0
-        with:
-          channel-id: "C07B6R6NYUW"
-          payload: |
-            {
-              "text": "GitHub Action failed",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Production deployment check failed* :fire_engine:\n High error rate detected after deployment! Rolling back..."
-                  }
-                },
-                {
-                  "type": "actions",
-                  "elements": [
-                    {
-                      "type": "button",
-                      "text": {
-                        "type": "plain_text",
-                        "text": ":github: Failed action"
-                      },
-                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-                    },
-                    {
-                      "type": "button",
-                      "text": {
-                        "type": "plain_text",
-                        "text": ":grafana: Grafana dashboard"
-                      },
-                      "url": "https://<your_organization>.grafana.net/d/my-app-dashboard?from=now-1h&to=now"
+  jobs:
+    static-code-analysis:
+      runs-on: ubuntu-latest
+      env:
+      #   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      # env:
+      #   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      #   SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+      steps: 
+        # - name: Post to a Slack channel
+        #   id: slackdd
+        #   uses: slackapi/slack-github-action@v1.26.0
+        #   with:
+        #     # Slack channel id, channel name, or user id to post message.
+        #     # See also: https://api.slack.com/methods/chat.postMessage#channels
+        #     # You can pass in multiple channels to post to by providing a comma-delimited list of channel IDs.
+        #     channel-id: 'C07B6R6NYUW'
+        #     # For posting a simple plain text message
+        #     slack-message: "GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+        #   env:
+        #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+            
+        # - name: Notify Slack Start
+        #   id: slack-notify-start
+        #   uses: slackapi/slack-github-action@v1.26.0
+        #   with:
+        #     channel-id: 'C07B6R6NYUW'
+        #     payload: |
+        #       {
+        #         "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}",
+        #         "blocks": [
+        #           {
+        #             "type": "section",
+        #             "text": {
+        #               "type": "mrkdwn",
+        #               "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+        #             }
+        #           }
+        #         ]
+        #       }  
+        #   env:
+        #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+        # - name: notify slack 
+        #   id: sldack
+        #   uses: slackapi/slack-github-action@v1.26.0
+        #   with:
+        #     # The following message update step does not accept a channel name.
+        #     # Setting a channel ID here for consistency is highly recommended.
+        #     channel-id: "C07B6R6NYUW"
+        #     payload: |
+        #       {
+        #         "text": "Deployment started (In Progress)",
+        #         "attachments": [
+        #           {
+        #             "pretext": "Deployment started",
+        #             "color": "dbab09",
+        #             "fields": [
+        #               {
+        #                 "title": "Status",
+        #                 "short": true,
+        #                 "value": "In Progress"
+        #               }
+        #             ]
+        #           }
+        #         ]
+        #       }
+        #   env:
+        #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        
+        # - uses: slackapi/slack-github-action@v1.26.0
+        #   with:
+        #     # Unlike the step posting a new message, this step does not accept a channel name.
+        #     # Please use a channel ID, not a name here.
+        #     channel-id: "C07B6R6NYUW"
+        #     update-ts: ${{ steps.slack.outputs.ts }}
+        #     payload: |
+        #       {
+        #         "text": "Deployment finished (Completed)",
+        #         "attachments": [
+        #           {
+        #             "pretext": "Deployment finished",
+        #             "color": "28a745",
+        #             "fields": [
+        #               {
+        #                 "title": "Status",
+        #                 "short": true,
+        #                 "value": "Completed"
+        #               }
+        #             ]
+        #           }
+        #         ]
+        #       }
+        #   env:
+        #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        
+
+
+        - name: Notify Slack 
+          id: workflow-started
+          uses: slackapi/slack-github-action@v1.26.0
+          with:
+            channel-id: "C07B6R6NYUW"
+            payload: |
+              {
+                "text": "PR Workflow Started",
+                "blocks": [
+                  {
+                    "type": "section",
+                    "text": {
+                      "type": "mrkdwn",
+                      "text": "*Pull request Workflow Started* :star2:\n High error rate detected after deployment! Rolling back..."
                     }
-                  ]
-                }
-              ]
-            }
-        # env:
-        #   SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-      - uses: slackapi/slack-github-action@v1.26.0
-        with:
-          channel-id: "C07B6R6NYUW"
-          payload: |
-            {
-              "thread_ts": "${{ steps.deployment_message.outputs.ts }}",
-              "text": "Deployment finished (Completed)"
-            }
-        # env:
-        #   SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+                  },
+
+                  {
+                    "type": "section",
+                    "fields": [
+                      {
+                        "type": "mrkdwn",
+                        "text": "*Author:*\n<${{ github.event.pull_request.user.html_url }}|${{ github.event.pull_request.user.login }}>"
+                      },
+                      {
+                        "type": "mrkdwn",
+                        "text": "*Branch:*\n`${{ github.event.pull_request.head.ref }} `"
+                      },
+                      {
+                        "type": "mrkdwn",
+                        "text": "*Commit Message:*\n<${{ github.event.pull_request.head.repo.html_url }}/commit/${{ github.event.pull_request.head.sha }}|${{ github.event.pull_request.title }}>"
+                      }
+                    ]
+                  },
+
+                  {
+                    "type": "actions",
+                    "elements": [
+                      {
+                        "type": "button",
+                        "text": {
+                          "type": "plain_text",
+                          "text": ":github: Failed action"
+                        },
+                        "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                      },
+                      {
+                        "type": "button",
+                        "text": {
+                          "type": "plain_text",
+                          "text": ":grafana: Grafana dashboard"
+                        },
+                        "url": "https://<your_organization>.grafana.net/d/my-app-dashboard?from=now-1h&to=now"
+                      }
+                    ]
+                  }
+                ]
+              }
+          # env:
+          #   SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        - uses: slackapi/slack-github-action@v1.26.0
+          with:
+            channel-id: "C07B6R6NYUW"
+            payload: |
+              {
+                "thread_ts": "${{ steps.deployment_message.outputs.ts }}",
+                "text": "Deployment finished (Completed)"
+              }
+          # env:
+          #   SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
 
