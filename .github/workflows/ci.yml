@@ -247,7 +247,7 @@ jobs:
               "attachments": [
                 {
                   "pretext": "*A new PR workflow has started!* :star:",
-                  "color": "#0073e6",
+                  "color": "#1aff1a",
                   "fields": [
                     {
                       "title": "Repository",
