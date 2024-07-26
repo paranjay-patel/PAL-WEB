@@ -236,25 +236,25 @@ jobs:
               ]
             }
 
-        # - name: Notify Workflow Complete
-        #   if: success()
-        #   uses: slackapi/slack-github-action@v1.26.0
-        #   with:
-        #     channel-id: "C07B6R6NYUW"
-        #     update-ts: ${{ steps.Workflow_starting.outputs.ts }}
-        #     payload: |
-        #       {
-        #         "attachments": [
-        #           {
-        #             "pretext":"PR Workflow Status",
-        #             "color": "1aff1a",
-        #             "fields": [
-        #               {
-        #                 "title": "Status",
-        #                 "short": true,
-        #                 "value": "Successful"
-        #               }
-        #             ]
-        #           }
-        #         ]
-        #       }
+      - name: Notify Workflow Complete
+        # if: success()
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: "C07B6R6NYUW"
+          update-ts: ${{ steps.Workflow_starting.outputs.ts }}
+          payload: |
+            {
+              "attachments": [
+                {
+                  "pretext":"PR Workflow Status",
+                  "color": "1aff1a",
+                  "fields": [
+                    {
+                      "title": "Status",
+                      "short": true,
+                      "value": "Successful"
+                    }
+                  ]
+                }
+              ]
+            }
