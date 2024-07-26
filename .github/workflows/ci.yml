@@ -33,9 +33,9 @@ jobs:
         with:
           debug: true # Enable debug mode to capture the response
 
-      - name: Capture Initial Slack Message Timestamp
-        id: capture-ts
-        run: echo "::set-output name=thread_ts::$(echo '${{ steps.initial-slack.outputs.response }}' | jq -r '.ts')"
+      # - name: Capture Initial Slack Message Timestamp
+      #   id: capture-ts
+      #   run: echo "::set-output name=thread_ts::$(echo '${{ steps.initial-slack.outputs.response }}' | jq -r '.ts')"
 
       - name: Slack Notification in Thread
         uses: rtCamp/action-slack-notify@v2
@@ -47,4 +47,4 @@ jobs:
           SLACK_TITLE: Reply Post Title
           SLACK_USERNAME: rtCamp
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
-          SLACK_THREAD_TS: ${{ steps.capture-ts.outputs.thread_ts }}
+          SLACK_THREAD_TS: ${{ steps.initial-slack.outputs.thread_ts }}
