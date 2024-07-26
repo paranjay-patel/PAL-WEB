@@ -14,7 +14,7 @@ on:
       - feature
 
 jobs:
-  code-analysis:
+  Code-Analysis:
     runs-on: ubuntu-latest
     env:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
@@ -24,9 +24,40 @@ jobs:
         with:
           channel-id: "C07B6R6NYUW"
           payload: |
-            {
-              "text": "Deployment started (In Progress)"
-            }
+          {
+            "thread_ts": "${{ steps.deployment_message.outputs.ts }}",
+            "text": "GitHub Action Successfull",
+            "blocks": [
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*Static code analysis check successful...✅*\n\n*Pull Request:* <${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>\n*Source Branch:* <${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.head.ref }}|${{ github.event.pull_request.head.ref }}>\n*Target Branch:* <${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.base.ref }}|${{ github.event.pull_request.base.ref }}>\n*Committer:* <${{ github.event.pull_request.user.html_url }}|${{ github.event.pull_request.user.login }}>"
+                }
+              },
+              {
+                "type": "actions",
+                "elements": [
+                  {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": ":github: View Action"
+                    },
+                    "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  },
+                  {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": ":git: View Pull Request"
+                    },
+                    "url": "${{ github.event.pull_request.html_url }}"
+                  }
+                ]
+              }
+            ]
+          }
 
       - name: Checkout code
         id: Checkout-code
