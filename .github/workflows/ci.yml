@@ -27,14 +27,12 @@ jobs:
         channel-id: 'C07B6R6NYUW'
         payload: |
           {
-            "text": "Pull Request Wrokflow Started",
             "attachments": [
               {
-                "pretext": "Pull Request Wrokflow Started",
                 "color": "dbab09",
                 "fields": [
                   {
-                    "title": "Pull Request Wrokflow Started",
+                    "title": ""text": "*Pull Request Workflow Started...:star:*\n\n*Pull Request:* <${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>\n*Source Branch:* <${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.head.ref }}|${{ github.event.pull_request.head.ref }}>\n*Target Branch:* <${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.base.ref }}|${{ github.event.pull_request.base.ref }}>\n*Committer:* <${{ github.event.pull_request.user.html_url }}|${{ github.event.pull_request.user.login }}>"",
                     "short": true,
                     "value": "In Progress"
                   }
@@ -45,6 +43,7 @@ jobs:
 
   static-code-analysis:
     runs-on: ubuntu-latest
+    needs: notify-on-starting
     steps:
     - name: Checkout code
       uses: actions/checkout@v1
