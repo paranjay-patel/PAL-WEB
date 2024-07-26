@@ -107,7 +107,7 @@ jobs:
               "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
               "attachments": [
                 {
-                  "pretext": "Workflow Status :gh-green:",
+                  "pretext": "Workflow Status :large_green_circle:",
                   "color": "#1aff1a",
                   "fields": [
                     {
