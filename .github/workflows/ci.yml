@@ -19,10 +19,6 @@ jobs:
     env:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
     steps:
-jobs:
-  notify:
-    runs-on: ubuntu-latest
-    steps:
       - name: Initial Slack Notification
         id: initial-slack
         uses: rtCamp/action-slack-notify@v2
