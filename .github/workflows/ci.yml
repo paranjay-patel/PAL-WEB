@@ -25,16 +25,54 @@ jobs:
           channel-id: "C07B6R6NYUW"
           payload: |
             {
-              "text": "Deployment started (In Progress)",
+              "text": "PR Workflow Started (In Progress)",
               "attachments": [
                 {
-                  "pretext": "Deployment started",
-                  "color": "dbab09",
+                  "pretext": "A new PR workflow has started! :start:",
+                  "color": "#0073e6",
                   "fields": [
                     {
+                      "title": "Pull Request",
+                      "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
+                      "short": false
+                    },
+                    {
+                      "title": "Author",
+                      "value": "<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>",
+                      "short": true
+                    },
+                    {
+                      "title": "Source Branch",
+                      "value": "${{ github.event.pull_request.head.ref }}",
+                      "short": true
+                    },
+                    {
+                      "title": "Target Branch",
+                      "value": "${{ github.event.pull_request.base.ref }}",
+                      "short": true
+                    },
+                    {
                       "title": "Status",
-                      "short": true,
-                      "value": "In Progress"
+                      "value": "In Progress",
+                      "short": true
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": ":github: View PR"
+                      },
+                      "url": "${{ github.event.pull_request.html_url }}"
+                    },
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": ":github: View Action"
+                      },
+                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                     }
                   ]
                 }
