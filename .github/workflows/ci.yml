@@ -1,53 +1,33 @@
-
-name: Pull Request
-
-on:
-  # push:
-  #   branches:
-  #     - reply-notification
-  pull_request:
-    branches:
-      - master
-      - release*
-      - develop
-      - main
-      - feature
-
 jobs:
-  code-analysis:
+  notify:
     runs-on: ubuntu-latest
-    env:
-      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
     steps:
-    - name: Slack Notificadtion
-      uses: rtCamp/action-slack-notify@v2
-      env:
-        SLACK_CHANNEL: general
-        SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
-        SLACK_ICON: https://github.com/rtCamp.png?size=48
-        SLACK_MESSAGE: 'Post Content :rocket:'
-        SLACK_TITLE: Post Title
-        SLACK_USERNAME: rtCamp
-        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+      - name: Initial Slack Notification
+        id: initial-slack
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: general
+          SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: 'Initial Post Content :rocket:'
+          SLACK_TITLE: Initial Post Title
+          SLACK_USERNAME: rtCamp
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+          debug: true # Enable debug mode to capture the response
 
-    - name: Slack Notificatdion
-      uses: rtCamp/action-slack-notify@v2
-      env:
-        SLACK_CHANNEL: general
-        SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
-        SLACK_ICON: https://github.com/rtCamp.png?size=48
-        SLACK_MESSAGE: 'Post Content :rocket:'
-        SLACK_TITLE: Post Title
-        SLACK_USERNAME: rtCamp
-        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+      - name: Capture Initial Slack Message Timestamp
+        id: capture-ts
+        run: echo "::set-output name=thread_ts::$(echo '${{ steps.initial-slack.outputs.response }}' | jq -r '.ts')"
 
-    - name: Slack Notificatdion
-      uses: rtCamp/action-slack-notify@v2
-      env:
-        SLACK_CHANNEL: general
-        SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
-        SLACK_ICON: https://github.com/rtCamp.png?size=48
-        SLACK_MESSAGE: 'Post Content :rocket:'
-        SLACK_TITLE: Post Title
-        SLACK_USERNAME: rtCamp
-        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+      - name: Slack Notification in Thread
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: general
+          SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: 'Reply Post Content :rocket:'
+          SLACK_TITLE: Reply Post Title
+          SLACK_USERNAME: rtCamp
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_THREAD_TS: ${{ steps.capture-ts.outputs.thread_ts }}
