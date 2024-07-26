@@ -131,17 +131,12 @@ jobs:
               "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
               "attachments": [
                 {
-                  "pretext": "\n",
+                  "pretext": "\n\n\n",
                   "color": "#FF1A1A",
                   "fields": [
                     {
                       "title": "Linting Status",
                       "value": "Failed",
-                      "short": true
-                    },
-                    {
-                      "title": "View Workflow",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
                       "short": true
                     }
                   ]
@@ -153,6 +148,31 @@ jobs:
 
 
 
+
+    #        {
+    #          "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
+    #          "attachments": [
+    #            {
+    #              "pretext": "\n",
+    #              "color": "#FF1A1A",
+    #              "fields": [
+    #                {
+    #                  "title": "Linting Status",
+    #                  "value": "Failed",
+    #                  "short": true
+    #                },
+    #                {
+    #                  "title": "View Workflow",
+    #                  "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
+    #                  "short": true
+    #                }
+    #              ]
+    #            }
+    #          ]
+    #        }
+
+
+            
 
 
 
