@@ -91,10 +91,18 @@ jobs:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       with:
         channel-id: 'C07B6R6NYUW'
+        update-ts: ${{ steps.slack.outputs.ts }}
         payload: |
           {
             "text": "GitHub Action Successfull",
             "blocks": [
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*Static code analysis check failed...⚠️ :fire_engine:*\n\n*Pull Request:* ${{ github.event.pull_request.title }}\n*Source Branch:* ${{ github.event.pull_request.head.ref }}\n*Target Branch:* ${{ github.event.pull_request.base.ref }}\n*Auther :* ${{ github.actor }}"
+                }
+              },
               {
                 "type": "actions",
                 "elements": [
@@ -135,6 +143,7 @@ jobs:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       with:
         channel-id: 'C07B6R6NYUW'
+        update-ts: ${{ steps.slack.outputs.ts }}
         payload: |
           {
             "text": "GitHub Action Failed",
