@@ -19,7 +19,7 @@ jobs:
     env:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
     steps:
-      - id: deployment_message
+      - id: Workflow_starting
         uses: slackapi/slack-github-action@v1.24.0
         with:
           channel-id: "C07B6R6NYUW"
@@ -74,49 +74,101 @@ jobs:
                       },
                       "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                     }
-                  ],
-
-                  "elements": [
-                    {
-                      "type": "button",
-                      "text": {
-                        "type": "plain_text",
-                        "text": ":github: Failed action"
-                      },
-                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-                    },
-                    {
-                      "type": "button",
-                      "text": {
-                        "type": "plain_text",
-                        "text": ":grafana: Grafana dashboard"
-                      },
-                      "url": "https://<your_organization>.grafana.net/d/my-app-dashboard?from=now-1h&to=now"
-                    }
-                  ]
-                
+                  ],               
                 }
               ]
             }
 
       - name: Checkout code
-        id: Checkout-code
+        id: Checkout_code
+        needs: Workflow_starting
         uses: actions/checkout@v1
         with:
           fetch-depth: 0
+      
+      - name: Setup SSH
+        id: Setup-SSH
+        needs: Checkout_code
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      # env:
-      #   SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      - name: Set up Flutter
+        id: Setup_flutter
+        needs: Checkout_code
+        uses: subosito/flutter-action@v2  
+        with:
+          flutter-version: '3.22.0'
+
+      - name: Install dependencies
+        id: Install_dependencies
+        needs: Setup_flutter
+        run: flutter pub get
+
+      - name: Run linter
+        id: Run_linter
+        needs: Install_dependencies
+        run: |
+          flutter analyze
+  
+      - name: Notify linter success
+        if: success()
+        id: Linter_successfull_notify
+        uses: slackapi/slack-github-action@v1.24.0
+        needs: Run_linter
+        with:
+          channel-id: "C07B6R6NYUW"
+          payload: |
+            {
+              "thread_ts": "${{ steps.deployment_message.outputs.ts }}",
+              "text": "Linting Successfull"
+            }
+      
+      - name: Notify linter failure
+        if: failure()
+        id: Linter_failed_notify
+        uses: slackapi/slack-github-action@v1.24.0
+        needs: Run_linter
+        with:
+          channel-id: "C07B6R6NYUW"
+          payload: |
+            {
+              "thread_ts": "${{ steps.deployment_message.outputs.ts }}",
+              "text": "Linting failed"
+            }
+
+      - name: Sonar scanner
+        id: Sonar_scan
+        needs: Run_linter
+        env:
+          SONAR_SCANNER_VER: sonar-scanner-cli-4.7.0.2747-linux
+          SONAR_SCANNER_PATH: sonar-scanner-4.7.0.2747-linux/bin
+        run: |
+          wget --quiet https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip
+          unzip -q sonar-scanner-cli-4.7.0.2747-linux.zip
+          $SONAR_SCANNER_PATH/sonar-scanner -v
+          $SONAR_SCANNER_PATH/sonar-scanner -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+
+      - name: Quality gate check
+        id: Quality_gate_check
+        needs: Sonar_scan
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
       - uses: slackapi/slack-github-action@v1.24.0
         with:
           channel-id: "C07B6R6NYUW"
           payload: |
             {
               "thread_ts": "${{ steps.deployment_message.outputs.ts }}",
-              "text": "Deployment finished (Completed)"
+              "text": "workflow Successfull"
             }
-      # env:
-      #   SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
       - uses: slackapi/slack-github-action@v1.24.0
         with:
           channel-id: "C07B6R6NYUW"
