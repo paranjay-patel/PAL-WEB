@@ -91,10 +91,10 @@ jobs:
         id: Install_dependencies
         run: flutter pub get
 
-      - name: Run linter
-        id: Run_linter
-        run: |
-          flutter analyze
+      # - name: Run linter
+      #   id: Run_linter
+      #   run: |
+      #     flutter analyze
   
       - name: Notify linter success
         if: success()
@@ -124,7 +124,6 @@ jobs:
                 }
               ]
             }
-      
 
       - name: Notify linter failure
         if: failure()
@@ -155,82 +154,24 @@ jobs:
               ]
             }
 
+      - name: Sonar scanner
+        id: Sonar_scan
+        env:
+          SONAR_SCANNER_VER: sonar-scanner-cli-4.7.0.2747-linux
+          SONAR_SCANNER_PATH: sonar-scanner-4.7.0.2747-linux/bin
+        run: |
+          wget --quiet https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip
+          unzip -q sonar-scanner-cli-4.7.0.2747-linux.zip
+          $SONAR_SCANNER_PATH/sonar-scanner -v
+          $SONAR_SCANNER_PATH/sonar-scanner -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
 
-
-
-
-
-    #        {
-    #          "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
-    #          "attachments": [
-    #            {
-    #              "pretext": "\n",
-    #              "color": "#FF1A1A",
-    #              "fields": [
-    #                {
-    #                  "title": "Linting Status",
-    #                  "value": "Failed",
-    #                  "short": true
-    #                },
-    #                {
-    #                  "title": "View Workflow",
-    #                  "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
-    #                  "short": true
-    #                }
-    #              ]
-    #            }
-    #          ]
-    #        }
-
-
-            
-
-
-
-    #        {
-    #          "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
-    #          "attachments": [
-    #            {
-    #              "pretext": " ",
-    #              "color": "FF1A1A",
-    #              "fields": [
-    #                {
-    #                  "title": "Linting",
-    #                  "short": true,
-    #                  "value": "Failed"
-    #                }
-    #              ]
-    #            }
-    #          ]
-    #        }
-    #  
-
-
-
-
-
-
-
-    
-
-      # - name: Sonar scanner
-      #   id: Sonar_scan
-      #   env:
-      #     SONAR_SCANNER_VER: sonar-scanner-cli-4.7.0.2747-linux
-      #     SONAR_SCANNER_PATH: sonar-scanner-4.7.0.2747-linux/bin
-      #   run: |
-      #     wget --quiet https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip
-      #     unzip -q sonar-scanner-cli-4.7.0.2747-linux.zip
-      #     $SONAR_SCANNER_PATH/sonar-scanner -v
-      #     $SONAR_SCANNER_PATH/sonar-scanner -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
-
-      # - name: Quality gate check
-      #   id: Quality_gate_check
-      #   uses: sonarsource/sonarqube-quality-gate-action@master
-      #   timeout-minutes: 5
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      - name: Quality gate check
+        id: Quality_gate_check
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
       # - uses: slackapi/slack-github-action@v1.24.0
       #   with:
