@@ -53,6 +53,11 @@ jobs:
                       "short": true
                     },
                     {
+                      "title": "Workflow",
+                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Workflow>",
+                      "short": true
+                    },
+                    {
                       "title": "Status",
                       "value": "In Progress",
                       "short": true
