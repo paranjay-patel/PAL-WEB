@@ -300,7 +300,7 @@ jobs:
               "attachments": [
                 {
                   "pretext": "*A new PR workflow has started!* :star:",
-                  "color": "#1aff1a",
+                  "color": "#FF1A1A",
                   "fields": [
                     {
                       "title": "Repository",
