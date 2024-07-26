@@ -27,9 +27,11 @@ jobs:
             {
               "text": "PR workflow started (In Progress)"
             }      
-      - name: Checkout code
-        id: Checkout-code
-        uses: actions/checkout@v4
+
+      # - name: Checkout code
+      #   id: Checkout-code
+      #   uses: actions/checkout@v4
+
       - uses: slackapi/slack-github-action@v1.24.0
         with:
           channel-id: "C07B6R6NYUW"
