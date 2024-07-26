@@ -131,17 +131,17 @@ jobs:
               "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
               "attachments": [
                 {
-                  "pretext": "*Linting Failed* :x:",
+                  "pretext": " ",
                   "color": "#FF1A1A",
                   "fields": [
                     {
-                      "title": "View Workflow",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
+                      "title": "Linting Status",
+                      "value": "Failed",
                       "short": true
                     },
                     {
-                      "title": "Linting Status",
-                      "value": "Failed",
+                      "title": "View Workflow",
+                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
                       "short": true
                     }
                   ]
