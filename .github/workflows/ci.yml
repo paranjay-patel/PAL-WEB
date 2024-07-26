@@ -23,22 +23,22 @@ jobs:
     - id: deployment_message
       uses: slackapi/slack-github-action@v1.24.0
       with:
-        channel-id: "C07C0LDFMK6"
+        channel-id: "C07B6R6NYUW"
         payload: |
           {
             "text": "Deployment started (In Progress)"
           }
       env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} 
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
     - uses: slackapi/slack-github-action@v1.24.0
       with:
         # Unlike the step posting a new message, this step does not accept a channel name.
         # Please use a channel ID, not a name here.
-        channel-id: "C07C0LDFMK6"
+        channel-id: "C07B6R6NYUW"
         payload: |
           {
             "thread_ts": "${{ steps.deployment_message.outputs.ts }}",
             "text": "Deployment finished (Completed)"
           }
       env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} 
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
