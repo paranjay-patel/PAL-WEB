@@ -91,7 +91,7 @@ jobs:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       with:
         channel-id: 'C07B6R6NYUW'
-        update-ts: ${{ steps.slack.outputs.ts }}
+        thread_ts: "${{ steps.deployment_message.outputs.ts }}",
         payload: |
           {
             "text": "GitHub Action Successfull",
@@ -143,7 +143,7 @@ jobs:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       with:
         channel-id: 'C07B6R6NYUW'
-        update-ts: ${{ steps.slack.outputs.ts }}
+        thread_ts: "${{ steps.deployment_message.outputs.ts }}",
         payload: |
           {
             "text": "GitHub Action Failed",
