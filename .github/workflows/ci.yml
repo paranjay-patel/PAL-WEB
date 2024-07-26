@@ -22,7 +22,7 @@ jobs:
     steps:
     - name: notify-on-starting
       id: notify-on-starting
-      uses: slackapi/slack-github-action@v1.26.0
+      uses: slackapi/slack-github-action@v1.24.0
       with:
         channel-id: "C07B6R6NYUW"
         payload: |
@@ -32,7 +32,7 @@ jobs:
 
     # - name: notify-on-complete
     #   id: notify-on-complete
-    - uses: slackapi/slack-github-action@v1.26.0
+    - uses: slackapi/slack-github-action@v1.24.0
       with:
         # Unlike the step posting a new message, this step does not accept a channel name.
         # Please use a channel ID, not a name here.
