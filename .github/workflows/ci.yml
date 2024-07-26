@@ -102,7 +102,7 @@ jobs:
               "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
               "attachments": [
                 {
-                  "color": "28a745",
+                  "color": "00ff00",
                   "fields": [
                     {
                       "title": "Linting",
@@ -126,7 +126,8 @@ jobs:
               "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
               "attachments": [
                 {
-                  "color": "FF0000",
+                  "pretext": "",
+                  "color": "FF1A1A",
                   "fields": [
                     {
                       "title": "Linting",
