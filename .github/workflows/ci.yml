@@ -91,9 +91,10 @@ jobs:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       with:
         channel-id: 'C07B6R6NYUW'
-        thread_ts: "${{ steps.deployment_message.outputs.ts }}",
+        # update-ts: ${{ steps.slack.outputs.ts }}
         payload: |
           {
+            "thread_ts": "${{ steps.deployment_message.outputs.ts }}",
             "text": "GitHub Action Successfull",
             "blocks": [
               {
@@ -143,9 +144,10 @@ jobs:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       with:
         channel-id: 'C07B6R6NYUW'
-        thread_ts: "${{ steps.deployment_message.outputs.ts }}",
+        # update-ts: ${{ steps.slack.outputs.ts }}
         payload: |
           {
+            "thread_ts": "${{ steps.deployment_message.outputs.ts }}",
             "text": "GitHub Action Failed",
             "blocks": [
               {
