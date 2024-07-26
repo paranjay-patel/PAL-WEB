@@ -62,6 +62,22 @@ jobs:
             "text": "GitHub Action Successfull",
             "blocks": [
               {
+                "text": "Pull Request Wrokflow Started",
+                "attachments": [
+                  {
+                    "pretext": "Pull Request Wrokflow Started",
+                    "color": "dbab09",
+                    "fields": [
+                      {
+                        "title": "Pull Request Wrokflow Started",
+                        "short": true,
+                        "value": "In Progress"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
