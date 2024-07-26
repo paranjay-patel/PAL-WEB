@@ -113,10 +113,26 @@ jobs:
             "text": "GitHub Action Failed",
             "blocks": [
               {
+                "text": "Pull Request Wrokflow Started",
+                "attachments": [
+                  {
+                    "pretext": "Pull Request Wrokflow Started",
+                    "color": "dbab09",
+                    "fields": [
+                      {
+                        "title": "Pull Request Wrokflow Started",
+                        "short": true,
+                        "value": "In Progress"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": "*Static code analysis check failed...⚠️ :fire_engine:*\n\n*Pull Request:* ${{ github.event.pull_request.title }}\n*Source Branch:* ${{ github.event.pull_request.head.ref }}\n*Target Branch:* ${{ github.event.pull_request.base.ref }}\n*Committer:* ${{ github.actor }}"
+                  "text": "*Static code analysis check failed...⚠️ :fire_engine:*\n\n*Pull Request:* ${{ github.event.pull_request.title }}\n*Source Branch:* ${{ github.event.pull_request.head.ref }}\n*Target Branch:* ${{ github.event.pull_request.base.ref }}\n*Auther :* ${{ github.actor }}"
                 }
               },
               {
