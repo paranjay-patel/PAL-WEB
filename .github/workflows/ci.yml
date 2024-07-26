@@ -38,7 +38,7 @@ jobs:
 
                     {
                       "title": "Source Branch",
-                      "value": "${{ github.event.pull_request.head.ref }}",
+                      "value": "<${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.head.ref }}|${{ github.event.pull_request.head.ref }}>",
                       "short": true
                     },
                     {
@@ -48,7 +48,7 @@ jobs:
                     },
                     {
                       "title": "Target Branch",
-                      "value": "${{ github.event.pull_request.base.ref }}",
+                      "value": "<${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.base.ref }}|${{ github.event.pull_request.base.ref }}>",
                       "short": true
                     },
                     {
