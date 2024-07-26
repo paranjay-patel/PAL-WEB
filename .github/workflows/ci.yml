@@ -29,7 +29,7 @@ jobs:
             "text": "Deployment started (In Progress)"
           }
       env:
-        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} 
     - uses: slackapi/slack-github-action@v1.24.0
       with:
         # Unlike the step posting a new message, this step does not accept a channel name.
@@ -41,4 +41,4 @@ jobs:
             "text": "Deployment finished (Completed)"
           }
       env:
-        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} 
