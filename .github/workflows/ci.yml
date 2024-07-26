@@ -2,9 +2,6 @@
 name: Static Code Analysis
 
 on:
-  push:
-    branches:
-      - reply-notification
   pull_request:
     branches:
       - master
@@ -20,25 +17,25 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v1
 
-    - name: Install Java
-      uses: actions/setup-java@v1
-      with:
-        java-version: '19.0.1'
+    # - name: Install Java
+    #   uses: actions/setup-java@v1
+    #   with:
+    #     java-version: '19.0.1'
 
-    - name: Set up Flutter
-      uses: subosito/flutter-action@v1
-      with:
-        flutter-version: '3.22.2' 
+    # - name: Set up Flutter
+    #   uses: subosito/flutter-action@v1
+    #   with:
+    #     flutter-version: '3.22.2' 
 
-    - name: Install dependencies
-      run: |
-        flutter --version
-        dart --version
-        flutter pub get
+    # - name: Install dependencies
+    #   run: |
+    #     flutter --version
+    #     dart --version
+    #     flutter pub get
 
-    - name: Run linter
-      run: |
-        flutter analyze
+    # - name: Run linter
+    #   run: |
+    #     flutter analyze
           
   notify-on-success:
     runs-on: ubuntu-latest
@@ -49,9 +46,11 @@ jobs:
     - name: notify slack
       id: slack
       uses: slackapi/slack-github-action@v1.24.0
+      # env:
+      #   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      #   SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
       env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       with:
         channel-id: 'C07B6R6NYUW'
         payload: |
@@ -98,9 +97,11 @@ jobs:
     - name: notify slack
       id: slack
       uses: slackapi/slack-github-action@v1.24.0
+      # env:
+      #   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      #   SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
       env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       with:
         channel-id: 'C07B6R6NYUW'
         payload: |
