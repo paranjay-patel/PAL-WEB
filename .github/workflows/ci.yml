@@ -118,34 +118,15 @@
             channel-id: "C07B6R6NYUW"
             payload: |
               {
-                "text": "PR Workflow Started",
+                "text": "GitHub Action Successfull",
                 "blocks": [
                   {
                     "type": "section",
                     "text": {
                       "type": "mrkdwn",
-                      "text": "*Pull request Workflow Started* :star2:\n High error rate detected after deployment! Rolling back..."
+                      "text": "*Static code analysis check successful...✅*\n\n*Pull Request:* ${{ github.event.pull_request.title }}\n*Source Branch:* ${{ github.event.pull_request.head.ref }}\n*Target Branch:* ${{ github.event.pull_request.base.ref }}\n*Committer:* ${{ github.actor }}"
                     }
                   },
-
-                  {
-                    "type": "section",
-                    "fields": [
-                      {
-                        "type": "mrkdwn",
-                        "text": "*Author:*\n<${{ github.event.pull_request.user.html_url }}|${{ github.event.pull_request.user.login }}>"
-                      },
-                      {
-                        "type": "mrkdwn",
-                        "text": "*Branch:*\n`${{ github.event.pull_request.head.ref }} `"
-                      },
-                      {
-                        "type": "mrkdwn",
-                        "text": "*Commit Message:*\n<${{ github.event.pull_request.head.repo.html_url }}/commit/${{ github.event.pull_request.head.sha }}|${{ github.event.pull_request.title }}>"
-                      }
-                    ]
-                  },
-
                   {
                     "type": "actions",
                     "elements": [
@@ -153,7 +134,7 @@
                         "type": "button",
                         "text": {
                           "type": "plain_text",
-                          "text": ":github: Failed action"
+                          "text": ":github: View Action"
                         },
                         "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                       },
@@ -161,14 +142,16 @@
                         "type": "button",
                         "text": {
                           "type": "plain_text",
-                          "text": ":grafana: Grafana dashboard"
+                          "text": ":git: View Pull Request"
                         },
-                        "url": "https://<your_organization>.grafana.net/d/my-app-dashboard?from=now-1h&to=now"
+                        "url": "${{ github.event.pull_request.html_url }}"
                       }
                     ]
                   }
                 ]
               }
+    
+
           # env:
           #   SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
         - uses: slackapi/slack-github-action@v1.26.0
