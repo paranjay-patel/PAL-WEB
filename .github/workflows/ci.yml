@@ -54,7 +54,7 @@ jobs:
                     },
                     {
                       "title": "Workflow",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Workflow>",
+                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|view workflow>",
                       "short": true
                     },
                     {
@@ -131,19 +131,56 @@ jobs:
               "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
               "attachments": [
                 {
-                  "pretext": " ",
-                  "color": "FF1A1A",
+                  "pretext": "*Linting Failed* :x:",
+                  "color": "#FF1A1A",
                   "fields": [
                     {
-                      "title": "Linting",
-                      "short": true,
-                      "value": "Failed"
+                      "title": "View Workflow",
+                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Workflow>",
+                      "short": false
+                    },
+                    {
+                      "title": "Linting Status",
+                      "value": "Failed",
+                      "short": true
                     }
                   ]
                 }
               ]
             }
-      
+
+
+
+
+
+
+
+
+    #        {
+    #          "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
+    #          "attachments": [
+    #            {
+    #              "pretext": " ",
+    #              "color": "FF1A1A",
+    #              "fields": [
+    #                {
+    #                  "title": "Linting",
+    #                  "short": true,
+    #                  "value": "Failed"
+    #                }
+    #              ]
+    #            }
+    #          ]
+    #        }
+    #  
+
+
+
+
+
+
+
+    
 
       # - name: Sonar scanner
       #   id: Sonar_scan
