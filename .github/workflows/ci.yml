@@ -14,9 +14,37 @@ on:
       - feature
 
 jobs:
+
+  notify-on-starting:
+    runs-on: ubuntu-latest
+    steps:
+    - name: notify-on-starting
+      id: notify-on-starting
+      uses: slackapi/slack-github-action@v1.24.0
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      with:
+        channel-id: 'C07B6R6NYUW'
+        payload: |
+          {
+            "text": "Pull Request Wrokflow Started",
+            "attachments": [
+              {
+                "pretext": "Pull Request Wrokflow Started",
+                "color": "dbab09",
+                "fields": [
+                  {
+                    "title": "Pull Request Wrokflow Started",
+                    "short": true,
+                    "value": "In Progress"
+                  }
+                ]
+              }
+            ]
+          }
+
   static-code-analysis:
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v1
@@ -61,22 +89,6 @@ jobs:
           {
             "text": "GitHub Action Successfull",
             "blocks": [
-              {
-                "text": "Pull Request Wrokflow Started",
-                "attachments": [
-                  {
-                    "pretext": "Pull Request Wrokflow Started",
-                    "color": "dbab09",
-                    "fields": [
-                      {
-                        "title": "Pull Request Wrokflow Started",
-                        "short": true,
-                        "value": "In Progress"
-                      }
-                    ]
-                  }
-                ]
-              },
               {
                 "type": "section",
                 "text": {
@@ -128,22 +140,6 @@ jobs:
           {
             "text": "GitHub Action Failed",
             "blocks": [
-              {
-                "text": "Pull Request Wrokflow Started",
-                "attachments": [
-                  {
-                    "pretext": "Pull Request Wrokflow Started",
-                    "color": "dbab09",
-                    "fields": [
-                      {
-                        "title": "Pull Request Wrokflow Started",
-                        "short": true,
-                        "value": "In Progress"
-                      }
-                    ]
-                  }
-                ]
-              },
               {
                 "type": "section",
                 "text": {
