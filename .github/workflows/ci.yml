@@ -58,7 +58,7 @@ jobs:
                     },
                     {
                       "title": "Workflow",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|PR Workflow>",
+                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
                       "short": true
                     },
                     {
@@ -95,10 +95,10 @@ jobs:
       #   id: Install_dependencies
       #   run: flutter pub get
 
-      # - name: Run linter
-      #   id: Run_linter
-      #   run: |
-      #     flutter analyze
+      - name: Run linter
+        id: Run_linter
+        run: |
+          flutter analyze
   
       - name: Notify linter success
         if: success()
@@ -120,7 +120,7 @@ jobs:
                       "short": true
                     },
                     {
-                      "title": "View Workflow",
+                      "title": "Workflow",
                       "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
                       "short": true
                     }
@@ -149,7 +149,7 @@ jobs:
                       "short": true
                     },
                     {
-                      "title": "View Workflow",
+                      "title": "Workflow",
                       "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
                       "short": true
                     }
@@ -198,7 +198,7 @@ jobs:
                       "short": true
                     },
                     {
-                      "title": "View Workflow",
+                      "title": "Workflow",
                       "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
                       "short": true
                     }
@@ -227,7 +227,7 @@ jobs:
                       "short": true
                     },
                     {
-                      "title": "View Workflow",
+                      "title": "Workflow",
                       "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
                       "short": true
                     }
@@ -276,7 +276,7 @@ jobs:
                     },
                     {
                       "title": "Workflow",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|PR Workflow>",
+                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
                       "short": true
                     },
                     {
