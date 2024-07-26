@@ -33,7 +33,7 @@ jobs:
                   "fields": [
                     {
                       "title": "Repository",
-                      "value": "${{ github.repository }}",
+                      "value": "<https://github.com/${{ github.repository }}>${{ github.repository }}",
                       "short": true
                     },
                     {
@@ -41,7 +41,6 @@ jobs:
                       "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
                       "short": true
                     },
-
                     {
                       "title": "Source Branch",
                       "value": "<${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.head.ref }}|${{ github.event.pull_request.head.ref }}>",
@@ -78,23 +77,23 @@ jobs:
         with:
           fetch-depth: 0
       
-      - name: Setup SSH
-        id: Setup-SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
+      # - name: Setup SSH
+      #   id: Setup-SSH
+      #   run: |
+      #     mkdir -p ~/.ssh
+      #     echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
+      #     chmod 600 ~/.ssh/id_rsa
+      #     ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      - name: Set up Flutter
-        id: Setup_flutter
-        uses: subosito/flutter-action@v2  
-        with:
-          flutter-version: '3.22.0'
+      # - name: Set up Flutter
+      #   id: Setup_flutter
+      #   uses: subosito/flutter-action@v2  
+      #   with:
+      #     flutter-version: '3.22.0'
 
-      - name: Install dependencies
-        id: Install_dependencies
-        run: flutter pub get
+      # - name: Install dependencies
+      #   id: Install_dependencies
+      #   run: flutter pub get
 
       # - name: Run linter
       #   id: Run_linter
@@ -112,7 +111,7 @@ jobs:
               "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
               "attachments": [
                 {
-                  "pretext": "Workflow Status",
+                  "pretext": "Workflow Status!",
                   "color": "#1aff1a",
                   "fields": [
                     {
@@ -141,7 +140,7 @@ jobs:
               "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
               "attachments": [
                 {
-                  "pretext": "PR Workflow Status :fire_engine:",
+                  "pretext": "PR Workflow Status! :fire_engine:",
                   "color": "#FF1A1A",
                   "fields": [
                     {
@@ -179,20 +178,60 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-      # - uses: slackapi/slack-github-action@v1.24.0
-      #   with:
-      #     channel-id: "C07B6R6NYUW"
-      #     payload: |
-      #       {
-      #         "thread_ts": "${{ steps.deployment_message.outputs.ts }}",
-      #         "text": "workflow Successfull"
-      #       }
+      - name: Notify sonar success
+        if: success()
+        id: Sonar_successful_notify
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          channel-id: "C07B6R6NYUW"
+          payload: |
+            {
+              "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
+              "attachments": [
+                {
+                  "pretext": "Workflow Status!",
+                  "color": "#1aff1a",
+                  "fields": [
+                    {
+                      "title": "Sonar-Scan",
+                      "value": "Successful",
+                      "short": true
+                    },
+                    {
+                      "title": "View Workflow",
+                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
+                      "short": true
+                    }
+                  ]
+                }
+              ]
+            }
 
-      # - uses: slackapi/slack-github-action@v1.24.0
-      #   with:
-      #     channel-id: "C07B6R6NYUW"
-      #     payload: |
-      #       {
-      #         "thread_ts": "${{ steps.deployment_message.outputs.ts }}",
-      #         "text": "Deployment finished second (Completed)"
-      #       }
+      - name: Notify Sonar failure
+        if: failure()
+        id: Sonar_failed_notify
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          channel-id: "C07B6R6NYUW"
+          payload: |
+            {
+              "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
+              "attachments": [
+                {
+                  "pretext": "PR Workflow Status!",
+                  "color": "#FF1A1A",
+                  "fields": [
+                    {
+                      "title": "Sonar-Scan",
+                      "value": "Failed",
+                      "short": true
+                    },
+                    {
+                      "title": "View Workflow",
+                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
+                      "short": true
+                    }
+                  ]
+                }
+              ]
+            }
