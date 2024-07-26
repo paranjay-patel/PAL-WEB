@@ -54,26 +54,6 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v1
-
-    # - name: Install Java
-    #   uses: actions/setup-java@v1
-    #   with:
-    #     java-version: '19.0.1'
-
-    # - name: Set up Flutter
-    #   uses: subosito/flutter-action@v1
-    #   with:
-    #     flutter-version: '3.22.2' 
-
-    # - name: Install dependencies
-    #   run: |
-    #     flutter --version
-    #     dart --version
-    #     flutter pub get
-
-    # - name: Run linter
-    #   run: |
-    #     flutter analyze
           
   notify-on-success:
     runs-on: ubuntu-latest
@@ -101,7 +81,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": "*Static code analysis check failed...⚠️ :fire_engine:*\n\n*Pull Request:* ${{ github.event.pull_request.title }}\n*Source Branch:* ${{ github.event.pull_request.head.ref }}\n*Target Branch:* ${{ github.event.pull_request.base.ref }}\n*Auther :* ${{ github.actor }}"
+                  "text": "*Static code analysis check successful...✅*\n\n*Pull Request:* <${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>\n*Source Branch:* <${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.head.ref }}|${{ github.event.pull_request.head.ref }}>\n*Target Branch:* <${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.base.ref }}|${{ github.event.pull_request.base.ref }}>\n*Committer:* <${{ github.event.pull_request.user.html_url }}|${{ github.event.pull_request.user.login }}>"
                 }
               },
               {
@@ -154,7 +134,8 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": "*Static code analysis check failed...⚠️ :fire_engine:*\n\n*Pull Request:* ${{ github.event.pull_request.title }}\n*Source Branch:* ${{ github.event.pull_request.head.ref }}\n*Target Branch:* ${{ github.event.pull_request.base.ref }}\n*Auther :* ${{ github.actor }}"
+                  "text": "*Static code analysis check failed...⚠️ :fire_engine:* <${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>\n*Source Branch:* <${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.head.ref }}|${{ github.event.pull_request.head.ref }}>\n*Target Branch:* <${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.base.ref }}|${{ github.event.pull_request.base.ref }}>\n*Committer:* <${{ github.event.pull_request.user.html_url }}|${{ github.event.pull_request.user.login }}>"
+
                 }
               },
               {
