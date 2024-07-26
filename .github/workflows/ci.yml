@@ -14,7 +14,7 @@ on:
       - feature
 
 jobs:
-  Code-Analysis:
+  pull_request:
     runs-on: ubuntu-latest
     env:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
@@ -33,7 +33,7 @@ jobs:
                   "fields": [
                     {
                       "title": "Repository",
-                      "value": "<https://github.com/${{ github.repository }}>${{ github.repository }}",
+                      "value": "<https://github.com/${{ github.repository }}|${{ github.repository }}>",
                       "short": true
                     },
                     {
@@ -111,7 +111,7 @@ jobs:
               "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
               "attachments": [
                 {
-                  "pretext": "Workflow Status!",
+                  "pretext": "PR Workflow Status!",
                   "color": "#1aff1a",
                   "fields": [
                     {
@@ -235,3 +235,7 @@ jobs:
                 }
               ]
             }
+
+            
+
+
