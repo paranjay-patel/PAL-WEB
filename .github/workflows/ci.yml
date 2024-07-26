@@ -77,13 +77,13 @@ jobs:
         with:
           fetch-depth: 0
       
-      # - name: Setup SSH
-      #   id: Setup-SSH
-      #   run: |
-      #     mkdir -p ~/.ssh
-      #     echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
-      #     chmod 600 ~/.ssh/id_rsa
-      #     ssh-keyscan github.com >> ~/.ssh/known_hosts
+      - name: Setup SSH
+        id: Setup-SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
 
       # - name: Set up Flutter
       #   id: Setup_flutter
@@ -97,7 +97,7 @@ jobs:
 
       # - name: Run linter
       #   id: Run_linter
-      #   run: |
+      #   run: |`
       #     flutter analyze
   
       - name: Notify linter success
@@ -170,13 +170,13 @@ jobs:
   #        $SONAR_SCANNER_PATH/sonar-scanner -v
   #        $SONAR_SCANNER_PATH/sonar-scanner -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
 
-      # - name: Quality gate check
-      #   id: Quality_gate_check
-      #   uses: sonarsource/sonarqube-quality-gate-action@master
-      #   timeout-minutes: 5
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      - name: Quality gate check
+        id: Quality_gate_check
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
       - name: Notify sonar success
         if: success()
