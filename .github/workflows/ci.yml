@@ -236,8 +236,8 @@ jobs:
               ]
             }
 
-      - name: Notify Workflow Complete
-        # if: success()
+      - name: Notify Workflow Success
+        if: success()
         uses: slackapi/slack-github-action@v1.26.0
         with:
           channel-id: "C07B6R6NYUW"
@@ -281,10 +281,64 @@ jobs:
                     },
                     {
                       "title": "Status",
-                      "value": "In Progress",
+                      "value": "Success",
                       "short": true
                     }
                   ]               
                 }
               ]
             }
+
+      - name: Notify Workflow failure
+        if: failure()
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: "C07B6R6NYUW"
+          update-ts: ${{ steps.Workflow_starting.outputs.ts }}
+          payload: |
+            {
+              "attachments": [
+                {
+                  "pretext": "*A new PR workflow has started!* :star:",
+                  "color": "#1aff1a",
+                  "fields": [
+                    {
+                      "title": "Repository",
+                      "value": "<https://github.com/${{ github.repository }}|${{ github.repository }}>",
+                      "short": true
+                    },
+                    {
+                      "title": "Pull Request",
+                      "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
+                      "short": true
+                    },
+                    {
+                      "title": "Source Branch",
+                      "value": "<${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.head.ref }}|${{ github.event.pull_request.head.ref }}>",
+                      "short": true
+                    },
+                    {
+                      "title": "Author",
+                      "value": "<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>",
+                      "short": true
+                    },
+                    {
+                      "title": "Target Branch",
+                      "value": "<${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.base.ref }}|${{ github.event.pull_request.base.ref }}>",
+                      "short": true
+                    },
+                    {
+                      "title": "Workflow",
+                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
+                      "short": true
+                    },
+                    {
+                      "title": "Status",
+                      "value": "Fail",
+                      "short": true
+                    }
+                  ]               
+                }
+              ]
+            }
+
