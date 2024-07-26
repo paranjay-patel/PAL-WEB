@@ -19,7 +19,8 @@ jobs:
     env:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
     steps:
-      - id: Workflow_starting
+      - name: Notify Workflow Starting
+        id: Workflow_starting
         uses: slackapi/slack-github-action@v1.24.0
         with:
           channel-id: "C07B6R6NYUW"
@@ -98,7 +99,7 @@ jobs:
           channel-id: "C07B6R6NYUW"
           payload: |
             {
-              "thread_ts": "${{ steps.deployment_message.outputs.ts }}",
+              "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
               "text": "Linting Successfull"
             }
       
@@ -110,7 +111,7 @@ jobs:
           channel-id: "C07B6R6NYUW"
           payload: |
             {
-              "thread_ts": "${{ steps.deployment_message.outputs.ts }}",
+              "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
               "text": "Linting failed"
             }
 
