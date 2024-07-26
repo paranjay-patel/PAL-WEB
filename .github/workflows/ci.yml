@@ -131,7 +131,7 @@ jobs:
               "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
               "attachments": [
                 {
-                  "pretext": " ",
+                  "pretext": "\n",
                   "color": "#FF1A1A",
                   "fields": [
                     {
