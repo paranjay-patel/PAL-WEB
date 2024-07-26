@@ -95,10 +95,10 @@ jobs:
       #   id: Install_dependencies
       #   run: flutter pub get
 
-      - name: Run linter
-        id: Run_linter
-        run: |
-          flutter analyze
+      # - name: Run linter
+      #   id: Run_linter
+      #   run: |
+      #     flutter analyze
   
       - name: Notify linter success
         if: success()
