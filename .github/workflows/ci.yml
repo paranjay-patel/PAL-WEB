@@ -1,3 +1,24 @@
+
+name: Pull Request
+
+on:
+  # push:
+  #   branches:
+  #     - reply-notification
+  pull_request:
+    branches:
+      - master
+      - release*
+      - develop
+      - main
+      - feature
+
+jobs:
+  code-analysis:
+    runs-on: ubuntu-latest
+    env:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
+    steps:
 jobs:
   notify:
     runs-on: ubuntu-latest
