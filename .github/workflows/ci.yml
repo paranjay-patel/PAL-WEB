@@ -118,13 +118,13 @@ jobs:
           channel-id: "C07B6R6NYUW"
           payload: |
             {
-              "text": "Pull Request Workflow Started",
+              "text": "GitHub Action failed",
               "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Pull Request Workflow Started* :start:\n High error rate detected after deployment! Rolling back..."
+                    "text": "*Production deployment check failed* :fire_engine:\n High error rate detected after deployment! Rolling back..."
                   }
                 },
                 {
@@ -138,15 +138,14 @@ jobs:
                       },
                       "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                     },
-                {
-                  "type": "section",
-                  "fields": [
                     {
-                      "type": "mrkdwn",
-                      "text": "*Pull Request:*\n<${{ github.server_url }}/${{ github.repository }}/pull/${{ github.event.pull_request.number }}|${{ github.event.pull_request.title }}>"
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": ":grafana: Grafana dashboard"
+                      },
+                      "url": "https://<your_organization>.grafana.net/d/my-app-dashboard?from=now-1h&to=now"
                     }
-                  ]
-                }
                   ]
                 }
               ]
