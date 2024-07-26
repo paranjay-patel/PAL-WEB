@@ -11,6 +11,7 @@ on:
       - release*
       - develop
       - main
+      - feature
 
 jobs:
   static-code-analysis:
