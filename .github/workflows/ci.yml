@@ -136,8 +136,8 @@ jobs:
                   "fields": [
                     {
                       "title": "View Workflow",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Workflow>",
-                      "short": false
+                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
+                      "short": true
                     },
                     {
                       "title": "Linting Status",
