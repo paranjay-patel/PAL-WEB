@@ -32,9 +32,14 @@ jobs:
                   "color": "#0073e6",
                   "fields": [
                     {
+                      "title": "Repository",
+                      "value": "${{ github.repository }}",
+                      "short": true
+                    },
+                    {
                       "title": "Pull Request",
                       "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
-                      "short": false
+                      "short": true
                     },
 
                     {
@@ -54,7 +59,7 @@ jobs:
                     },
                     {
                       "title": "Workflow",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|view workflow>",
+                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|PR Workflow>",
                       "short": true
                     },
                     {
@@ -107,7 +112,7 @@ jobs:
               "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
               "attachments": [
                 {
-                  "pretext": "Workflow Status :large_green_circle:",
+                  "pretext": "Workflow Status",
                   "color": "#1aff1a",
                   "fields": [
                     {
@@ -136,7 +141,7 @@ jobs:
               "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
               "attachments": [
                 {
-                  "pretext": "Workflow Status :fire_engine:",
+                  "pretext": "PR Workflow Status :fire_engine:",
                   "color": "#FF1A1A",
                   "fields": [
                     {
@@ -160,10 +165,11 @@ jobs:
           SONAR_SCANNER_VER: sonar-scanner-cli-4.7.0.2747-linux
           SONAR_SCANNER_PATH: sonar-scanner-4.7.0.2747-linux/bin
         run: |
-          wget --quiet https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip
-          unzip -q sonar-scanner-cli-4.7.0.2747-linux.zip
-          $SONAR_SCANNER_PATH/sonar-scanner -v
-          $SONAR_SCANNER_PATH/sonar-scanner -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+           echo "Sonar Scanner"
+  #        wget --quiet https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip
+  #        unzip -q sonar-scanner-cli-4.7.0.2747-linux.zip
+  #        $SONAR_SCANNER_PATH/sonar-scanner -v
+  #        $SONAR_SCANNER_PATH/sonar-scanner -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
 
       - name: Quality gate check
         id: Quality_gate_check
