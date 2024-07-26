@@ -102,7 +102,7 @@ jobs:
               "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
               "text": "Linting Successfull"
             }
-      
+
       - name: Notify linter failure
         if: failure()
         id: Linter_failed_notify
@@ -111,9 +111,20 @@ jobs:
           channel-id: "C07B6R6NYUW"
           payload: |
             {
-              "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
-              "text": "Linting failed"
+              "attachments": [
+                {
+                  "color": "dbab09",
+                  "fields": [
+                    {
+                      "title": "Linting",
+                      "short": true,
+                      "value": "Failed"
+                    }
+                  ]
+                }
+              ]
             }
+      
 
       # - name: Sonar scanner
       #   id: Sonar_scan
