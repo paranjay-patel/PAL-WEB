@@ -129,15 +129,19 @@ jobs:
           payload: |
             {
               "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
-              "text": "\n\n\n",
               "attachments": [
                 {
-                  "pretext": "\n\n\n",
+                  "pretext": "Workflow Status",
                   "color": "#FF1A1A",
                   "fields": [
                     {
-                      "title": "Linting Status",
+                      "title": "Linting",
                       "value": "Failed",
+                      "short": true
+                    },
+                    {
+                      "title": "View Workflow",
+                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
                       "short": true
                     }
                   ]
