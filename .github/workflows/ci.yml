@@ -40,8 +40,8 @@ jobs:
               "thread_ts": "${{ steps.deployment_message.outputs.ts }}",
               "text": "PR Workflow finished (Completed)"
             }
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        # env:
+        #   SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
 
       
