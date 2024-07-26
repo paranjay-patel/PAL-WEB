@@ -1,5 +1,5 @@
 
-name: Pull Request
+name: Static Code Analysis
 
 on:
   # push:
@@ -14,61 +14,31 @@ on:
       - feature
 
 jobs:
-  static-code-analysis:
+
+  notify-on-starting:
     runs-on: ubuntu-latest
-    env:
-      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+    # env:
+    #   SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
     steps:
-      - id: workflow-strated
-        uses: slackapi/slack-github-action@v1.24.0
-        with:
-          channel-id: "C07B6R6NYUW"
-          payload: |
-            {
-              "text": "PR workflow started (In Progress)"
-            }      
-
-      # - name: Checkout code
-      #   id: Checkout-code
-      #   uses: actions/checkout@v4
-
-      - uses: slackapi/slack-github-action@v1.24.0
-        with:
-          channel-id: "C07B6R6NYUW"
-          payload: |
-            {
-              "thread_ts": "${{ steps.deployment_message.outputs.ts }}",
-              "text": "PR Workflow finished (Completed)"
-            }
-        # env:
-        #   SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-
-
-      
-  # static-code-analysis:
-  #   runs-on: ubuntu-latest
-  #   # env:
-  #   #   SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
-  #   steps:
-  #   - id: deployment_message
-  #     uses: slackapi/slack-github-action@v1.24.0
-  #     with:
-  #       channel-id: "C07B6R6NYUW"
-  #       payload: |
-  #         {
-  #           "text": "Deployment started (In Progress)"
-  #         }
-  #     env:
-  #       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-  #   - uses: slackapi/slack-github-action@v1.24.0
-  #     with:
-  #       # Unlike the step posting a new message, this step does not accept a channel name.
-  #       # Please use a channel ID, not a name here.
-  #       channel-id: "C07B6R6NYUW"
-  #       payload: |
-  #         {
-  #           "thread_ts": "${{ steps.deployment_message.outputs.ts }}",
-  #           "text": "Deployment finished (Completed)"
-  #         }
-  #     env:
-  #       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+    - id: deployment_message
+      uses: slackapi/slack-github-action@v1.24.0
+      with:
+        channel-id: "C07C0LDFMK6"
+        payload: |
+          {
+            "text": "Deployment started (In Progress)"
+          }
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+    - uses: slackapi/slack-github-action@v1.24.0
+      with:
+        # Unlike the step posting a new message, this step does not accept a channel name.
+        # Please use a channel ID, not a name here.
+        channel-id: "C07C0LDFMK6"
+        payload: |
+          {
+            "thread_ts": "${{ steps.deployment_message.outputs.ts }}",
+            "text": "Deployment finished (Completed)"
+          }
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
