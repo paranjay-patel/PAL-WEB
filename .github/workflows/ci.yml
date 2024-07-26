@@ -1,168 +1,136 @@
-  name: Pull Request
 
-  on:
-    push:
-      branches:
-        - reply-notification
-    pull_request:
-      branches:
-        - master
-        - release/**
-        - develop
-        - main
+name: Static Code Analysis
 
+on:
+  pull_request:
+    branches:
+      - master
+      - release*
+      - develop
+      - main
 
-  jobs:
-    static-code-analysis:
-      runs-on: ubuntu-latest
+jobs:
+  static-code-analysis:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v1
+
+    - name: Install Java
+      uses: actions/setup-java@v1
+      with:
+        java-version: '19.0.1'
+
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v1
+      with:
+        flutter-version: '3.22.2' 
+
+    - name: Install dependencies
+      run: |
+        flutter --version
+        dart --version
+        flutter pub get
+
+    - name: Run linter
+      run: |
+        flutter analyze
+          
+  notify-on-success:
+    runs-on: ubuntu-latest
+    needs: static-code-analysis
+    if: success()
+    
+    steps:
+    - name: notify slack
+      id: slack
+      uses: slackapi/slack-github-action@v1.24.0
       env:
-      #   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-      # env:
-      #   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      #   SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-      steps: 
-        # - name: Post to a Slack channel
-        #   id: slackdd
-        #   uses: slackapi/slack-github-action@v1.26.0
-        #   with:
-        #     # Slack channel id, channel name, or user id to post message.
-        #     # See also: https://api.slack.com/methods/chat.postMessage#channels
-        #     # You can pass in multiple channels to post to by providing a comma-delimited list of channel IDs.
-        #     channel-id: 'C07B6R6NYUW'
-        #     # For posting a simple plain text message
-        #     slack-message: "GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
-        #   env:
-        #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-            
-        # - name: Notify Slack Start
-        #   id: slack-notify-start
-        #   uses: slackapi/slack-github-action@v1.26.0
-        #   with:
-        #     channel-id: 'C07B6R6NYUW'
-        #     payload: |
-        #       {
-        #         "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}",
-        #         "blocks": [
-        #           {
-        #             "type": "section",
-        #             "text": {
-        #               "type": "mrkdwn",
-        #               "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
-        #             }
-        #           }
-        #         ]
-        #       }  
-        #   env:
-        #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-
-        # - name: notify slack 
-        #   id: sldack
-        #   uses: slackapi/slack-github-action@v1.26.0
-        #   with:
-        #     # The following message update step does not accept a channel name.
-        #     # Setting a channel ID here for consistency is highly recommended.
-        #     channel-id: "C07B6R6NYUW"
-        #     payload: |
-        #       {
-        #         "text": "Deployment started (In Progress)",
-        #         "attachments": [
-        #           {
-        #             "pretext": "Deployment started",
-        #             "color": "dbab09",
-        #             "fields": [
-        #               {
-        #                 "title": "Status",
-        #                 "short": true,
-        #                 "value": "In Progress"
-        #               }
-        #             ]
-        #           }
-        #         ]
-        #       }
-        #   env:
-        #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-        
-        # - uses: slackapi/slack-github-action@v1.26.0
-        #   with:
-        #     # Unlike the step posting a new message, this step does not accept a channel name.
-        #     # Please use a channel ID, not a name here.
-        #     channel-id: "C07B6R6NYUW"
-        #     update-ts: ${{ steps.slack.outputs.ts }}
-        #     payload: |
-        #       {
-        #         "text": "Deployment finished (Completed)",
-        #         "attachments": [
-        #           {
-        #             "pretext": "Deployment finished",
-        #             "color": "28a745",
-        #             "fields": [
-        #               {
-        #                 "title": "Status",
-        #                 "short": true,
-        #                 "value": "Completed"
-        #               }
-        #             ]
-        #           }
-        #         ]
-        #       }
-        #   env:
-        #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-        
-
-
-        - name: Notify Slack 
-          id: workflow-started
-          uses: slackapi/slack-github-action@v1.26.0
-          with:
-            channel-id: "C07B6R6NYUW"
-            payload: |
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+      with:
+        channel-id: 'C07B6R6NYUW'
+        payload: |
+          {
+            "text": "GitHub Action Successfull",
+            "blocks": [
               {
-                "text": "GitHub Action Successfull",
-                "blocks": [
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*Static code analysis check successful...✅*\n\n*Pull Request:* ${{ github.event.pull_request.title }}\n*Source Branch:* ${{ github.event.pull_request.head.ref }}\n*Target Branch:* ${{ github.event.pull_request.base.ref }}\n*Committer:* ${{ github.actor }}"
+                }
+              },
+              {
+                "type": "actions",
+                "elements": [
                   {
-                    "type": "section",
+                    "type": "button",
                     "text": {
-                      "type": "mrkdwn",
-                      "text": "*Static code analysis check successful...✅*\n\n*Pull Request:* ${{ github.event.pull_request.title }}\n*Source Branch:* ${{ github.event.pull_request.head.ref }}\n*Target Branch:* ${{ github.event.pull_request.base.ref }}\n*Committer:* ${{ github.actor }}"
-                    }
+                      "type": "plain_text",
+                      "text": ":github: View Action"
+                    },
+                    "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                   },
                   {
-                    "type": "actions",
-                    "elements": [
-                      {
-                        "type": "button",
-                        "text": {
-                          "type": "plain_text",
-                          "text": ":github: View Action"
-                        },
-                        "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-                      },
-                      {
-                        "type": "button",
-                        "text": {
-                          "type": "plain_text",
-                          "text": ":git: View Pull Request"
-                        },
-                        "url": "${{ github.event.pull_request.html_url }}"
-                      }
-                    ]
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": ":git: View Pull Request"
+                    },
+                    "url": "${{ github.event.pull_request.html_url }}"
                   }
                 ]
               }
+            ]
+          }
+        
+  notify-on-failure:
+    runs-on: ubuntu-latest
+    needs: static-code-analysis
+    if: failure()
     
-
-          # env:
-          #   SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-        - uses: slackapi/slack-github-action@v1.26.0
-          with:
-            channel-id: "C07B6R6NYUW"
-            payload: |
+    steps:
+    - name: notify slack
+      id: slack
+      uses: slackapi/slack-github-action@v1.24.0
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+      with:
+        channel-id: 'C07B6R6NYUW'
+        payload: |
+          {
+            "text": "GitHub Action Failed",
+            "blocks": [
               {
-                "thread_ts": "${{ steps.deployment_message.outputs.ts }}",
-                "text": "Deployment finished (Completed)"
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*Static code analysis check failed...⚠️ :fire_engine:*\n\n*Pull Request:* ${{ github.event.pull_request.title }}\n*Source Branch:* ${{ github.event.pull_request.head.ref }}\n*Target Branch:* ${{ github.event.pull_request.base.ref }}\n*Committer:* ${{ github.actor }}"
+                }
+              },
+              {
+                "type": "actions",
+                "elements": [
+                  {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": ":github: View Action"
+                    },
+                    "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  },
+                  {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": ":git: View Pull Request"
+                    },
+                    "url": "${{ github.event.pull_request.html_url }}"
+                  }
+                ]
               }
-          # env:
-          #   SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-
-
+            ]
+          }
