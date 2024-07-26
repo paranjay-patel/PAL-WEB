@@ -129,6 +129,7 @@ jobs:
           payload: |
             {
               "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
+              "text": "\n\n\n",
               "attachments": [
                 {
                   "pretext": "\n\n\n",
