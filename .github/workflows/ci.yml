@@ -21,7 +21,7 @@ jobs:
     #   SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
     steps:
     - id: deployment_message
-      uses: slackapi/slack-github-action@v1.26.0
+      uses: slackapi/slack-github-action@v1.24.0
       with:
         channel-id: "C07C0LDFMK6"
         payload: |
@@ -30,7 +30,7 @@ jobs:
           }
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-    - uses: slackapi/slack-github-action@v1.26.0
+    - uses: slackapi/slack-github-action@v1.24.0
       with:
         # Unlike the step posting a new message, this step does not accept a channel name.
         # Please use a channel ID, not a name here.
