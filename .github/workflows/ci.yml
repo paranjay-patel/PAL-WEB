@@ -42,7 +42,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": "*Pull Request Workflow Started...:star:*\n\n*Pull Request:* <${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>\n*Source Branch:* <${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.head.ref }}|${{ github.event.pull_request.head.ref }}>\n*Target Branch:* <${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.base.ref }}|${{ github.event.pull_request.base.ref }}>\n*Committer:* <${{ github.event.pull_request.user.html_url }}|${{ github.event.pull_request.user.login }}>"
+                  "text": "\n\n*Pull Request:* <${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>\n*Source Branch:* <${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.head.ref }}|${{ github.event.pull_request.head.ref }}>\n*Target Branch:* <${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.base.ref }}|${{ github.event.pull_request.base.ref }}>\n*Committer:* <${{ github.event.pull_request.user.html_url }}|${{ github.event.pull_request.user.login }}>"
                 }
               }
             ]
