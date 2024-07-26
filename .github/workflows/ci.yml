@@ -42,13 +42,13 @@ jobs:
                       "short": true
                     },
                     {
-                      "title": "Target Branch",
-                      "value": "${{ github.event.pull_request.base.ref }}",
+                      "title": "Author",
+                      "value": "<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>",
                       "short": true
                     },
                     {
-                      "title": "Author",
-                      "value": "<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>",
+                      "title": "Target Branch",
+                      "value": "${{ github.event.pull_request.base.ref }}",
                       "short": true
                     },
                     {
