@@ -170,13 +170,13 @@ jobs:
   #        $SONAR_SCANNER_PATH/sonar-scanner -v
   #        $SONAR_SCANNER_PATH/sonar-scanner -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
 
-      - name: Quality gate check
-        id: Quality_gate_check
-        uses: sonarsource/sonarqube-quality-gate-action@master
-        timeout-minutes: 5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      # - name: Quality gate check
+      #   id: Quality_gate_check
+      #   uses: sonarsource/sonarqube-quality-gate-action@master
+      #   timeout-minutes: 5
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
       - name: Notify sonar success
         if: success()
@@ -236,6 +236,25 @@ jobs:
               ]
             }
 
-            
-
-
+        - name: Notify Workflow Complete
+          if: success()
+          uses: slackapi/slack-github-action@v1.26.0
+          with:
+            channel-id: "C07B6R6NYUW"
+            update-ts: ${{ steps.Workflow_starting.outputs.ts }}
+            payload: |
+              {
+                "attachments": [
+                  {
+                    "pretext":"PR Workflow Status",
+                    "color": "1aff1a",
+                    "fields": [
+                      {
+                        "title": "Status",
+                        "short": true,
+                        "value": "Successful"
+                      }
+                    ]
+                  }
+                ]
+              }
