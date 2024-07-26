@@ -52,5 +52,5 @@ jobs:
           payload: |
             {
               "thread_ts": "${{ steps.deployment_message.outputs.ts }}",
-              "text": "Deployment finished (Completed)"
+              "text": "Deployment finished second (Completed)"
             }
