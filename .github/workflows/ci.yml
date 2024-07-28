@@ -32,33 +32,8 @@ jobs:
                   "color": "#0073e6",
                   "fields": [
                     {
-                      "title": "Repository",
-                      "value": "<https://github.com/${{ github.repository }}|${{ github.repository }}>",
-                      "short": true
-                    },
-                    {
                       "title": "Pull Request",
                       "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
-                      "short": true
-                    },
-                    {
-                      "title": "Source Branch",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.head.ref }}|${{ github.event.pull_request.head.ref }}>",
-                      "short": true
-                    },
-                    {
-                      "title": "Author",
-                      "value": "<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>",
-                      "short": true
-                    },
-                    {
-                      "title": "Target Branch",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.base.ref }}|${{ github.event.pull_request.base.ref }}>",
-                      "short": true
-                    },
-                    {
-                      "title": "Workflow",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
                       "short": true
                     },
                     {
@@ -250,33 +225,8 @@ jobs:
                   "color": "#1aff1a",
                   "fields": [
                     {
-                      "title": "Repository",
-                      "value": "<https://github.com/${{ github.repository }}|${{ github.repository }}>",
-                      "short": true
-                    },
-                    {
                       "title": "Pull Request",
                       "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
-                      "short": true
-                    },
-                    {
-                      "title": "Source Branch",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.head.ref }}|${{ github.event.pull_request.head.ref }}>",
-                      "short": true
-                    },
-                    {
-                      "title": "Author",
-                      "value": "<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>",
-                      "short": true
-                    },
-                    {
-                      "title": "Target Branch",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.base.ref }}|${{ github.event.pull_request.base.ref }}>",
-                      "short": true
-                    },
-                    {
-                      "title": "Workflow",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
                       "short": true
                     },
                     {
@@ -299,42 +249,17 @@ jobs:
             {
               "attachments": [
                 {
-                  "pretext": "A *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>* workflow initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* has failed.* 🚨",
+                  "pretext": "A *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>* workflow initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* has failed. 🚨",
                   "color": "#FF1A1A",
                   "fields": [
-                    {
-                      "title": "Repository",
-                      "value": "<https://github.com/${{ github.repository }}|${{ github.repository }}>",
-                      "short": true
-                    },
                     {
                       "title": "Pull Request",
                       "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
                       "short": true
                     },
                     {
-                      "title": "Source Branch",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.head.ref }}|${{ github.event.pull_request.head.ref }}>",
-                      "short": true
-                    },
-                    {
-                      "title": "Author",
-                      "value": "<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>",
-                      "short": true
-                    },
-                    {
-                      "title": "Target Branch",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.base.ref }}|${{ github.event.pull_request.base.ref }}>",
-                      "short": true
-                    },
-                    {
-                      "title": "Workflow",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
-                      "short": true
-                    },
-                    {
                       "title": "Status",
-                      "value": "Fail",
+                      "value": "Failed",
                       "short": true
                     }
                   ]               
