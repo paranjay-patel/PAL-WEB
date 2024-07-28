@@ -300,11 +300,17 @@ jobs:
       - name: Install Chromedriver
         id: Install_Chromedriver
         run: |
-          wget https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip
+          echo "################################################   1  ######################################################"
+          wget --quiet https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip
+          echo "################################################   2  ######################################################"
           tar -xvf chromedriver_linux64.tar.gz
+          echo "################################################   3  ######################################################"
           chmod +x chromedriver
+          echo "################################################   4  ######################################################"
           sudo mv chromedriver /usr/bin/
+          echo "################################################   5  ######################################################"
           chromedriver --version
+          echo "################################################   6  ######################################################"
           chromedriver --port 4444 &
           
       - name: Run Integration Test
@@ -329,6 +335,40 @@ jobs:
                     {
                       "title": "Integration Test",
                       "value": "Successful",
+                      "short": true
+                    },
+                    {
+                      "title": "Workflow",
+                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
+                      "short": true
+                    }
+                  ]
+                }
+              ]
+            }
+
+      - name: Run Integration Test
+        id: Run_Integration_test
+        run: |
+          flutter drive --driver=test_driver/integration_test.dart --target=test/sauna_session_test.dart --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=safari
+
+      - name: Notify Integration Test Failure
+        if: failure()
+        id: Notify_Integration_Test_Failure
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          channel-id: "C07B6R6NYUW"
+          payload: |
+            {
+              "thread_ts": "${{ steps.Notify_workflow_starting.outputs.ts }}",
+              "attachments": [
+                {
+                  "pretext": "PR Workflow Status!",
+                  "color": "#1aff1a",
+                  "fields": [
+                    {
+                      "title": "Integration Test",
+                      "value": "Failure",
                       "short": true
                     },
                     {
