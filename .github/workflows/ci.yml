@@ -375,6 +375,7 @@ jobs:
             }
 
   Update_Slack:
+    if: always()
     runs-on: ubuntu-latest
     needs: [Notify_Slack, Linting, Sonar_Scanner, Integration_Test]
     env:
