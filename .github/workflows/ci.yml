@@ -10,13 +10,13 @@ on:
       - feature
 
 jobs:
-
   Notify_Slack:
     runs-on: ubuntu-latest
     env:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
     outputs:
-      slack_initial_thread_ts: ${{ steps.Notify_workflow_starting.outputs.ts }}     
+      slack_initial_thread_ts: ${{ steps.Notify_workflow_starting.outputs.ts }}  
+#      build_result: ${{ steps.build_step.outputs.result }}  
     steps:
       - name: Notify Workflow Starting
         id: Notify_Workflow_Starting
@@ -375,15 +375,15 @@ jobs:
             }
 
   Update_Slack:
-    if: always()
     runs-on: ubuntu-latest
     needs: [Notify_Slack, Linting, Sonar_Scanner, Integration_Test]
+    if: always()
     env:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
     steps:
       - name: Update Workflow Success
         id: Update_Workflow_Success
-        if: success()
+        if: needs.Notify_Slack.result == 'success' && needs.Linting.result == 'success' && needs.Sonar_Scanner.result == 'success && needs.Integration_Test.result == 'success'
         uses: slackapi/slack-github-action@v1.26.0
         with:
           channel-id: "C07B6R6NYUW"
@@ -412,7 +412,7 @@ jobs:
 
       - name: Update Workflow Failure
         id: Update_Workflow_Failure
-        if: failure()
+        if: needs.Notify_Slack.result == 'failure' || needs.Linting.result == 'failure' || needs.Sonar_Scanner.result == 'failure' || needs.Integration_Test.result == 'failure'
         uses: slackapi/slack-github-action@v1.26.0
         with:
           channel-id: "C07B6R6NYUW"
