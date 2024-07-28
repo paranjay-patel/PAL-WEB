@@ -339,6 +339,7 @@ jobs:
                       "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
                       "short": true
                     },
+                    {
                       "title": "Test Case",
                       "value": "${{ matrix.test }}",
                       "short": true
