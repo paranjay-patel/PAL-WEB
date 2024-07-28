@@ -179,13 +179,13 @@ jobs:
       #     $SONAR_SCANNER_PATH/sonar-scanner -v
       #     $SONAR_SCANNER_PATH/sonar-scanner -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
 
-      # - name: Quality Gate Check
-      #   id: Quality_Gate_Check
-      #   uses: sonarsource/sonarqube-quality-gate-action@master
-      #   timeout-minutes: 5
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      - name: Quality Gate Check
+        id: Quality_Gate_Check
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
       - name: Notify Sonar Success
         if: success()
@@ -340,7 +340,7 @@ jobs:
                       "short": true
                     },
                     {
-                      "title": "\nTest Case",
+                      "title": "Test Case",
                       "value": "<https://github.com/Healtech-Pty-Ltd/S1-Web/blob/develop/test/${{ matrix.test }}|${{ matrix.test }}>",
                       "short": false
                     }
@@ -372,6 +372,11 @@ jobs:
                       "title": "Workflow",
                       "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
                       "short": true
+                    },
+                    {
+                      "title": "Test Case",
+                      "value": "<https://github.com/Healtech-Pty-Ltd/S1-Web/blob/develop/test/${{ matrix.test }}|${{ matrix.test }}>",
+                      "short": false
                     }
                   ]
                 }
