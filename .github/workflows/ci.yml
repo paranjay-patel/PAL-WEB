@@ -28,7 +28,7 @@ jobs:
             {
               "attachments": [
                 {
-                  "pretext": "*A new <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request> workflow has been initiated by <https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}> for <https://github.com/${{ github.repository }}|${{ github.repository }}> * :star:",
+                  "pretext": "A new *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>* workflow has been initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* 🚀 ",
                   "color": "#0073e6",
                   "fields": [
                     {
@@ -246,7 +246,7 @@ jobs:
             {
               "attachments": [
                 {
-                  "pretext": "*A <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request> workflow initiated by <https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}> for <https://github.com/${{ github.repository }}|${{ github.repository }}> has completed successfully.* :star:",
+                  "pretext": "A *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>* workflow initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* has completed successfully. ✅",
                   "color": "#1aff1a",
                   "fields": [
                     {
@@ -299,7 +299,7 @@ jobs:
             {
               "attachments": [
                 {
-                  "pretext": "*A <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request> workflow initiated by <https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}> for <https://github.com/${{ github.repository }}|${{ github.repository }}> has failed.* :star:",
+                  "pretext": "A *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>* workflow initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* has failed.* 🚨",
                   "color": "#FF1A1A",
                   "fields": [
                     {
