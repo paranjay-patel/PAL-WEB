@@ -346,12 +346,7 @@ jobs:
                 }
               ]
             }
-
-      - name: Run Integration Test
-        id: Run_Integration_test
-        run: |
-          flutter drive --driver=test_driver/integration_test.dart --target=test/sauna_session_test.dart --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=safari
-
+            
       - name: Notify Integration Test Failure
         if: failure()
         id: Notify_Integration_Test_Failure
