@@ -303,7 +303,7 @@ jobs:
           echo "################################################   1  ######################################################"
           wget --quiet https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip
           echo "################################################   2  ######################################################"
-          tar -xvf chromedriver_linux64.tar.gz
+          unzip chromedriver_linux64.zip
           echo "################################################   3  ######################################################"
           chmod +x chromedriver
           echo "################################################   4  ######################################################"
@@ -346,7 +346,7 @@ jobs:
                 }
               ]
             }
-            
+
       - name: Notify Integration Test Failure
         if: failure()
         id: Notify_Integration_Test_Failure
