@@ -47,6 +47,7 @@ jobs:
             
   Linting:
     runs-on: ubuntu-latest
+    needs: Notify_Slack
     env:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
     steps:
@@ -139,6 +140,7 @@ jobs:
 
   Sonar_Scanner:
     runs-on: ubuntu-latest
+    needs: Notify_Slack
     env:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
     steps:
@@ -246,6 +248,7 @@ jobs:
 
   Integration_Test:
     runs-on: ubuntu-latest
+    needs: Notify_Slack
     strategy:
       matrix:
         test:
