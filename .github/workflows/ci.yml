@@ -316,7 +316,7 @@ jobs:
       - name: Run Integration Test
         id: Run_Integration_test
         run: |
-          flutter drive --driver=test_driver/integration_test.dart --target=test/sauna_session_test.dart --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=safari
+          flutter drive --driver=test_driver/integration_test.dart --target=test/sauna_session_test.dart -d web-server
 
       - name: Notify Integration Test Success
         if: success()
