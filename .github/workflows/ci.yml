@@ -59,7 +59,7 @@ jobs:
         id: start-chromedriver
         run: |
           wget -q https://storage.googleapis.com/chrome-for-testing-public/127.0.6533.72/linux64/chromedriver-linux64.zip
-          unzip chromedriver_linux64.zip
+          unzip chromedriver-linux64.zip
           sudo mv chromedriver /usr/local/bin/
           chromedriver --port=4444 &
 
