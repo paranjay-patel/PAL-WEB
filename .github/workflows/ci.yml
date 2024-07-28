@@ -301,11 +301,13 @@ jobs:
         id: flutter-enable-web
         run: flutter config --enable-web
 
-      - name: Install Chrome
+      - name: Install Google Chrome
         id: install-chrome
         run: |
+          wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list'
           sudo apt-get update
-          sudo apt-get install -y chromium-browser
+          sudo apt-get install -y google-chrome-stable
 
       - name: Start ChromeDriver
         id: start-chromedriver
@@ -318,7 +320,34 @@ jobs:
       - name: Integration Test
         id: integration-test
         run: |
-          flutter drive --driver=test_driver/integration_test.dart --target=test/sauna_session_test.dart --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=chromium
+          flutter drive --driver=test_driver/integration_test.dart --target=test/sauna_session_test.dart --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=chrome
+          
+###################################################################################################################
+
+      # - name: Install Chrome
+      #   id: install-chrome
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install -y chromium-browser
+
+      # - name: Start ChromeDriver
+      #   id: start-chromedriver
+      #   run: |
+      #     wget -q -N https://chromedriver.storage.googleapis.com/$(wget -qO- https://chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_linux64.zip
+      #     unzip chromedriver_linux64.zip
+      #     sudo mv chromedriver /usr/local/bin/
+      #     chromedriver --port=4444 &
+
+      # - name: Integration Test
+      #   id: integration-test
+      #   run: |
+      #     flutter drive --driver=test_driver/integration_test.dart --target=test/sauna_session_test.dart --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=chromium
+
+
+
+
+################################################################################################################
+
 
       # - name: Install Chromedriver
       #   id: Install_Chromedriver
