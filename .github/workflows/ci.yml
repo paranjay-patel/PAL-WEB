@@ -7,7 +7,6 @@ on:
       - release/**
       - develop
       - main
-      - feature
 
 jobs:
 
@@ -16,7 +15,7 @@ jobs:
     env:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
     outputs:
-      slack_thread_ts: ${{ steps.Notify_workflow_starting.outputs.ts }}
+      slack_initial_thread_ts: ${{ steps.Notify_workflow_starting.outputs.ts }}     
     steps:
       - name: Notify Workflow Starting
         id: Notify_Workflow_Starting
@@ -87,7 +86,7 @@ jobs:
           channel-id: "C07B6R6NYUW"
           payload: |
             {
-              "thread_ts": "${{ steps.Notify_workflow_starting.outputs.ts }}",
+              "thread_ts": "${{ needs.Pull_Request.outputs.slack_initial_thread_ts }}",
               "attachments": [
                 {
                   "pretext": "PR Workflow Status!",
@@ -116,7 +115,7 @@ jobs:
           channel-id: "C07B6R6NYUW"
           payload: |
             {
-              "thread_ts": "${{ steps.Notify_workflow_starting.outputs.ts }}",
+              "thread_ts": "${{ needs.Pull_Request.outputs.slack_initial_thread_ts }}",
               "attachments": [
                 {
                   "pretext": "PR Workflow Status! :fire_engine:",
@@ -194,7 +193,7 @@ jobs:
           channel-id: "C07B6R6NYUW"
           payload: |
             {
-              "thread_ts": "${{ steps.Notify_workflow_starting.outputs.ts }}",
+              "thread_ts": "${{ needs.Pull_Request.outputs.slack_initial_thread_ts }}",
               "attachments": [
                 {
                   "pretext": "Workflow Status!",
@@ -223,7 +222,7 @@ jobs:
           channel-id: "C07B6R6NYUW"
           payload: |
             {
-              "thread_ts": "${{ steps.Notify_workflow_starting.outputs.ts }}",
+              "thread_ts": "${{ needs.Pull_Request.outputs.slack_initial_thread_ts }}",
               "attachments": [
                 {
                   "pretext": "PR Workflow Status!",
@@ -321,7 +320,7 @@ jobs:
           channel-id: "C07B6R6NYUW"
           payload: |
             {
-              "thread_ts": "${{ steps.Notify_workflow_starting.outputs.ts }}",
+              "thread_ts": "${{ needs.Pull_Request.outputs.slack_initial_thread_ts }}",
               "attachments": [
                 {
                   "pretext": "PR Workflow Status!",
@@ -350,11 +349,11 @@ jobs:
           channel-id: "C07B6R6NYUW"
           payload: |
             {
-              "thread_ts": "${{ steps.Notify_workflow_starting.outputs.ts }}",
+              "thread_ts": "${{ needs.Pull_Request.outputs.slack_initial_thread_ts }}",
               "attachments": [
                 {
                   "pretext": "PR Workflow Status!",
-                  "color": "#1aff1a",
+                  "color": "#FF1A1A",
                   "fields": [
                     {
                       "title": "Integration Test",
