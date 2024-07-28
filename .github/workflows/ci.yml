@@ -247,6 +247,8 @@ jobs:
 
   Integration_Test:
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' && (github.base_ref == 'master' || github.base_ref == 'main' || github.base_ref == 'develop' || startsWith(github.base_ref, 'release')) }} 
+    environment: manual
     needs: Notify_Slack
     strategy:
       matrix:
@@ -447,3 +449,6 @@ jobs:
                 }
               ]
             }
+
+
+
