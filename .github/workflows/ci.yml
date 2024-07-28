@@ -340,7 +340,7 @@ jobs:
                       "short": true
                     },
                     {
-                      "title": "Test Case",
+                      "title": "\nTest Case",
                       "value": "<https://github.com/Healtech-Pty-Ltd/S1-Web/blob/develop/test/${{ matrix.test }}|${{ matrix.test }}>",
                       "short": false
                     }
