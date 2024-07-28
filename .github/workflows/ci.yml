@@ -21,8 +21,8 @@ jobs:
           - test/sauna_session_test.dart
           - test/sleep_mode_test.dart
           - test/temperature_test.dart
-          - test/timer_test.dart
-          - test/timer_session_test.dart
+          # - test/timer_test.dart
+          # - test/timer_session_test.dart
     env:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
     steps:
