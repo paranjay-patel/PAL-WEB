@@ -91,7 +91,7 @@ jobs:
               "thread_ts": "${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}",
               "attachments": [
                 {
-                  "pretext": "PR Workflow Status!",
+                  "pretext": "Pull Request Workflow Status!",
                   "color": "#1aff1a",
                   "fields": [
                     {
@@ -120,7 +120,7 @@ jobs:
               "thread_ts": "${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}",
               "attachments": [
                 {
-                  "pretext": "PR Workflow Status! :fire_engine:",
+                  "pretext": "Pull Request Workflow Status! :fire_engine:",
                   "color": "#FF1A1A",
                   "fields": [
                     {
@@ -228,7 +228,7 @@ jobs:
               "thread_ts": "${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}",
               "attachments": [
                 {
-                  "pretext": "PR Workflow Status!",
+                  "pretext": "Pull Request Workflow Status! :fire_engine:",
                   "color": "#FF1A1A",
                   "fields": [
                     {
@@ -327,7 +327,7 @@ jobs:
               "thread_ts": "${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}",
               "attachments": [
                 {
-                  "pretext": "PR Workflow Status!",
+                  "pretext": "Pull Request Workflow Status!",
                   "color": "#1aff1a",
                   "fields": [
                     {
@@ -356,7 +356,7 @@ jobs:
               "thread_ts": "${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}",
               "attachments": [
                 {
-                  "pretext": "PR Workflow Status!",
+                  "pretext": "Pull Request Workflow Status! :fire_engine:",
                   "color": "#FF1A1A",
                   "fields": [
                     {
@@ -374,64 +374,66 @@ jobs:
               ]
             }
 
+  Update_Slack:
+    runs-on: ubuntu-latest
+    needs: [Notify_Slack, Linting, Sonar_Scanner, Integration_Test]
+    env:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
+    steps:
+      - name: Update Workflow Success
+        id: Update_Workflow_Success
+        if: success()
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: "C07B6R6NYUW"
+          update-ts: ${{ steps.Notify_workflow_starting.outputs.ts }}
+          payload: |
+            {
+              "attachments": [
+                {
+                  "pretext": "A *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>* workflow initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* has completed successfully. ✅",
+                  "color": "#1aff1a",
+                  "fields": [
+                    {
+                      "title": "Status",
+                      "value": "Successful",
+                      "short": true
+                    },
+                    {
+                      "title": "Pull Request",
+                      "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
+                      "short": true
+                    }
+                  ]               
+                }
+              ]
+            }
 
-
-
-
-      # - name: Update Workflow Success
-      #   id: Update_workflow_success
-      #   if: success()
-      #   uses: slackapi/slack-github-action@v1.26.0
-      #   with:
-      #     channel-id: "C07B6R6NYUW"
-      #     update-ts: ${{ steps.Notify_workflow_starting.outputs.ts }}
-      #     payload: |
-      #       {
-      #         "attachments": [
-      #           {
-      #             "pretext": "A *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>* workflow initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* has completed successfully. ✅",
-      #             "color": "#1aff1a",
-      #             "fields": [
-      #               {
-      #                 "title": "Status",
-      #                 "value": "Successful",
-      #                 "short": true
-      #               },
-      #               {
-      #                 "title": "Pull Request",
-      #                 "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
-      #                 "short": true
-      #               }
-      #             ]               
-      #           }
-      #         ]
-      #       }
-
-      # - name: Update Workflow Failure
-      #   id: Update_workflow_failure
-      #   if: failure()
-      #   uses: slackapi/slack-github-action@v1.26.0
-      #   with:
-      #     channel-id: "C07B6R6NYUW"
-      #     update-ts: ${{ steps.Notify_workflow_starting.outputs.ts }}
-      #     payload: |
-      #       {
-      #         "attachments": [
-      #           {
-      #             "pretext": "A *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>* workflow initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* has failed. 🚨",
-      #             "color": "#FF1A1A",
-      #             "fields": [
-      #               {
-      #                 "title": "Status",
-      #                 "value": "Failed",
-      #                 "short": true
-      #               },
-      #               {
-      #                 "title": "Pull Request",
-      #                 "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
-      #                 "short": true
-      #               }
-      #             ]               
-      #           }
-      #         ]
-      #       }
+      - name: Update Workflow Failure
+        id: Update_Workflow_Failure
+        if: failure()
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: "C07B6R6NYUW"
+          update-ts: ${{ steps.Notify_workflow_starting.outputs.ts }}
+          payload: |
+            {
+              "attachments": [
+                {
+                  "pretext": "A *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>* workflow initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* has failed. 🚨",
+                  "color": "#FF1A1A",
+                  "fields": [
+                    {
+                      "title": "Status",
+                      "value": "Failed",
+                      "short": true
+                    },
+                    {
+                      "title": "Pull Request",
+                      "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
+                      "short": true
+                    }
+                  ]               
+                }
+              ]
+            }
