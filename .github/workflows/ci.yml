@@ -383,7 +383,7 @@ jobs:
     steps:
       - name: Update Workflow Success
         id: Update_Workflow_Success
-        if: needs.Notify_Slack.result == 'success' && needs.Linting.result == 'success' && needs.Sonar_Scanner.result == 'success && needs.Integration_Test.result == 'success'
+        if: needs.Notify_Slack.result == 'success' && needs.Linting.result == 'success' && needs.Sonar_Scanner.result == 'success' && needs.Integration_Test.result == 'success'
         uses: slackapi/slack-github-action@v1.26.0
         with:
           channel-id: "C07B6R6NYUW"
