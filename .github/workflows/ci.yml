@@ -24,36 +24,36 @@ jobs:
         with:
           fetch-depth: 0
       
-      # - name: Setup SSH
-      #   id: Setup-SSH
-      #   run: |
-      #     mkdir -p ~/.ssh
-      #     echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
-      #     chmod 600 ~/.ssh/id_rsa
-      #     ssh-keyscan github.com >> ~/.ssh/known_hosts
+      - name: Setup SSH
+        id: Setup-SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      # - name: Set up Flutter
-      #   id: Setup_flutter
-      #   uses: subosito/flutter-action@v2  
-      #   with:
-      #     flutter-version: '3.22.0'
+      - name: Set up Flutter
+        id: Setup_flutter
+        uses: subosito/flutter-action@v2  
+        with:
+          flutter-version: '3.22.0'
 
-      # - name: Install dependencies
-      #   id: Install_dependencies
-      #   run: flutter pub get
+      - name: Install dependencies
+        id: Install_dependencies
+        run: flutter pub get
 
-      # - name: Flutter Enable Web
-      #   id: flutter-enable-web
-      #   run: flutter config --enable-web
+      - name: Flutter Enable Web
+        id: flutter-enable-web
+        run: flutter config --enable-web
 
-      # - name: Install Google Chrome
-      #   id: install-chrome
-      #   run: |
-      #     wget -q https://storage.googleapis.com/chrome-for-testing-public/127.0.6533.72/linux64/chrome-linux64.zip
-      #     sudo apt-get update
-      #     sudo apt-get install -y google-chrome-stable
-      #     echo "google-chrome --version"
-      #     google-chrome --version 
+      - name: Install Google Chrome
+        id: install-chrome
+        run: |
+          wget -q https://storage.googleapis.com/chrome-for-testing-public/127.0.6533.72/linux64/chrome-linux64.zip
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+          echo "google-chrome --version"
+          google-chrome --version 
 
       - name: Install Chromedriver
         id: Install_Chromedriver
@@ -63,7 +63,7 @@ jobs:
           echo "################################################   2  ######################################################"
           unzip chromedriver-linux64.zip
           echo "################################################   3  ######################################################"
-          ls
+          cd chromedriver-linux64
           chmod +x chromedriver
           echo "################################################   4  ######################################################"
           sudo mv chromedriver /usr/bin/
@@ -72,10 +72,10 @@ jobs:
           echo "################################################   6  ######################################################"
           chromedriver --port=4444 &
 
-      # - name: Integration Test
-      #   id: integration-test
-      #   run: |
-      #     flutter drive --driver=test_driver/integration_test.dart --target=test/sauna_session_test.dart --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=chrome
+      - name: Integration Test
+        id: integration-test
+        run: |
+          flutter drive --driver=test_driver/integration_test.dart --target=test/sauna_session_test.dart --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=chrome
           
 ###################################################################################################################
 
