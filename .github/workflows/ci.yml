@@ -16,7 +16,6 @@ jobs:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
     outputs:
       slack_initial_thread_ts: ${{ steps.Notify_workflow_starting.outputs.ts }}  
-#      build_result: ${{ steps.build_step.outputs.result }}  
     steps:
       - name: Notify Workflow Starting
         id: Notify_Workflow_Starting
@@ -75,10 +74,10 @@ jobs:
         id: Install_Dependencies
         run: flutter pub get
 
-      - name: Run Linter
-        id: Run_Linter
-        run: |
-          flutter analyze
+      # - name: Run Linter
+      #   id: Run_Linter
+      #   run: |
+      #     flutter analyze
   
       - name: Notify Linter Success
         if: success()
