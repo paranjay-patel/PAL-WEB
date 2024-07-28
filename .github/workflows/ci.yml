@@ -1,25 +1,24 @@
 name: Pull Request
 
 on:
-  # push:
-  #   branches:
-  #     - reply-notification
   pull_request:
     branches:
       - master
-      - release*
+      - release/**
       - develop
       - main
-      - feature
 
 jobs:
-  Pull_Request:
+
+  Notify_Slack:
     runs-on: ubuntu-latest
     env:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
+    outputs:
+      slack_thread_ts: ${{ steps.Notify_workflow_starting.outputs.ts }}
     steps:
       - name: Notify Workflow Starting
-        id: Notify_workflow_starting
+        id: Notify_Workflow_Starting
         uses: slackapi/slack-github-action@v1.24.0
         with:
           channel-id: "C07B6R6NYUW"
@@ -44,39 +43,44 @@ jobs:
                 }
               ]
             }
-
-      - name: Checkout code
-        id: Checkout_code
+            
+  Linting:
+    runs-on: ubuntu-latest
+    env:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
+    steps:
+      - name: Checkout Code
+        id: Checkout_Code
         uses: actions/checkout@v1
         with:
           fetch-depth: 0
       
       - name: Setup SSH
-        id: Setup-SSH
+        id: Setup_SSH
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      # - name: Set up Flutter
-      #   id: Setup_flutter
-      #   uses: subosito/flutter-action@v2  
-      #   with:
-      #     flutter-version: '3.22.0'
+      - name: Setup Flutter
+        id: Setup_Flutter
+        uses: subosito/flutter-action@v2  
+        with:
+          flutter-version: '3.22.0'
 
-      # - name: Install dependencies
-      #   id: Install_dependencies
-      #   run: flutter pub get
+      - name: Install Dependencies
+        id: Install_Dependencies
+        run: flutter pub get
 
-      # - name: Run linter
-      #   id: Run_linter
-      #   run: |`
-      #     flutter analyze
+      - name: Run Linter
+        id: Run_Linter
+        run: |
+          flutter analyze
   
-      - name: Notify linter success
+      - name: Notify Linter Success
         if: success()
-        id: Notify_linter_success
+        id: Notify_Linter_Success
         uses: slackapi/slack-github-action@v1.24.0
         with:
           channel-id: "C07B6R6NYUW"
@@ -103,9 +107,9 @@ jobs:
               ]
             }
 
-      - name: Notify linter failure
+      - name: Notify Linter Failure
         if: failure()
-        id: Linter_failed_notify
+        id: Notify_Linter_Failure
         uses: slackapi/slack-github-action@v1.24.0
         with:
           channel-id: "C07B6R6NYUW"
@@ -132,29 +136,58 @@ jobs:
               ]
             }
 
-      - name: Sonar scanner
-        id: Sonar_scan
+  Sonar_Scanner:
+    runs-on: ubuntu-latest
+    env:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
+    steps:
+      - name: Checkout Code
+        id: Checkout_Code
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 0
+      
+      - name: Setup SSH
+        id: Setup_SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Set up Flutter
+        id: Setup_Flutter
+        uses: subosito/flutter-action@v2  
+        with:
+          flutter-version: '3.22.0'
+
+      - name: Install dependencies
+        id: Install_Dependencies
+        run: flutter pub get
+
+      - name: Sonar Scanner
+        id: Sonar_Scan
         env:
           SONAR_SCANNER_VER: sonar-scanner-cli-4.7.0.2747-linux
           SONAR_SCANNER_PATH: sonar-scanner-4.7.0.2747-linux/bin
         run: |
-           echo "Sonar Scanner"
-  #        wget --quiet https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip
-  #        unzip -q sonar-scanner-cli-4.7.0.2747-linux.zip
-  #        $SONAR_SCANNER_PATH/sonar-scanner -v
-  #        $SONAR_SCANNER_PATH/sonar-scanner -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+          echo "Sonar Scanner"
+          wget --quiet https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip
+          unzip -q sonar-scanner-cli-4.7.0.2747-linux.zip
+          $SONAR_SCANNER_PATH/sonar-scanner -v
+          $SONAR_SCANNER_PATH/sonar-scanner -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
 
-      # - name: Quality gate check
-      #   id: Quality_gate_check
-      #   uses: sonarsource/sonarqube-quality-gate-action@master
-      #   timeout-minutes: 5
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      - name: Quality Gate Check
+        id: Quality_Gate_Check
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-      - name: Notify sonar success
+      - name: Notify Sonar Success
         if: success()
-        id: Notify_sonar_success
+        id: Notify_Sonar_Success
         uses: slackapi/slack-github-action@v1.24.0
         with:
           channel-id: "C07B6R6NYUW"
@@ -183,7 +216,7 @@ jobs:
 
       - name: Notify Sonar Failure
         if: failure()
-        id: Notify_sonar_failure
+        id: Notify_Sonar_Failure
         uses: slackapi/slack-github-action@v1.24.0
         with:
           channel-id: "C07B6R6NYUW"
@@ -210,165 +243,74 @@ jobs:
               ]
             }
 
-      - name: Update Workflow Success
-        id: Update_workflow_success
-        if: success()
-        uses: slackapi/slack-github-action@v1.26.0
-        with:
-          channel-id: "C07B6R6NYUW"
-          update-ts: ${{ steps.Notify_workflow_starting.outputs.ts }}
-          payload: |
-            {
-              "attachments": [
-                {
-                  "pretext": "A *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>* workflow initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* has completed successfully. ✅",
-                  "color": "#1aff1a",
-                  "fields": [
-                    {
-                      "title": "Status",
-                      "value": "Successful",
-                      "short": true
-                    },
-                    {
-                      "title": "Pull Request",
-                      "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
-                      "short": true
-                    }
-                  ]               
-                }
-              ]
-            }
-
-      - name: Update Workflow Failure
-        id: Update_workflow_failure
-        if: failure()
-        uses: slackapi/slack-github-action@v1.26.0
-        with:
-          channel-id: "C07B6R6NYUW"
-          update-ts: ${{ steps.Notify_workflow_starting.outputs.ts }}
-          payload: |
-            {
-              "attachments": [
-                {
-                  "pretext": "A *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>* workflow initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* has failed. 🚨",
-                  "color": "#FF1A1A",
-                  "fields": [
-                    {
-                      "title": "Status",
-                      "value": "Failed",
-                      "short": true
-                    },
-                    {
-                      "title": "Pull Request",
-                      "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
-                      "short": true
-                    }
-                  ]               
-                }
-              ]
-            }
-
-  integration_test:
+  Integration_Test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test:
+          - test/sauna_session_test.dart
+          - test/sleep_mode_test.dart
+          - test/temperature_test.dart
+          - test/timer_test.dart
+          - test/timer_session_test.dart
     env:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
     steps:
-      - name: Checkout code
-        id: Checkout_code
+      - name: Checkout Code
+        id: Checkout_Code
         uses: actions/checkout@v1
         with:
           fetch-depth: 0
       
       - name: Setup SSH
-        id: Setup-SSH
+        id: Setup_SSH
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      - name: Set up Flutter
-        id: Setup_flutter
+      - name: Setup Flutter
+        id: Setup_Flutter
         uses: subosito/flutter-action@v2  
         with:
           flutter-version: '3.22.0'
 
-      - name: Install dependencies
-        id: Install_dependencies
+      - name: Install Dependencies
+        id: Install_Dependencies
         run: flutter pub get
 
       - name: Flutter Enable Web
-        id: flutter-enable-web
+        id: Flutter-Enable-Web
         run: flutter config --enable-web
 
       - name: Install Google Chrome
-        id: install-chrome
+        id: install_Google_Chrome
         run: |
-          wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-          sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list'
-          sudo apt-get update
-          sudo apt-get install -y google-chrome-stable
+          wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt-get update 
+          sudo dpkg -i google-chrome-stable_current_amd64.deb
+          sudo apt-get install -f -y
+          echo "google-chrome --version"
+          google-chrome --version 
 
-      - name: Start ChromeDriver
-        id: start-chromedriver
+      - name: Install Chromedriver
+        id: Install_Chromedriver
         run: |
-          wget -q -N https://chromedriver.storage.googleapis.com/$(wget -qO- https://chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_linux64.zip
-          unzip chromedriver_linux64.zip
-          sudo mv chromedriver /usr/local/bin/
+          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+.\d+')
+          echo "Chrome version: $CHROME_VERSION"
+          wget -q "https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chromedriver-linux64.zip"
+          unzip chromedriver-linux64.zip
+          cd chromedriver-linux64
+          chmod +x chromedriver
+          sudo mv chromedriver /usr/bin/
+          chromedriver --version
           chromedriver --port=4444 &
 
       - name: Integration Test
-        id: integration-test
-        run: |
-          flutter drive --driver=test_driver/integration_test.dart --target=test/sauna_session_test.dart --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=chrome
-          
-###################################################################################################################
-
-      # - name: Install Chrome
-      #   id: install-chrome
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install -y chromium-browser
-
-      # - name: Start ChromeDriver
-      #   id: start-chromedriver
-      #   run: |
-      #     wget -q -N https://chromedriver.storage.googleapis.com/$(wget -qO- https://chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_linux64.zip
-      #     unzip chromedriver_linux64.zip
-      #     sudo mv chromedriver /usr/local/bin/
-      #     chromedriver --port=4444 &
-
-      # - name: Integration Test
-      #   id: integration-test
-      #   run: |
-      #     flutter drive --driver=test_driver/integration_test.dart --target=test/sauna_session_test.dart --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=chromium
-
-
-
-
-################################################################################################################
-
-
-      # - name: Install Chromedriver
-      #   id: Install_Chromedriver
-      #   run: |
-      #     echo "################################################   1  ######################################################"
-      #     wget --quiet https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip
-      #     echo "################################################   2  ######################################################"
-      #     unzip chromedriver_linux64.zip
-      #     echo "################################################   3  ######################################################"
-      #     chmod +x chromedriver
-      #     echo "################################################   4  ######################################################"
-      #     sudo mv chromedriver /usr/bin/
-      #     echo "################################################   5  ######################################################"
-      #     chromedriver --version
-      #     echo "################################################   6  ######################################################"
-      #     chromedriver --port=4444 &
-          
-      # - name: Run Integration Test
-      #   id: Run_Integration_test
-      #   run: |
-      #     flutter drive --driver=test_driver/integration_test.dart --target=test/sauna_session_test.dart  --flavor=red --dart-define=flavor=red -d web-server
+        id: integration_test
+        run: |          
+          flutter drive --driver=test_driver/integration_test.dart --target=${{ matrix.test }} --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=chrome
 
       - name: Notify Integration Test Success
         if: success()
@@ -427,3 +369,65 @@ jobs:
                 }
               ]
             }
+
+
+
+
+
+      # - name: Update Workflow Success
+      #   id: Update_workflow_success
+      #   if: success()
+      #   uses: slackapi/slack-github-action@v1.26.0
+      #   with:
+      #     channel-id: "C07B6R6NYUW"
+      #     update-ts: ${{ steps.Notify_workflow_starting.outputs.ts }}
+      #     payload: |
+      #       {
+      #         "attachments": [
+      #           {
+      #             "pretext": "A *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>* workflow initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* has completed successfully. ✅",
+      #             "color": "#1aff1a",
+      #             "fields": [
+      #               {
+      #                 "title": "Status",
+      #                 "value": "Successful",
+      #                 "short": true
+      #               },
+      #               {
+      #                 "title": "Pull Request",
+      #                 "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
+      #                 "short": true
+      #               }
+      #             ]               
+      #           }
+      #         ]
+      #       }
+
+      # - name: Update Workflow Failure
+      #   id: Update_workflow_failure
+      #   if: failure()
+      #   uses: slackapi/slack-github-action@v1.26.0
+      #   with:
+      #     channel-id: "C07B6R6NYUW"
+      #     update-ts: ${{ steps.Notify_workflow_starting.outputs.ts }}
+      #     payload: |
+      #       {
+      #         "attachments": [
+      #           {
+      #             "pretext": "A *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>* workflow initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* has failed. 🚨",
+      #             "color": "#FF1A1A",
+      #             "fields": [
+      #               {
+      #                 "title": "Status",
+      #                 "value": "Failed",
+      #                 "short": true
+      #               },
+      #               {
+      #                 "title": "Pull Request",
+      #                 "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
+      #                 "short": true
+      #               }
+      #             ]               
+      #           }
+      #         ]
+      #       }
