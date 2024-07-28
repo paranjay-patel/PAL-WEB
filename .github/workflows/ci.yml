@@ -198,7 +198,7 @@ jobs:
               "thread_ts": "${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}",
               "attachments": [
                 {
-                  "pretext": "Workflow Status!",
+                  "pretext": "Pull Request Workflow Status!",
                   "color": "#1aff1a",
                   "fields": [
                     {
@@ -338,7 +338,11 @@ jobs:
                       "title": "Workflow",
                       "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
                       "short": true
-                    }
+                    },
+                      "title": "Test Case",
+                      "value": "${{ matrix.test }}",
+                      "short": true
+                    },
                   ]
                 }
               ]
