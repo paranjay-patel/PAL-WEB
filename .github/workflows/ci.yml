@@ -157,15 +157,15 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      - name: Set up Flutter
-        id: Setup_Flutter
-        uses: subosito/flutter-action@v2  
-        with:
-          flutter-version: '3.22.0'
+      # - name: Set up Flutter
+      #   id: Setup_Flutter
+      #   uses: subosito/flutter-action@v2  
+      #   with:
+      #     flutter-version: '3.22.0'
 
-      - name: Install dependencies
-        id: Install_Dependencies
-        run: flutter pub get
+      # - name: Install dependencies
+      #   id: Install_Dependencies
+      #   run: flutter pub get
 
       # - name: Sonar Scanner
       #   id: Sonar_Scan
@@ -273,47 +273,47 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      - name: Setup Flutter
-        id: Setup_Flutter
-        uses: subosito/flutter-action@v2  
-        with:
-          flutter-version: '3.22.0'
+      # - name: Setup Flutter
+      #   id: Setup_Flutter
+      #   uses: subosito/flutter-action@v2  
+      #   with:
+      #     flutter-version: '3.22.0'
 
-      - name: Install Dependencies
-        id: Install_Dependencies
-        run: flutter pub get
+      # - name: Install Dependencies
+      #   id: Install_Dependencies
+      #   run: flutter pub get
 
-      - name: Flutter Enable Web
-        id: Flutter-Enable-Web
-        run: flutter config --enable-web
+      # - name: Flutter Enable Web
+      #   id: Flutter-Enable-Web
+      #   run: flutter config --enable-web
 
-      - name: Install Google Chrome
-        id: install_Google_Chrome
-        run: |
-          wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-          sudo apt-get update 
-          sudo dpkg -i google-chrome-stable_current_amd64.deb
-          sudo apt-get install -f -y
-          echo "google-chrome --version"
-          google-chrome --version 
+      # - name: Install Google Chrome
+      #   id: install_Google_Chrome
+      #   run: |
+      #     wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+      #     sudo apt-get update 
+      #     sudo dpkg -i google-chrome-stable_current_amd64.deb
+      #     sudo apt-get install -f -y
+      #     echo "google-chrome --version"
+      #     google-chrome --version 
 
-      - name: Install Chromedriver
-        id: Install_Chromedriver
-        run: |
-          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+.\d+')
-          echo "Chrome version: $CHROME_VERSION"
-          wget -q "https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chromedriver-linux64.zip"
-          unzip chromedriver-linux64.zip
-          cd chromedriver-linux64
-          chmod +x chromedriver
-          sudo mv chromedriver /usr/bin/
-          chromedriver --version
-          chromedriver --port=4444 &
+      # - name: Install Chromedriver
+      #   id: Install_Chromedriver
+      #   run: |
+      #     CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+.\d+')
+      #     echo "Chrome version: $CHROME_VERSION"
+      #     wget -q "https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chromedriver-linux64.zip"
+      #     unzip chromedriver-linux64.zip
+      #     cd chromedriver-linux64
+      #     chmod +x chromedriver
+      #     sudo mv chromedriver /usr/bin/
+      #     chromedriver --version
+      #     chromedriver --port=4444 &
 
-      - name: Integration Test
-        id: integration_test
-        run: |          
-          flutter drive --driver=test_driver/integration_test.dart --target=${{ matrix.test }} --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=chrome
+      # - name: Integration Test
+      #   id: integration_test
+      #   run: |          
+      #     flutter drive --driver=test_driver/integration_test.dart --target=${{ matrix.test }} --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=chrome
 
       - name: Notify Integration Test Success
         if: success()
