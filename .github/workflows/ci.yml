@@ -1,344 +1,293 @@
 
-name: Pull Request
+  name: Pull Request
 
-on:
-  # push:
-  #   branches:
-  #     - reply-notification
-  pull_request:
-    branches:
-      - master
-      - release*
-      - develop
-      - main
-      - feature
+  on:
+    # push:
+    #   branches:
+    #     - reply-notification
+    pull_request:
+      branches:
+        - master
+        - release*
+        - develop
+        - main
+        - feature
 
-jobs:
-  pull_request:
-    runs-on: ubuntu-latest
-    env:
-      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
-    steps:
-      - name: Notify Workflow Starting
-        id: Workflow_starting
-        uses: slackapi/slack-github-action@v1.24.0
-        with:
-          channel-id: "C07B6R6NYUW"
-          payload: |
-            {
-              "attachments": [
-                {
-                  "pretext": "*A new [PR workflow](${{ github.event.workflow_run.html_url }}) has been triggered by <${{ github.event.pull_request.user.html_url }}|${{ github.event.pull_request.user.login }}> for the repository <https://github.com/${{ github.repository }}|${{ github.repository }}>.* :star:",
-                  "color": "#0073e6",
-                  "fields": [
-                    {
-                      "title": "Repository",
-                      "value": "<https://github.com/${{ github.repository }}|${{ github.repository }}>",
-                      "short": true
-                    },
-                    {
-                      "title": "Pull Request",
-                      "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
-                      "short": true
-                    },
-                    {
-                      "title": "Source Branch",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.head.ref }}|${{ github.event.pull_request.head.ref }}>",
-                      "short": true
-                    },
-                    {
-                      "title": "Author",
-                      "value": "<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>",
-                      "short": true
-                    },
-                    {
-                      "title": "Target Branch",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.base.ref }}|${{ github.event.pull_request.base.ref }}>",
-                      "short": true
-                    },
-                    {
-                      "title": "Workflow",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
-                      "short": true
-                    },
-                    {
-                      "title": "Status",
-                      "value": "In Progress",
-                      "short": true
-                    }
-                  ]               
-                }
-              ]
-            }
+  jobs:
+    pull_request:
+      runs-on: ubuntu-latest
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
+      steps:
+        - name: Notify Workflow Starting
+          id: Workflow_starting
+          uses: slackapi/slack-github-action@v1.24.0
+          with:
+            channel-id: "C07B6R6NYUW"
+            payload: |
+              {
+                "attachments": [
+                  {
+                    "pretext": "*A new <${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}> has been triggered by <https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}> for the repository <https://github.com/${{ github.repository }}|${{ github.repository }}>.* :star:",
+                    "color": "#0073e6",
+                    "fields": [
+                      {
+                        "title": "Pull Request",
+                        "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
+                        "short": true
+                      }
+                      {
+                        "title": "Status",
+                        "value": "In Progress",
+                        "short": true
+                      }
+                    ]               
+                  }
+                ]
+              }
 
-      - name: Checkout code
-        id: Checkout_code
-        uses: actions/checkout@v1
-        with:
-          fetch-depth: 0
-      
-      - name: Setup SSH
-        id: Setup-SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
+        - name: Checkout code
+          id: Checkout_code
+          uses: actions/checkout@v1
+          with:
+            fetch-depth: 0
+        
+        - name: Setup SSH
+          id: Setup-SSH
+          run: |
+            mkdir -p ~/.ssh
+            echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+            ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      # - name: Set up Flutter
-      #   id: Setup_flutter
-      #   uses: subosito/flutter-action@v2  
-      #   with:
-      #     flutter-version: '3.22.0'
+        # - name: Set up Flutter
+        #   id: Setup_flutter
+        #   uses: subosito/flutter-action@v2  
+        #   with:
+        #     flutter-version: '3.22.0'
 
-      # - name: Install dependencies
-      #   id: Install_dependencies
-      #   run: flutter pub get
+        # - name: Install dependencies
+        #   id: Install_dependencies
+        #   run: flutter pub get
 
-      # - name: Run linter
-      #   id: Run_linter
-      #   run: |`
-      #     flutter analyze
-  
-      - name: Notify linter success
-        if: success()
-        id: Linter_successful_notify
-        uses: slackapi/slack-github-action@v1.24.0
-        with:
-          channel-id: "C07B6R6NYUW"
-          payload: |
-            {
-              "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
-              "attachments": [
-                {
-                  "pretext": "PR Workflow Status!",
-                  "color": "#1aff1a",
-                  "fields": [
-                    {
-                      "title": "Linting",
-                      "value": "Successful",
-                      "short": true
-                    },
-                    {
-                      "title": "Workflow",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
-                      "short": true
-                    }
-                  ]
-                }
-              ]
-            }
+        # - name: Run linter
+        #   id: Run_linter
+        #   run: |`
+        #     flutter analyze
+    
+        - name: Notify linter success
+          if: success()
+          id: Linter_successful_notify
+          uses: slackapi/slack-github-action@v1.24.0
+          with:
+            channel-id: "C07B6R6NYUW"
+            payload: |
+              {
+                "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
+                "attachments": [
+                  {
+                    "pretext": "PR Workflow Status!",
+                    "color": "#1aff1a",
+                    "fields": [
+                      {
+                        "title": "Linting",
+                        "value": "Successful",
+                        "short": true
+                      },
+                      {
+                        "title": "Workflow",
+                        "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
+                        "short": true
+                      }
+                    ]
+                  }
+                ]
+              }
 
-      - name: Notify linter failure
-        if: failure()
-        id: Linter_failed_notify
-        uses: slackapi/slack-github-action@v1.24.0
-        with:
-          channel-id: "C07B6R6NYUW"
-          payload: |
-            {
-              "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
-              "attachments": [
-                {
-                  "pretext": "PR Workflow Status! :fire_engine:",
-                  "color": "#FF1A1A",
-                  "fields": [
-                    {
-                      "title": "Linting",
-                      "value": "Failed",
-                      "short": true
-                    },
-                    {
-                      "title": "Workflow",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
-                      "short": true
-                    }
-                  ]
-                }
-              ]
-            }
+        - name: Notify linter failure
+          if: failure()
+          id: Linter_failed_notify
+          uses: slackapi/slack-github-action@v1.24.0
+          with:
+            channel-id: "C07B6R6NYUW"
+            payload: |
+              {
+                "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
+                "attachments": [
+                  {
+                    "pretext": "PR Workflow Status! :fire_engine:",
+                    "color": "#FF1A1A",
+                    "fields": [
+                      {
+                        "title": "Linting",
+                        "value": "Failed",
+                        "short": true
+                      },
+                      {
+                        "title": "Workflow",
+                        "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
+                        "short": true
+                      }
+                    ]
+                  }
+                ]
+              }
 
-      - name: Sonar scanner
-        id: Sonar_scan
-        env:
-          SONAR_SCANNER_VER: sonar-scanner-cli-4.7.0.2747-linux
-          SONAR_SCANNER_PATH: sonar-scanner-4.7.0.2747-linux/bin
-        run: |
-           echo "Sonar Scanner"
-  #        wget --quiet https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip
-  #        unzip -q sonar-scanner-cli-4.7.0.2747-linux.zip
-  #        $SONAR_SCANNER_PATH/sonar-scanner -v
-  #        $SONAR_SCANNER_PATH/sonar-scanner -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+        - name: Sonar scanner
+          id: Sonar_scan
+          env:
+            SONAR_SCANNER_VER: sonar-scanner-cli-4.7.0.2747-linux
+            SONAR_SCANNER_PATH: sonar-scanner-4.7.0.2747-linux/bin
+          run: |
+            echo "Sonar Scanner"
+    #        wget --quiet https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip
+    #        unzip -q sonar-scanner-cli-4.7.0.2747-linux.zip
+    #        $SONAR_SCANNER_PATH/sonar-scanner -v
+    #        $SONAR_SCANNER_PATH/sonar-scanner -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
 
-      - name: Quality gate check
-        id: Quality_gate_check
-        uses: sonarsource/sonarqube-quality-gate-action@master
-        timeout-minutes: 5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        - name: Quality gate check
+          id: Quality_gate_check
+          uses: sonarsource/sonarqube-quality-gate-action@master
+          timeout-minutes: 5
+          env:
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+            SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-      - name: Notify sonar success
-        if: success()
-        id: Sonar_successful_notify
-        uses: slackapi/slack-github-action@v1.24.0
-        with:
-          channel-id: "C07B6R6NYUW"
-          payload: |
-            {
-              "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
-              "attachments": [
-                {
-                  "pretext": "Workflow Status!",
-                  "color": "#1aff1a",
-                  "fields": [
-                    {
-                      "title": "Sonar-Scan",
-                      "value": "Successful",
-                      "short": true
-                    },
-                    {
-                      "title": "Workflow",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
-                      "short": true
-                    }
-                  ]
-                }
-              ]
-            }
+        - name: Notify sonar success
+          if: success()
+          id: Sonar_successful_notify
+          uses: slackapi/slack-github-action@v1.24.0
+          with:
+            channel-id: "C07B6R6NYUW"
+            payload: |
+              {
+                "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
+                "attachments": [
+                  {
+                    "pretext": "Workflow Status!",
+                    "color": "#1aff1a",
+                    "fields": [
+                      {
+                        "title": "Sonar-Scan",
+                        "value": "Successful",
+                        "short": true
+                      },
+                      {
+                        "title": "Workflow",
+                        "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
+                        "short": true
+                      }
+                    ]
+                  }
+                ]
+              }
 
-      - name: Notify Sonar failure
-        if: failure()
-        id: Sonar_failed_notify
-        uses: slackapi/slack-github-action@v1.24.0
-        with:
-          channel-id: "C07B6R6NYUW"
-          payload: |
-            {
-              "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
-              "attachments": [
-                {
-                  "pretext": "PR Workflow Status!",
-                  "color": "#FF1A1A",
-                  "fields": [
-                    {
-                      "title": "Sonar-Scan",
-                      "value": "Failed",
-                      "short": true
-                    },
-                    {
-                      "title": "Workflow",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
-                      "short": true
-                    }
-                  ]
-                }
-              ]
-            }
+        - name: Notify Sonar failure
+          if: failure()
+          id: Sonar_failed_notify
+          uses: slackapi/slack-github-action@v1.24.0
+          with:
+            channel-id: "C07B6R6NYUW"
+            payload: |
+              {
+                "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
+                "attachments": [
+                  {
+                    "pretext": "PR Workflow Status!",
+                    "color": "#FF1A1A",
+                    "fields": [
+                      {
+                        "title": "Sonar-Scan",
+                        "value": "Failed",
+                        "short": true
+                      },
+                      {
+                        "title": "Workflow",
+                        "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
+                        "short": true
+                      }
+                    ]
+                  }
+                ]
+              }
 
-      - name: Notify Workflow Success
-        if: success()
-        uses: slackapi/slack-github-action@v1.26.0
-        with:
-          channel-id: "C07B6R6NYUW"
-          update-ts: ${{ steps.Workflow_starting.outputs.ts }}
-          payload: |
-            {
-              "attachments": [
-                {
-                  "pretext": "*A new <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|PR Workflow> tiggerd by <https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}> has started for <https://github.com/${{ github.repository }}|${{ github.repository }}> * :star:",
-                  "color": "#1aff1a",
-                  "fields": [
-                    {
-                      "title": "Repository",
-                      "value": "<https://github.com/${{ github.repository }}|${{ github.repository }}>",
-                      "short": true
-                    },
-                    {
-                      "title": "Pull Request",
-                      "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
-                      "short": true
-                    },
-                    {
-                      "title": "Source Branch",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.head.ref }}|${{ github.event.pull_request.head.ref }}>",
-                      "short": true
-                    },
-                    {
-                      "title": "Author",
-                      "value": "<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>",
-                      "short": true
-                    },
-                    {
-                      "title": "Target Branch",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.base.ref }}|${{ github.event.pull_request.base.ref }}>",
-                      "short": true
-                    },
-                    {
-                      "title": "Workflow",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
-                      "short": true
-                    },
-                    {
-                      "title": "Status",
-                      "value": "Success",
-                      "short": true
-                    }
-                  ]               
-                }
-              ]
-            }
+        - name: Notify Workflow Success
+          if: success()
+          uses: slackapi/slack-github-action@v1.26.0
+          with:
+            channel-id: "C07B6R6NYUW"
+            update-ts: ${{ steps.Workflow_starting.outputs.ts }}
+            payload: |
+              {
+                "attachments": [
+                  {
+                    "pretext": "*A new <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request> has been initiated by <https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}> for <https://github.com/${{ github.repository }}|${{ github.repository }}> * :star:",
+                    "color": "#1aff1a",
+                    "fields": [
+                      {
+                        "title": "Repository",
+                        "value": "<https://github.com/${{ github.repository }}|${{ github.repository }}>",
+                        "short": true
+                      },
+                      {
+                        "title": "Pull Request",
+                        "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
+                        "short": true
+                      },
+                      {
+                        "title": "Source Branch",
+                        "value": "<${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.head.ref }}|${{ github.event.pull_request.head.ref }}>",
+                        "short": true
+                      },
+                      {
+                        "title": "Author",
+                        "value": "<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>",
+                        "short": true
+                      },
+                      {
+                        "title": "Target Branch",
+                        "value": "<${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.base.ref }}|${{ github.event.pull_request.base.ref }}>",
+                        "short": true
+                      },
+                      {
+                        "title": "Workflow",
+                        "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
+                        "short": true
+                      },
+                      {
+                        "title": "Status",
+                        "value": "Success",
+                        "short": true
+                      }
+                    ]               
+                  }
+                ]
+              }
 
-      - name: Notify Workflow failure
-        if: failure()
-        uses: slackapi/slack-github-action@v1.26.0
-        with:
-          channel-id: "C07B6R6NYUW"
-          update-ts: ${{ steps.Workflow_starting.outputs.ts }}
-          payload: |
-            {
-              "attachments": [
-                {
-                  "pretext": "*A new <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|PR Workflow> tiggerd by <https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}> has started for <https://github.com/${{ github.repository }}|${{ github.repository }}> * :star:",
-                  "color": "#FF1A1A",
-                  "fields": [
-                    {
-                      "title": "Repository",
-                      "value": "<https://github.com/${{ github.repository }}|${{ github.repository }}>",
-                      "short": true
-                    },
-                    {
-                      "title": "Pull Request",
-                      "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
-                      "short": true
-                    },
-                    {
-                      "title": "Source Branch",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.head.ref }}|${{ github.event.pull_request.head.ref }}>",
-                      "short": true
-                    },
-                    {
-                      "title": "Author",
-                      "value": "<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>",
-                      "short": true
-                    },
-                    {
-                      "title": "Target Branch",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.pull_request.base.ref }}|${{ github.event.pull_request.base.ref }}>",
-                      "short": true
-                    },
-                    {
-                      "title": "Workflow",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
-                      "short": true
-                    },
-                    {
-                      "title": "Status",
-                      "value": "Fail",
-                      "short": true
-                    }
-                  ]               
-                }
-              ]
-            }
-
+        - name: Notify Workflow failure
+          if: failure()
+          uses: slackapi/slack-github-action@v1.26.0
+          with:
+            channel-id: "C07B6R6NYUW"
+            update-ts: ${{ steps.Workflow_starting.outputs.ts }}
+            payload: |
+              {
+                "attachments": [
+                  {
+                    "pretext": "*A new <${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}> has been triggered by <https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}> for the repository <https://github.com/${{ github.repository }}|${{ github.repository }}>.* :star:",
+                    "color": "#0073e6",
+                    "fields": [
+                      {
+                        "title": "Pull Request",
+                        "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
+                        "short": true
+                      }
+                      {
+                        "title": "Status",
+                        "value": "In Progress",
+                        "short": true
+                      }
+                    ]               
+                  }
+                ]
+              }
