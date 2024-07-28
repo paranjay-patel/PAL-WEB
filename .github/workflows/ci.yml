@@ -28,7 +28,7 @@ jobs:
             {
               "attachments": [
                 {
-                  "pretext": "*A new [workflow](${{ github.event.workflow_run.html_url }}) triggered by <${{ github.event.pull_request.user.html_url }}|${{ github.event.pull_request.user.login }}> has started for <https://github.com/${{ github.repository }}|${{ github.repository }}>* :star:",
+                  "pretext": "*A new '<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|PR Workflow' has started for '<https://github.com/${{ github.repository }}|${{ github.repository }}>'' * :star:",
                   "color": "#0073e6",
                   "fields": [
                     {
@@ -246,7 +246,7 @@ jobs:
             {
               "attachments": [
                 {
-                  "pretext": "*A new PR workflow has started!* :star:",
+                  "pretext": "*A new '<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|PR Workflow' has started for '<https://github.com/${{ github.repository }}|${{ github.repository }}>'' * :star:",
                   "color": "#1aff1a",
                   "fields": [
                     {
@@ -299,7 +299,7 @@ jobs:
             {
               "attachments": [
                 {
-                  "pretext": "*A new PR workflow has started!* :star:",
+                  "pretext": "*A new '<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|PR Workflow' has started for '<https://github.com/${{ github.repository }}|${{ github.repository }}>'' * :star:",
                   "color": "#FF1A1A",
                   "fields": [
                     {
