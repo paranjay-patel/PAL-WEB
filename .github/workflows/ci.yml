@@ -49,17 +49,19 @@ jobs:
       - name: Install Google Chrome
         id: install-chrome
         run: |
-          wget -q https://storage.googleapis.com/chrome-for-testing-public/127.0.6533.72/linux64/chrome-linux64.zip
-          sudo apt-get update
-          sudo apt-get install -y google-chrome-stable
+          wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt-get update 
+          sudo dpkg -i google-chrome-stable_current_amd64.deb
+          sudo apt-get install -f -y
           echo "google-chrome --version"
           google-chrome --version 
 
       - name: Install Chromedriver
         id: Install_Chromedriver
         run: |
+          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
           echo "################################################   1  ######################################################"
-          wget --quiet https://storage.googleapis.com/chrome-for-testing-public/127.0.6533.72/linux64/chromedriver-linux64.zip
+          wget --quiet "https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chromedriver-linux64.zip"
           echo "################################################   2  ######################################################"
           unzip chromedriver-linux64.zip
           echo "################################################   3  ######################################################"
