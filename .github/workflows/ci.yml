@@ -8,12 +8,6 @@ on:
       - develop
       - main
       - feature
-  workflow_dispatch:  # Manual trigger
-    inputs:
-      run-manual-job:
-        description: 'Trigger manual job'
-        required: false
-        default: 'false'
 
 jobs:
   Notify_Slack:
@@ -253,7 +247,7 @@ jobs:
 
   Integration_Test:
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' && github.event.inputs.run-manual-job == 'true'
+    if: ${{ github.event_name == 'pull_request' && (github.base_ref == 'master' || github.base_ref == 'main' || github.base_ref == 'develop' || startsWith(github.base_ref, 'release')) }} 
     environment: manual
     needs: Notify_Slack
     strategy:
