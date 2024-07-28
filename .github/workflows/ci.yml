@@ -251,11 +251,11 @@ jobs:
     strategy:
       matrix:
         test:
-          - test/sauna_session_test.dart
-          - test/sleep_mode_test.dart
-          - test/temperature_test.dart
-          - test/timer_test.dart
-          - test/timer_session_test.dart
+          - sauna_session_test.dart
+          - sleep_mode_test.dart
+          - temperature_test.dart
+          - timer_test.dart
+          - timer_session_test.dart
     env:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
     steps:
@@ -313,7 +313,7 @@ jobs:
       # - name: Integration Test
       #   id: integration_test
       #   run: |          
-      #     flutter drive --driver=test_driver/integration_test.dart --target=${{ matrix.test }} --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=chrome
+      #     flutter drive --driver=test_driver/integration_test.dart --target=test/${{ matrix.test }} --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=chrome
 
       - name: Notify Integration Test Success
         if: success()
@@ -341,7 +341,7 @@ jobs:
                     },
                     {
                       "title": "Test Case",
-                      "value": "${{ matrix.test }}",
+                      "value": "<https://github.com/Healtech-Pty-Ltd/S1-Web/blob/develop/test/${{ matrix.test }}|${{ matrix.test }}>",
                       "short": false
                     }
                   ]
