@@ -297,26 +297,49 @@ jobs:
         id: Install_dependencies
         run: flutter pub get
 
-      - name: Install Chromedriver
-        id: Install_Chromedriver
+      - name: Flutter Enable Web
+        id: flutter-enable-web
+        run: flutter config --enable-web
+
+      - name: Install Chrome
+        id: install-chrome
         run: |
-          echo "################################################   1  ######################################################"
-          wget --quiet https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip
-          echo "################################################   2  ######################################################"
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser
+
+      - name: Start ChromeDriver
+        id: start-chromedriver
+        run: |
+          wget -N https://chromedriver.storage.googleapis.com/$(wget -qO- https://chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_linux64.zip
           unzip chromedriver_linux64.zip
-          echo "################################################   3  ######################################################"
-          chmod +x chromedriver
-          echo "################################################   4  ######################################################"
-          sudo mv chromedriver /usr/bin/
-          echo "################################################   5  ######################################################"
-          chromedriver --version
-          echo "################################################   6  ######################################################"
+          sudo mv chromedriver /usr/local/bin/
           chromedriver --port=4444 &
-          
-      - name: Run Integration Test
-        id: Run_Integration_test
+
+      - name: Integration Test
+        id: integration-test
         run: |
-          flutter drive --driver=test_driver/integration_test.dart --target=test/sauna_session_test.dart  --flavor=red --dart-define=flavor=red -d web-server
+          flutter drive --driver=test_driver/integration_test.dart --target=test/sauna_session_test.dart --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=chrome
+
+      # - name: Install Chromedriver
+      #   id: Install_Chromedriver
+      #   run: |
+      #     echo "################################################   1  ######################################################"
+      #     wget --quiet https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip
+      #     echo "################################################   2  ######################################################"
+      #     unzip chromedriver_linux64.zip
+      #     echo "################################################   3  ######################################################"
+      #     chmod +x chromedriver
+      #     echo "################################################   4  ######################################################"
+      #     sudo mv chromedriver /usr/bin/
+      #     echo "################################################   5  ######################################################"
+      #     chromedriver --version
+      #     echo "################################################   6  ######################################################"
+      #     chromedriver --port=4444 &
+          
+      # - name: Run Integration Test
+      #   id: Run_Integration_test
+      #   run: |
+      #     flutter drive --driver=test_driver/integration_test.dart --target=test/sauna_session_test.dart  --flavor=red --dart-define=flavor=red -d web-server
 
       - name: Notify Integration Test Success
         if: success()
