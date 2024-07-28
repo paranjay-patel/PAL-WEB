@@ -246,7 +246,7 @@ jobs:
             {
               "attachments": [
                 {
-                  "pretext": "*A new <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|PR Workflow> triggered by <https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}> has started for <https://github.com/${{ github.repository }}|${{ github.repository }}> * :star:",
+                  "pretext": "*A new <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|PR Workflow> has started for <https://github.com/${{ github.repository }}|${{ github.repository }}> * :star:",
                   "color": "#1aff1a",
                   "fields": [
                     {
