@@ -342,7 +342,7 @@ jobs:
                     {
                       "title": "Test Case",
                       "value": "${{ matrix.test }}",
-                      "short": true
+                      "short": false
                     }
                   ]
                 }
