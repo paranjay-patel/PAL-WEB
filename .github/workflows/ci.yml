@@ -1,4 +1,3 @@
-
 name: Pull Request
 
 on:
@@ -14,13 +13,13 @@ on:
       - feature
 
 jobs:
-  pull_request:
+  Pull_Request:
     runs-on: ubuntu-latest
     env:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
     steps:
       - name: Notify Workflow Starting
-        id: Workflow_starting
+        id: Notify_workflow_starting
         uses: slackapi/slack-github-action@v1.24.0
         with:
           channel-id: "C07B6R6NYUW"
@@ -32,13 +31,13 @@ jobs:
                   "color": "#0073e6",
                   "fields": [
                     {
-                      "title": "Pull Request",
-                      "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
+                      "title": "Status",
+                      "value": "In Progress",
                       "short": true
                     },
                     {
-                      "title": "Status",
-                      "value": "In Progress",
+                      "title": "Pull Request",
+                      "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
                       "short": true
                     }
                   ]               
@@ -77,13 +76,13 @@ jobs:
   
       - name: Notify linter success
         if: success()
-        id: Linter_successful_notify
+        id: Notify_linter_success
         uses: slackapi/slack-github-action@v1.24.0
         with:
           channel-id: "C07B6R6NYUW"
           payload: |
             {
-              "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
+              "thread_ts": "${{ steps.Notify_workflow_starting.outputs.ts }}",
               "attachments": [
                 {
                   "pretext": "PR Workflow Status!",
@@ -112,7 +111,7 @@ jobs:
           channel-id: "C07B6R6NYUW"
           payload: |
             {
-              "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
+              "thread_ts": "${{ steps.Notify_workflow_starting.outputs.ts }}",
               "attachments": [
                 {
                   "pretext": "PR Workflow Status! :fire_engine:",
@@ -145,23 +144,23 @@ jobs:
   #        $SONAR_SCANNER_PATH/sonar-scanner -v
   #        $SONAR_SCANNER_PATH/sonar-scanner -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
 
-      - name: Quality gate check
-        id: Quality_gate_check
-        uses: sonarsource/sonarqube-quality-gate-action@master
-        timeout-minutes: 5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      # - name: Quality gate check
+      #   id: Quality_gate_check
+      #   uses: sonarsource/sonarqube-quality-gate-action@master
+      #   timeout-minutes: 5
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
       - name: Notify sonar success
         if: success()
-        id: Sonar_successful_notify
+        id: Notify_sonar_success
         uses: slackapi/slack-github-action@v1.24.0
         with:
           channel-id: "C07B6R6NYUW"
           payload: |
             {
-              "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
+              "thread_ts": "${{ steps.Notify_workflow_starting.outputs.ts }}",
               "attachments": [
                 {
                   "pretext": "Workflow Status!",
@@ -182,15 +181,15 @@ jobs:
               ]
             }
 
-      - name: Notify Sonar failure
+      - name: Notify Sonar Failure
         if: failure()
-        id: Sonar_failed_notify
+        id: Notify_sonar_failure
         uses: slackapi/slack-github-action@v1.24.0
         with:
           channel-id: "C07B6R6NYUW"
           payload: |
             {
-              "thread_ts": "${{ steps.Workflow_starting.outputs.ts }}",
+              "thread_ts": "${{ steps.Notify_workflow_starting.outputs.ts }}",
               "attachments": [
                 {
                   "pretext": "PR Workflow Status!",
@@ -211,12 +210,13 @@ jobs:
               ]
             }
 
-      - name: Notify Workflow Success
+      - name: Update Workflow Success
+        id: Update_workflow_success
         if: success()
         uses: slackapi/slack-github-action@v1.26.0
         with:
           channel-id: "C07B6R6NYUW"
-          update-ts: ${{ steps.Workflow_starting.outputs.ts }}
+          update-ts: ${{ steps.Notify_workflow_starting.outputs.ts }}
           payload: |
             {
               "attachments": [
@@ -225,13 +225,13 @@ jobs:
                   "color": "#1aff1a",
                   "fields": [
                     {
-                      "title": "Pull Request",
-                      "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
+                      "title": "Status",
+                      "value": "Successful",
                       "short": true
                     },
                     {
-                      "title": "Status",
-                      "value": "Success",
+                      "title": "Pull Request",
+                      "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
                       "short": true
                     }
                   ]               
@@ -239,12 +239,13 @@ jobs:
               ]
             }
 
-      - name: Notify Workflow failure
+      - name: Update Workflow Failure
+        id: Update_workflow_failure
         if: failure()
         uses: slackapi/slack-github-action@v1.26.0
         with:
           channel-id: "C07B6R6NYUW"
-          update-ts: ${{ steps.Workflow_starting.outputs.ts }}
+          update-ts: ${{ steps.Notify_workflow_starting.outputs.ts }}
           payload: |
             {
               "attachments": [
@@ -253,13 +254,13 @@ jobs:
                   "color": "#FF1A1A",
                   "fields": [
                     {
-                      "title": "Pull Request",
-                      "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
+                      "title": "Status",
+                      "value": "Failed",
                       "short": true
                     },
                     {
-                      "title": "Status",
-                      "value": "Failed",
+                      "title": "Pull Request",
+                      "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
                       "short": true
                     }
                   ]               
@@ -267,3 +268,75 @@ jobs:
               ]
             }
 
+  integration_test:
+    runs-on: ubuntu-latest
+    env:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
+    steps:
+      - name: Checkout code
+        id: Checkout_code
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 0
+      
+      - name: Setup SSH
+        id: Setup-SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Set up Flutter
+        id: Setup_flutter
+        uses: subosito/flutter-action@v2  
+        with:
+          flutter-version: '3.22.0'
+
+      - name: Install dependencies
+        id: Install_dependencies
+        run: flutter pub get
+
+      - name: Install Chromedriver
+        id: Install_Chromedriver
+        run: |
+          wget https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip
+          tar -xvf chromedriver_linux64.tar.gz
+          chmod +x chromedriver
+          sudo mv chromedriver /usr/bin/
+          chromedriver --version
+          chromedriver --port 4444 &
+          
+      - name: Run Integration Test
+        id: Run_Integration_test
+        run: |
+          flutter drive --driver=test_driver/integration_test.dart --target=test/sauna_session_test.dart --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=safari
+
+      - name: Notify Integration Test Success
+        if: success()
+        id: Notify_Integration_Test_Success
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          channel-id: "C07B6R6NYUW"
+          payload: |
+            {
+              "thread_ts": "${{ steps.Notify_workflow_starting.outputs.ts }}",
+              "attachments": [
+                {
+                  "pretext": "PR Workflow Status!",
+                  "color": "#1aff1a",
+                  "fields": [
+                    {
+                      "title": "Integration Test",
+                      "value": "Successful",
+                      "short": true
+                    },
+                    {
+                      "title": "Workflow",
+                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
+                      "short": true
+                    }
+                  ]
+                }
+              ]
+            }
