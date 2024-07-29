@@ -210,7 +210,7 @@ jobs:
                       "title": "Workflow",
                       "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
                       "short": true
-                    }
+                    },
                   ]
                 }
               ]
@@ -227,18 +227,29 @@ jobs:
               "thread_ts": "${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}",
               "attachments": [
                 {
-                  "pretext": "Pull Request Workflow Status! :fire_engine:",
-                  "color": "#FF1A1A",
+                  "pretext": "Pull Request Workflow Status!",
+                  "color": "#1aff1a",
                   "fields": [
                     {
                       "title": "Sonar-Scan",
-                      "value": "Failed",
+                      "value": "Successful",
                       "short": true
                     },
                     {
                       "title": "Workflow",
                       "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
                       "short": true
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View Sonarqube Dashboard"
+                      },
+                      "url": "https://sonarqube.healtech.au/",
+                      "style": "primary"
                     }
                   ]
                 }
