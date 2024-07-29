@@ -211,7 +211,23 @@ jobs:
                       "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
                       "short": true
                     },
+                  ],
+              "blocks": [
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": ":sonarqube-icon: Sonarqube Dashboard"
+                      },
+                      "url": "https://sonarqube.healtech.au/",
+                      "style": "primary"
+                    }
                   ]
+                }
+              ]
                 }
               ]
             }
@@ -228,11 +244,11 @@ jobs:
               "attachments": [
                 {
                   "pretext": "Pull Request Workflow Status!",
-                  "color": "#1aff1a",
+                  "color": "#FF1A1A",
                   "fields": [
                     {
                       "title": "Sonar-Scan",
-                      "value": "Successful",
+                      "value": "Failed",
                       "short": true
                     },
                     {
@@ -240,8 +256,13 @@ jobs:
                       "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
                       "short": true
                     }
-                  ],
-                  "actions": [
+                  ]
+                }
+              ],
+              "blocks": [
+                {
+                  "type": "actions",
+                  "elements": [
                     {
                       "type": "button",
                       "text": {
@@ -255,6 +276,7 @@ jobs:
                 }
               ]
             }
+          
 
           
   Integration_Test:
