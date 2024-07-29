@@ -4,153 +4,83 @@ on:
   pull_request:
     branches:
       - master
-      - release/**
-      - develop
       - main
-      - feature
+      - develop
+      - release/**
 
 jobs:
-  Notify_Slack:
+  Run-Linter:
     runs-on: ubuntu-latest
+    permissions: write-all
     env:
-      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
-    outputs:
-      slack_initial_thread_ts: ${{ steps.Notify_workflow_starting.outputs.ts }}  
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
     steps:
-      - name: Notify Workflow Starting
-        id: Notify_Workflow_Starting
-        uses: slackapi/slack-github-action@v1.24.0
-        with:
-          channel-id: "C03FGLK0R7F"
-          payload: |
-            {
-              "attachments": [
-                {
-                  "pretext": "A new *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>* workflow has been initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* 🚀 ",
-                  "color": "#0073e6",
-                  "fields": [
-                    {
-                      "title": "Status",
-                      "value": "In Progress",
-                      "short": true
-                    },
-                    {
-                      "title": "Pull Request",
-                      "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
-                      "short": true
-                    }
-                  ]               
-                }
-              ]
-            }
-            
-  Linting:
-    runs-on: ubuntu-latest
-    needs: Notify_Slack
-    env:
-      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
-    steps:
-      - name: Checkout Code
-        id: Checkout_Code
-        uses: actions/checkout@v1
-        with:
-          fetch-depth: 0
+    - name: notify slack      
+      uses: act10ns/slack@v2
+      with:
+        channel: 's1-panel'
+        status: starting
+        steps: ${{ toJson(steps) }}
+      if: always()
       
-      - name: Setup SSH
-        id: Setup_SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
+    - name: Checkout code
+      id: Checkout-code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
-      - name: Setup Flutter
-        id: Setup_Flutter
-        uses: subosito/flutter-action@v2  
-        with:
-          flutter-version: '3.22.0'
+    - name: Install Java
+      id : Install-java
+      uses: actions/setup-java@v1
+      with:
+        java-version: '19.0.1'
 
-      - name: Install Dependencies
-        id: Install_Dependencies
-        run: flutter pub get
+    - name: Set up Flutter
+      id: Setup-flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.22.2' 
 
-      - name: Run Linter
-        id: Run_Linter
-        run: |
-          flutter analyze
-  
-      - name: Notify Linter Success
-        if: success()
-        id: Notify_Linter_Success
-        uses: slackapi/slack-github-action@v1.24.0
-        with:
-          channel-id: "C03FGLK0R7F"
-          payload: |
-            {
-              "thread_ts": "${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}",
-              "attachments": [
-                {
-                  "pretext": "Pull Request Workflow Status!",
-                  "color": "#1aff1a",
-                  "fields": [
-                    {
-                      "title": "Linting",
-                      "value": "Successful",
-                      "short": true
-                    },
-                    {
-                      "title": "Workflow",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
-                      "short": true
-                    }
-                  ]
-                }
-              ]
-            }
+    - name: Install dependencies
+      id: Install-dependencies
+      run: flutter pub get
 
-      - name: Notify Linter Failure
-        if: failure()
-        id: Notify_Linter_Failure
-        uses: slackapi/slack-github-action@v1.24.0
-        with:
-          channel-id: "C03FGLK0R7F"
-          payload: |
-            {
-              "thread_ts": "${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}",
-              "attachments": [
-                {
-                  "pretext": "Pull Request Workflow Status! :fire_engine:",
-                  "color": "#FF1A1A",
-                  "fields": [
-                    {
-                      "title": "Linting",
-                      "value": "Failed",
-                      "short": true
-                    },
-                    {
-                      "title": "Workflow",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
-                      "short": true
-                    }
-                  ]
-                }
-              ]
-            }
+    - name: Run linter
+      id: Run-linter
+      run: |
+        flutter --version
+        dart --version
+        flutter analyze
 
-  Sonar_Scanner:
+    - name: notify slack      
+      uses: act10ns/slack@v2
+      with:
+        channel: 's1-panel'
+        status: ${{ job.status }}
+        steps: ${{ toJson(steps) }}
+      if: always()
+
+  Sonar-Scanner:
     runs-on: ubuntu-latest
-    needs: Notify_Slack
     env:
-      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
     steps:
-      - name: Checkout Code
-        id: Checkout_Code
-        uses: actions/checkout@v1
+      - name: Notify Slack
+        uses: act10ns/slack@v2
         with:
-          fetch-depth: 0
+          channel: s1-panel
+          status: starting
+          steps: ${{ toJson(steps) }}
+        if: always()
       
+      - name: Checkout code
+        id: Checkout-code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 
+
       - name: Setup SSH
-        id: Setup_SSH
+        id: Setup-SSH
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
@@ -158,185 +88,38 @@ jobs:
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
       - name: Set up Flutter
-        id: Setup_Flutter
+        id: Setup-flutter
         uses: subosito/flutter-action@v2  
         with:
           flutter-version: '3.22.0'
 
       - name: Install dependencies
-        id: Install_Dependencies
+        id: Install-dependencies
         run: flutter pub get
-
-      - name: Sonar Scanner
-        id: Sonar_Scan
+     
+      - name: Sonar scanner
+        id: Sonar-scan
         env:
           SONAR_SCANNER_VER: sonar-scanner-cli-4.7.0.2747-linux
           SONAR_SCANNER_PATH: sonar-scanner-4.7.0.2747-linux/bin
         run: |
-          echo "Sonar Scanner"
           wget --quiet https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip
           unzip -q sonar-scanner-cli-4.7.0.2747-linux.zip
           $SONAR_SCANNER_PATH/sonar-scanner -v
           $SONAR_SCANNER_PATH/sonar-scanner -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
 
-      - name: Quality Gate Check
-        id: Quality_Gate_Check
+      - name: Quality gate check
+        id: Quality-gate-check
         uses: sonarsource/sonarqube-quality-gate-action@master
         timeout-minutes: 5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-      - name: Notify Sonar Success
-        if: success()
-        id: Notify_Sonar_Success
-        uses: slackapi/slack-github-action@v1.24.0
+      - name: Notify Slack
+        uses: act10ns/slack@v2
         with:
-          channel-id: "C03FGLK0R7F"
-          payload: |
-            {
-              "thread_ts": "${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}",
-              "attachments": [
-                {
-                  "pretext": "Pull Request Workflow Status!",
-                  "color": "#1aff1a",
-                  "fields": [
-                    {
-                      "title": "Sonar-Scan",
-                      "value": "Successful",
-                      "short": true
-                    },
-                    {
-                      "title": "Workflow",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
-                      "short": true
-                    }
-                  ]
-                }
-              ],
-              "blocks": [
-                {
-                  "type": "actions",
-                  "elements": [
-                    {
-                      "type": "button",
-                      "text": {
-                        "type": "plain_text",
-                        "text": ":sonarqube-icon: Sonarqube Dashboard"
-                      },
-                      "url": "https://sonarqube.healtech.au/dashboard?id=S1-REST-APIs"                    }
-                  ]
-                }
-              ]
-            }
-
-      - name: Notify Sonar Failure
-        if: failure()
-        id: Notify_Sonar_Failure
-        uses: slackapi/slack-github-action@v1.24.0
-        with:
-          channel-id: "C03FGLK0R7F"
-          payload: |
-            {
-              "thread_ts": "${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}",
-              "attachments": [
-                {
-                  "pretext": "Pull Request Workflow Status! :fire_engine:",
-                  "color": "#FF1A1A",
-                  "fields": [
-                    {
-                      "title": "Sonar-Scan",
-                      "value": "Failed",
-                      "short": true
-                    },
-                    {
-                      "title": "Workflow",
-                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
-                      "short": true
-                    }
-                  ]
-                }
-              ],
-              "blocks": [
-                {
-                  "type": "actions",
-                  "elements": [
-                    {
-                      "type": "button",
-                      "text": {
-                        "type": "plain_text",
-                        "text": ":sonarqube-icon: Sonarqube Dashboard"
-                      },
-                      "url": "https://sonarqube.healtech.au/dashboard?id=S1-REST-APIs"                    }
-                  ]
-                }
-              ]
-            }
-
-  Update_Slack:
-    runs-on: ubuntu-latest
-    needs: [Notify_Slack, Linting, Sonar_Scanner]
-    if: always()
-    env:
-      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
-    steps:
-      - name: Update Workflow Success
-        id: Update_Workflow_Success
-        if: needs.Notify_Slack.result == 'success' && needs.Linting.result == 'success' && needs.Sonar_Scanner.result == 'success'
-        uses: slackapi/slack-github-action@v1.26.0
-        with:
-          channel-id: "C03FGLK0R7F"
-          update-ts: ${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}
-          payload: |
-            {
-              "attachments": [
-                {
-                  "pretext": "A *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>* workflow initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* has completed successfully. ✅",
-                  "color": "#1aff1a",
-                  "fields": [
-                    {
-                      "title": "Status",
-                      "value": "Successful",
-                      "short": true
-                    },
-                    {
-                      "title": "Pull Request",
-                      "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
-                      "short": true
-                    }
-                  ]               
-                }
-              ]
-            }
-
-      - name: Update Workflow Failure
-        id: Update_Workflow_Failure
-        if: needs.Notify_Slack.result == 'failure' || needs.Linting.result == 'failure' || needs.Sonar_Scanner.result == 'failure' 
-        uses: slackapi/slack-github-action@v1.26.0
-        with:
-          channel-id: "C03FGLK0R7F"
-          update-ts: ${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}
-          payload: |
-            {
-              "attachments": [
-                {
-                  "pretext": "A *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>* workflow initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* has failed. 🚨",
-                  "color": "#FF1A1A",
-                  "fields": [
-                    {
-                      "title": "Status",
-                      "value": "Failed",
-                      "short": true
-                    },
-                    {
-                      "title": "Pull Request",
-                      "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
-                      "short": true
-                    }
-                  ]               
-                }
-              ]
-            }
-
-
-
+          channel: s1-panel
+          status: ${{ job.status }}
+          steps: ${{ toJson(steps) }}
+        if: always()
