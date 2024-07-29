@@ -241,17 +241,22 @@ jobs:
                       "short": true
                     }
                   ],
-                  "actions": [
+               "blocks": [
+                {
+                  "type": "actions",
+                  "elements": [
                     {
                       "type": "button",
                       "text": {
-                        "type": ":sonarqube-icon: View Sonarqube Dashboard",
+                        "type": "plain_text",
                         "text": ":sonarqube-icon: View Sonarqube Dashboard"
                       },
-                      "url": "https://sonarqube.healtech.au/",
-                      # "style": "primary"
+                      "url": "https://sonarqube.healtech.au/"
                     }
                   ]
+                }
+              ]
+            }
                 }
               ]
             }
