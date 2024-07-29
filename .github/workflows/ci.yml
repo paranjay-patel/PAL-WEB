@@ -251,14 +251,16 @@ jobs:
                       "type": "button",
                       "text": {
                         "type": "plain_text",
-                        "text": "View Sonarqube Dashboard"
+                        "text": ":sonarqube-icon: View Sonarqube Dashboard"
                       },
-                      "url": "https://sonarqube.healtech.au/"
+                      "url": "https://sonarqube.healtech.au/",
+                      "type": "primary"
                     }
                   ]
                 }
               ]
             }
+          
           
   Integration_Test:
     runs-on: ubuntu-latest
