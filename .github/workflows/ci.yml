@@ -25,7 +25,7 @@ jobs:
         id: Notify_Workflow_Starting
         uses: slackapi/slack-github-action@v1.24.0
         with:
-          channel-id: "C07BV8CMA3F"
+          channel-id: "C07B6R6NYUW"
           payload: |
             {
               "attachments": [
@@ -90,7 +90,7 @@ jobs:
         id: Notify_Linter_Success
         uses: slackapi/slack-github-action@v1.24.0
         with:
-          channel-id: "C07BV8CMA3F"
+          channel-id: "C07B6R6NYUW"
           payload: |
             {
               "thread_ts": "${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}",
@@ -119,7 +119,7 @@ jobs:
         id: Notify_Linter_Failure
         uses: slackapi/slack-github-action@v1.24.0
         with:
-          channel-id: "C07BV8CMA3F"
+          channel-id: "C07B6R6NYUW"
           payload: |
             {
               "thread_ts": "${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}",
@@ -199,7 +199,7 @@ jobs:
         id: Notify_Sonar_Success
         uses: slackapi/slack-github-action@v1.24.0
         with:
-          channel-id: "C07BV8CMA3F"
+          channel-id: "C07B6R6NYUW"
           payload: |
             {
               "thread_ts": "${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}",
@@ -242,7 +242,7 @@ jobs:
         id: Notify_Sonar_Failure
         uses: slackapi/slack-github-action@v1.24.0
         with:
-          channel-id: "C07BV8CMA3F"
+          channel-id: "C07B6R6NYUW"
           payload: |
             {
               "thread_ts": "${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}",
@@ -293,7 +293,7 @@ jobs:
         if: needs.Notify_Slack.result == 'success' && needs.Linting.result == 'success' && needs.Sonar_Scanner.result == 'success' 
         uses: slackapi/slack-github-action@v1.26.0
         with:
-          channel-id: "C07BV8CMA3F"
+          channel-id: "C07B6R6NYUW"
           update-ts: ${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}
           payload: |
             {
@@ -322,7 +322,7 @@ jobs:
         if: needs.Notify_Slack.result == 'failure' || needs.Linting.result == 'failure' || needs.Sonar_Scanner.result == 'failure'
         uses: slackapi/slack-github-action@v1.26.0
         with:
-          channel-id: "C07BV8CMA3F"
+          channel-id: "C07B6R6NYUW"
           update-ts: ${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}
           payload: |
             {
