@@ -4,122 +4,451 @@ on:
   pull_request:
     branches:
       - master
-      - main
-      - develop
       - release/**
+      - develop
+      - main
+      - feature
 
 jobs:
-  Run-Linter:
-    runs-on: ubuntu-latest
-    permissions: write-all
-    env:
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-    steps:
-    - name: notify slack      
-      uses: act10ns/slack@v2
-      with:
-        channel: 's1-panel'
-        status: starting
-        steps: ${{ toJson(steps) }}
-      if: always()
-      
-    - name: Checkout code
-      id: Checkout-code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-
-    - name: Install Java
-      id : Install-java
-      uses: actions/setup-java@v1
-      with:
-        java-version: '19.0.1'
-
-    - name: Set up Flutter
-      id: Setup-flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.22.2' 
-
-    - name: Install dependencies
-      id: Install-dependencies
-      run: flutter pub get
-
-    - name: Run linter
-      id: Run-linter
-      run: |
-        flutter --version
-        dart --version
-        flutter analyze
-
-    - name: notify slack      
-      uses: act10ns/slack@v2
-      with:
-        channel: 's1-panel'
-        status: ${{ job.status }}
-        steps: ${{ toJson(steps) }}
-      if: always()
-
-  Sonar-Scanner:
+  Notify_Slack:
     runs-on: ubuntu-latest
     env:
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
+    outputs:
+      slack_initial_thread_ts: ${{ steps.Notify_workflow_starting.outputs.ts }}  
     steps:
-      - name: Notify Slack
-        uses: act10ns/slack@v2
+      - name: Notify Workflow Starting
+        id: Notify_Workflow_Starting
+        uses: slackapi/slack-github-action@v1.24.0
         with:
-          channel: s1-panel
-          status: starting
-          steps: ${{ toJson(steps) }}
-        if: always()
+          channel-id: "C07B6R6NYUW"
+          payload: |
+            {
+              "attachments": [
+                {
+                  "pretext": "A new *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>* workflow has been initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* 🚀 ",
+                  "color": "#0073e6",
+                  "fields": [
+                    {
+                      "title": "Status",
+                      "value": "In Progress",
+                      "short": true
+                    },
+                    {
+                      "title": "Pull Request",
+                      "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
+                      "short": true
+                    }
+                  ]               
+                }
+              ]
+            }
+            
+  Linting:
+    runs-on: ubuntu-latest
+    needs: Notify_Slack
+    env:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
+    steps:
+      - name: Checkout Code
+        id: Checkout_Code
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 0
       
-      - name: Checkout code
-        id: Checkout-code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0 
+      # - name: Setup SSH
+      #   id: Setup_SSH
+      #   run: |
+      #     mkdir -p ~/.ssh
+      #     echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
+      #     chmod 600 ~/.ssh/id_rsa
+      #     ssh-keyscan github.com >> ~/.ssh/known_hosts
 
+      # - name: Setup Flutter
+      #   id: Setup_Flutter
+      #   uses: subosito/flutter-action@v2  
+      #   with:
+      #     flutter-version: '3.22.0'
+
+      # - name: Install Dependencies
+      #   id: Install_Dependencies
+      #   run: flutter pub get
+
+      # - name: Run Linter
+      #   id: Run_Linter
+      #   run: |
+      #     flutter analyze
+  
+      - name: Notify Linter Success
+        if: success()
+        id: Notify_Linter_Success
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          channel-id: "C07B6R6NYUW"
+          payload: |
+            {
+              "thread_ts": "${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}",
+              "attachments": [
+                {
+                  "pretext": "Pull Request Workflow Status!",
+                  "color": "#1aff1a",
+                  "fields": [
+                    {
+                      "title": "Linting",
+                      "value": "Successful",
+                      "short": true
+                    },
+                    {
+                      "title": "Workflow",
+                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
+                      "short": true
+                    }
+                  ]
+                }
+              ]
+            }
+
+      - name: Notify Linter Failure
+        if: failure()
+        id: Notify_Linter_Failure
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          channel-id: "C07B6R6NYUW"
+          payload: |
+            {
+              "thread_ts": "${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}",
+              "attachments": [
+                {
+                  "pretext": "Pull Request Workflow Status! :fire_engine:",
+                  "color": "#FF1A1A",
+                  "fields": [
+                    {
+                      "title": "Linting",
+                      "value": "Failed",
+                      "short": true
+                    },
+                    {
+                      "title": "Workflow",
+                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
+                      "short": true
+                    }
+                  ]
+                }
+              ]
+            }
+
+  Sonar_Scanner:
+    runs-on: ubuntu-latest
+    needs: Notify_Slack
+    env:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
+    steps:
+      - name: Checkout Code
+        id: Checkout_Code
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 0
+      
+      # - name: Setup SSH
+      #   id: Setup_SSH
+      #   run: |
+      #     mkdir -p ~/.ssh
+      #     echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
+      #     chmod 600 ~/.ssh/id_rsa
+      #     ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      # - name: Set up Flutter
+      #   id: Setup_Flutter
+      #   uses: subosito/flutter-action@v2  
+      #   with:
+      #     flutter-version: '3.22.0'
+
+      # - name: Install dependencies
+      #   id: Install_Dependencies
+      #   run: flutter pub get
+
+      # - name: Sonar Scanner
+      #   id: Sonar_Scan
+      #   env:
+      #     SONAR_SCANNER_VER: sonar-scanner-cli-4.7.0.2747-linux
+      #     SONAR_SCANNER_PATH: sonar-scanner-4.7.0.2747-linux/bin
+      #   run: |
+      #     echo "Sonar Scanner"
+      #     wget --quiet https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip
+      #     unzip -q sonar-scanner-cli-4.7.0.2747-linux.zip
+      #     $SONAR_SCANNER_PATH/sonar-scanner -v
+      #     $SONAR_SCANNER_PATH/sonar-scanner -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+
+      # - name: Quality Gate Check
+      #   id: Quality_Gate_Check
+      #   uses: sonarsource/sonarqube-quality-gate-action@master
+      #   timeout-minutes: 5
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+      - name: Notify Sonar Success
+        if: success()
+        id: Notify_Sonar_Success
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          channel-id: "C07B6R6NYUW"
+          payload: |
+            {
+              "thread_ts": "${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}",
+              "attachments": [
+                {
+                  "pretext": "Pull Request Workflow Status!",
+                  "color": "#1aff1a",
+                  "fields": [
+                    {
+                      "title": "Sonar-Scan",
+                      "value": "Successful",
+                      "short": true
+                    },
+                    {
+                      "title": "Workflow",
+                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
+                      "short": true
+                    }
+                  ]
+                }
+              ]
+            }
+
+      - name: Notify Sonar Failure
+        if: failure()
+        id: Notify_Sonar_Failure
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          channel-id: "C07B6R6NYUW"
+          payload: |
+            {
+              "thread_ts": "${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}",
+              "attachments": [
+                {
+                  "pretext": "Pull Request Workflow Status! :fire_engine:",
+                  "color": "#FF1A1A",
+                  "fields": [
+                    {
+                      "title": "Sonar-Scan",
+                      "value": "Failed",
+                      "short": true
+                    },
+                    {
+                      "title": "Workflow",
+                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
+                      "short": true
+                    }
+                  ]
+                }
+              ]
+            }
+
+  Integration_Test:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' && (github.base_ref == 'master' || github.base_ref == 'main' || github.base_ref == 'develop' || startsWith(github.base_ref, 'release')) }} 
+    environment: manual
+    needs: Notify_Slack
+    strategy:
+      matrix:
+        test:
+          - sauna_session_test.dart
+          - sleep_mode_test.dart
+          - temperature_test.dart
+          - timer_test.dart
+          - timer_session_test.dart
+    env:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
+    steps:
+      - name: Checkout Code
+        id: Checkout_Code
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 0
+      
       - name: Setup SSH
-        id: Setup-SSH
+        id: Setup_SSH
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      - name: Set up Flutter
-        id: Setup-flutter
+      - name: Setup Flutter
+        id: Setup_Flutter
         uses: subosito/flutter-action@v2  
         with:
           flutter-version: '3.22.0'
 
-      - name: Install dependencies
-        id: Install-dependencies
+      - name: Install Dependencies
+        id: Install_Dependencies
         run: flutter pub get
-     
-      - name: Sonar scanner
-        id: Sonar-scan
-        env:
-          SONAR_SCANNER_VER: sonar-scanner-cli-4.7.0.2747-linux
-          SONAR_SCANNER_PATH: sonar-scanner-4.7.0.2747-linux/bin
+
+      - name: Flutter Enable Web
+        id: Flutter-Enable-Web
+        run: flutter config --enable-web
+
+      - name: Install Google Chrome
+        id: install_Google_Chrome
         run: |
-          wget --quiet https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip
-          unzip -q sonar-scanner-cli-4.7.0.2747-linux.zip
-          $SONAR_SCANNER_PATH/sonar-scanner -v
-          $SONAR_SCANNER_PATH/sonar-scanner -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+          wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt-get update 
+          sudo dpkg -i google-chrome-stable_current_amd64.deb
+          sudo apt-get install -f -y
+          echo "google-chrome --version"
+          google-chrome --version 
 
-      - name: Quality gate check
-        id: Quality-gate-check
-        uses: sonarsource/sonarqube-quality-gate-action@master
-        timeout-minutes: 5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      - name: Install Chromedriver
+        id: Install_Chromedriver
+        run: |
+          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+.\d+')
+          echo "Chrome version: $CHROME_VERSION"
+          wget -q "https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chromedriver-linux64.zip"
+          unzip chromedriver-linux64.zip
+          cd chromedriver-linux64
+          chmod +x chromedriver
+          sudo mv chromedriver /usr/bin/
+          chromedriver --version
+          chromedriver --port=4444 &
 
-      - name: Notify Slack
-        uses: act10ns/slack@v2
+      - name: Integration Test
+        id: integration_test
+        run: |          
+          flutter drive --driver=test_driver/integration_test.dart --target=test/${{ matrix.test }} --flavor=red --dart-define=flavor=red -d web-server --release --browser-name=chrome
+
+      - name: Notify Integration Test Success
+        if: success()
+        id: Notify_Integration_Test_Success
+        uses: slackapi/slack-github-action@v1.24.0
         with:
-          channel: s1-panel
-          status: ${{ job.status }}
-          steps: ${{ toJson(steps) }}
-        if: always()
+          channel-id: "C07B6R6NYUW"
+          payload: |
+            {
+              "thread_ts": "${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}",
+              "attachments": [
+                {
+                  "pretext": "Pull Request Workflow Status!",
+                  "color": "#1aff1a",
+                  "fields": [
+                    {
+                      "title": "Integration Test",
+                      "value": "Successful",
+                      "short": true
+                    },
+                    {
+                      "title": "Workflow",
+                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
+                      "short": true
+                    },
+                    {
+                      "title": "Test Case",
+                      "value": "<https://github.com/Healtech-Pty-Ltd/S1-Web/blob/develop/test/${{ matrix.test }}|${{ matrix.test }}>",
+                      "short": false
+                    }
+                  ]
+                }
+              ]
+            }
+
+      - name: Notify Integration Test Failure
+        if: failure()
+        id: Notify_Integration_Test_Failure
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          channel-id: "C07B6R6NYUW"
+          payload: |
+            {
+              "thread_ts": "${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}",
+              "attachments": [
+                {
+                  "pretext": "Pull Request Workflow Status! :fire_engine:",
+                  "color": "#FF1A1A",
+                  "fields": [
+                    {
+                      "title": "Integration Test",
+                      "value": "Failed",
+                      "short": true
+                    },
+                    {
+                      "title": "Workflow",
+                      "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
+                      "short": true
+                    },
+                    {
+                      "title": "Test Case",
+                      "value": "<https://github.com/Healtech-Pty-Ltd/S1-Web/blob/develop/test/${{ matrix.test }}|${{ matrix.test }}>",
+                      "short": false
+                    }
+                  ]
+                }
+              ]
+            }
+
+  Update_Slack:
+    runs-on: ubuntu-latest
+    needs: [Notify_Slack, Linting, Sonar_Scanner, Integration_Test]
+    if: always()
+    env:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
+    steps:
+      - name: Update Workflow Success
+        id: Update_Workflow_Success
+        if: needs.Notify_Slack.result == 'success' && needs.Linting.result == 'success' && needs.Sonar_Scanner.result == 'success' && needs.Integration_Test.result == 'success'
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: "C07B6R6NYUW"
+          update-ts: ${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}
+          payload: |
+            {
+              "attachments": [
+                {
+                  "pretext": "A *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>* workflow initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* has completed successfully. ✅",
+                  "color": "#1aff1a",
+                  "fields": [
+                    {
+                      "title": "Status",
+                      "value": "Successful",
+                      "short": true
+                    },
+                    {
+                      "title": "Pull Request",
+                      "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
+                      "short": true
+                    }
+                  ]               
+                }
+              ]
+            }
+
+      - name: Update Workflow Failure
+        id: Update_Workflow_Failure
+        if: needs.Notify_Slack.result == 'failure' || needs.Linting.result == 'failure' || needs.Sonar_Scanner.result == 'failure' || needs.Integration_Test.result == 'failure'
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: "C07B6R6NYUW"
+          update-ts: ${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}
+          payload: |
+            {
+              "attachments": [
+                {
+                  "pretext": "A *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>* workflow initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* has failed. 🚨",
+                  "color": "#FF1A1A",
+                  "fields": [
+                    {
+                      "title": "Status",
+                      "value": "Failed",
+                      "short": true
+                    },
+                    {
+                      "title": "Pull Request",
+                      "value": "<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>",
+                      "short": true
+                    }
+                  ]               
+                }
+              ]
+            }
+
+
+
