@@ -270,7 +270,7 @@ jobs:
                         "text": ":sonarqube-icon: Sonarqube Dashboard"
                       },
                       "url": "https://sonarqube.healtech.au/",
-                      "style": "primary"
+                      "style": "danger"
                     }
                   ]
                 }
