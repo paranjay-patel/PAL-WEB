@@ -10,6 +10,7 @@ on:
       - release/**
       - develop
       - main
+      - feature
 
 jobs:
   Notify_Slack:
