@@ -187,7 +187,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-
       - name: Notify Sonar Success
         if: success()
         id: Notify_Sonar_Success
@@ -338,3 +337,6 @@ jobs:
                 }
               ]
             }
+
+
+
