@@ -1,16 +1,20 @@
 name: Pull Request
 
 on:
+  push:
+    branches:
+      - HT-211
   pull_request:
     branches:
       - master
       - release/**
       - develop
       - main
-      - feature
+
 jobs:
   Notify_Slack:
     runs-on: ubuntu-latest
+    permissions: write-all
     env:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
     outputs:
@@ -20,7 +24,7 @@ jobs:
         id: Notify_Workflow_Starting
         uses: slackapi/slack-github-action@v1.24.0
         with:
-          channel-id: "C07B6R6NYUW"
+          channel-id: "C07BV8CMA3F"
           payload: |
             {
               "attachments": [
@@ -46,6 +50,8 @@ jobs:
   Linting:
     runs-on: ubuntu-latest
     needs: Notify_Slack
+    permissions: write-all
+
     env:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
     steps:
@@ -63,27 +69,27 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      # - name: Setup Flutter
-      #   id: Setup_Flutter
-      #   uses: subosito/flutter-action@v2  
-      #   with:
-      #     flutter-version: '3.22.0'
+      - name: Setup Flutter
+        id: Setup_Flutter
+        uses: subosito/flutter-action@v2  
+        with:
+          flutter-version: '3.22.0'
 
-      # - name: Install Dependencies
-      #   id: Install_Dependencies
-      #   run: flutter pub get
+      - name: Install Dependencies
+        id: Install_Dependencies
+        run: flutter pub get
 
-      # - name: Run Linter
-      #   id: Run_Linter
-      #   run: |
-      #     flutter analyze
+      - name: Run Linter
+        id: Run_Linter
+        run: |
+          flutter analyze
   
       - name: Notify Linter Success
         if: success()
         id: Notify_Linter_Success
         uses: slackapi/slack-github-action@v1.24.0
         with:
-          channel-id: "C07B6R6NYUW"
+          channel-id: "C07BV8CMA3F"
           payload: |
             {
               "thread_ts": "${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}",
@@ -112,7 +118,7 @@ jobs:
         id: Notify_Linter_Failure
         uses: slackapi/slack-github-action@v1.24.0
         with:
-          channel-id: "C07B6R6NYUW"
+          channel-id: "C07BV8CMA3F"
           payload: |
             {
               "thread_ts": "${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}",
@@ -138,6 +144,7 @@ jobs:
 
   Sonar_Scanner:
     runs-on: ubuntu-latest
+    permissions: write-all
     needs: Notify_Slack
     env:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   
@@ -156,15 +163,15 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      # - name: Set up Flutter
-      #   id: Setup_Flutter
-      #   uses: subosito/flutter-action@v2  
-      #   with:
-      #     flutter-version: '3.22.0'
+      - name: Set up Flutter
+        id: Setup_Flutter
+        uses: subosito/flutter-action@v2  
+        with:
+          flutter-version: '3.22.0'
 
-      # - name: Install dependencies
-      #   id: Install_Dependencies
-      #   run: flutter pub get
+      - name: Install dependencies
+        id: Install_Dependencies
+        run: flutter pub get
 
       - name: Sonar Scanner
         id: Sonar_Scan
@@ -191,7 +198,7 @@ jobs:
         id: Notify_Sonar_Success
         uses: slackapi/slack-github-action@v1.24.0
         with:
-          channel-id: "C07B6R6NYUW"
+          channel-id: "C07BV8CMA3F"
           payload: |
             {
               "thread_ts": "${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}",
@@ -234,7 +241,7 @@ jobs:
         id: Notify_Sonar_Failure
         uses: slackapi/slack-github-action@v1.24.0
         with:
-          channel-id: "C07B6R6NYUW"
+          channel-id: "C07BV8CMA3F"
           payload: |
             {
               "thread_ts": "${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}",
@@ -274,6 +281,7 @@ jobs:
 
   Update_Slack:
     runs-on: ubuntu-latest
+    permissions: write-all
     needs: [Notify_Slack, Linting, Sonar_Scanner]
     if: always()
     env:
@@ -284,7 +292,7 @@ jobs:
         if: needs.Notify_Slack.result == 'success' && needs.Linting.result == 'success' && needs.Sonar_Scanner.result == 'success' 
         uses: slackapi/slack-github-action@v1.26.0
         with:
-          channel-id: "C07B6R6NYUW"
+          channel-id: "C07BV8CMA3F"
           update-ts: ${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}
           payload: |
             {
@@ -313,7 +321,7 @@ jobs:
         if: needs.Notify_Slack.result == 'failure' || needs.Linting.result == 'failure' || needs.Sonar_Scanner.result == 'failure'
         uses: slackapi/slack-github-action@v1.26.0
         with:
-          channel-id: "C07B6R6NYUW"
+          channel-id: "C07BV8CMA3F"
           update-ts: ${{ needs.Notify_Slack.outputs.slack_initial_thread_ts }}
           payload: |
             {
