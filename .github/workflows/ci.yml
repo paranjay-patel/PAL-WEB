@@ -240,8 +240,10 @@ jobs:
                       "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
                       "short": true
                     }
-                  ],
-               "blocks": [
+                  ]
+                }
+              ],
+              "blocks": [
                 {
                   "type": "actions",
                   "elements": [
@@ -249,7 +251,7 @@ jobs:
                       "type": "button",
                       "text": {
                         "type": "plain_text",
-                        "text": ":sonarqube-icon: View Sonarqube Dashboard"
+                        "text": "View Sonarqube Dashboard"
                       },
                       "url": "https://sonarqube.healtech.au/"
                     }
@@ -257,10 +259,7 @@ jobs:
                 }
               ]
             }
-                }
-              ]
-            }
-
+          
   Integration_Test:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'pull_request' && (github.base_ref == 'master' || github.base_ref == 'main' || github.base_ref == 'develop' || startsWith(github.base_ref, 'release')) }} 
