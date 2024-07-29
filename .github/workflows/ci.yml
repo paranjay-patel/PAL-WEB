@@ -213,6 +213,20 @@ jobs:
                     }
                   ]
                 }
+              ],
+              "blocks": [
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": ":sonarqube-icon: Sonarqube Dashboard"
+                      },
+                      "url": "https://sonarqube.healtech.au/dashboard?id=S1-REST-APIs"                    }
+                  ]
+                }
               ]
             }
 
@@ -240,6 +254,20 @@ jobs:
                       "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>",
                       "short": true
                     }
+                  ]
+                }
+              ],
+              "blocks": [
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": ":sonarqube-icon: Sonarqube Dashboard"
+                      },
+                      "url": "https://sonarqube.healtech.au/dashboard?id=S1-REST-APIs"                    }
                   ]
                 }
               ]
