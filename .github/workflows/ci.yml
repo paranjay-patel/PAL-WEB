@@ -149,35 +149,35 @@ jobs:
         with:
           fetch-depth: 0
       
-      - name: Setup SSH
-        id: Setup_SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
+      # - name: Setup SSH
+      #   id: Setup_SSH
+      #   run: |
+      #     mkdir -p ~/.ssh
+      #     echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
+      #     chmod 600 ~/.ssh/id_rsa
+      #     ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      - name: Set up Flutter
-        id: Setup_Flutter
-        uses: subosito/flutter-action@v2  
-        with:
-          flutter-version: '3.22.0'
+      # - name: Set up Flutter
+      #   id: Setup_Flutter
+      #   uses: subosito/flutter-action@v2  
+      #   with:
+      #     flutter-version: '3.22.0'
 
-      - name: Install dependencies
-        id: Install_Dependencies
-        run: flutter pub get
+      # - name: Install dependencies
+      #   id: Install_Dependencies
+      #   run: flutter pub get
 
-      - name: Sonar Scanner
-        id: Sonar_Scan
-        env:
-          SONAR_SCANNER_VER: sonar-scanner-cli-4.7.0.2747-linux
-          SONAR_SCANNER_PATH: sonar-scanner-4.7.0.2747-linux/bin
-        run: |
-          echo "Sonar Scanner"
-          wget --quiet https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip
-          unzip -q sonar-scanner-cli-4.7.0.2747-linux.zip
-          $SONAR_SCANNER_PATH/sonar-scanner -v
-          $SONAR_SCANNER_PATH/sonar-scanner -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+      # - name: Sonar Scanner
+      #   id: Sonar_Scan
+      #   env:
+      #     SONAR_SCANNER_VER: sonar-scanner-cli-4.7.0.2747-linux
+      #     SONAR_SCANNER_PATH: sonar-scanner-4.7.0.2747-linux/bin
+      #   run: |
+      #     echo "Sonar Scanner"
+      #     wget --quiet https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip
+      #     unzip -q sonar-scanner-cli-4.7.0.2747-linux.zip
+      #     $SONAR_SCANNER_PATH/sonar-scanner -v
+      #     $SONAR_SCANNER_PATH/sonar-scanner -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
 
       - name: Quality Gate Check
         id: Quality_Gate_Check
@@ -245,11 +245,11 @@ jobs:
                     {
                       "type": "button",
                       "text": {
-                        "type": "plain_text",
+                        "type": ":sonarqube-icon: View Sonarqube Dashboard",
                         "text": ":sonarqube-icon: View Sonarqube Dashboard"
                       },
                       "url": "https://sonarqube.healtech.au/",
-                      "style": "primary"
+                      # "style": "primary"
                     }
                   ]
                 }
