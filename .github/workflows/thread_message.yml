@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - master
-      - feature/*
+      - feature
 
 jobs:
   static-code-analysis:
