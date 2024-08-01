@@ -1,8 +1,16 @@
-name: Use Stored Slack Thread Timestamp
+name: pull request reply
 
 on:
-  workflow_dispatch:
-
+  push:
+    branches:
+      - reply-notification-artifact
+  pull_request:
+    branches:
+      - master
+      - release/**
+      - develop
+      - main
+      - feature
 jobs:
   use_slack_thread_ts:
     runs-on: ubuntu-latest
