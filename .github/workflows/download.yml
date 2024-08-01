@@ -5,9 +5,9 @@ on:
     workflows: ["Pull Request"]
     types:
       - completed
-  push:
-    branches:
-      - reply-notification-artifact
+  # push:
+  #   branches:
+  #     - reply-notification-artifact
   pull_request:
     branches:
       - master
