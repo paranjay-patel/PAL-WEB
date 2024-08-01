@@ -9,7 +9,7 @@ on:
       - main
       - master
       - feature
-
+  
 jobs:
   thread-msg:
     runs-on: ubuntu-latest
