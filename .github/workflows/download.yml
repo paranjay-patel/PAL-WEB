@@ -1,6 +1,6 @@
 name: pull request reply
 
-on:
+on: 
   workflow_run:
     workflows: ["Pull Request"]
     types:
