@@ -9,6 +9,7 @@ on:
       - main
       - master
       - feature
+      - reply-notification-artifact
   
 jobs:
   thread-msg:
