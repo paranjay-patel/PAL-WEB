@@ -23,25 +23,34 @@ jobs:
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         SLACK_API_TOKEN: ${{ secrets.SLACK_API_TOKEN }}
+        SLACK_CHANNEL: "github-notification"
       run: |
-        echo "###################################  start"
         PR_NUMBER="${{ github.event.number }}"
         PR_TITLE="${{ github.event.pull_request.title }}"
         REPO_NAME="${{ github.repository }}"
         WORKFLOW_ID="${{ github.run_id }}"
-        SLACK_CHANNEL="github-notification"
-       
-        # Check if there is a thread_ts (thread timestamp) associated with this PR
-        THREAD_TS=$(curl -s "https://slack.com/api/conversations.history?token=${SLACK_API_TOKEN}&channel=${SLACK_CHANNEL}" | jq -r ".messages[] | select(.text | contains(\"PR #${PR_NUMBER}\")) | .ts")
-        
-        echo "THREAD_TS: ${THREAD_TS}"
-        if [ -z "$THREAD_TS" ]; then
+
+        echo "PR_NUMBER=${PR_NUMBER}"
+        echo "PR_TITLE=${PR_TITLE}"
+        echo "REPO_NAME=${REPO_NAME}"
+        echo "WORKFLOW_ID=${WORKFLOW_ID}"
+
+        # Fetch message history from Slack channel
+        RESPONSE=$(curl -s -H "Authorization: Bearer ${SLACK_API_TOKEN}" "https://slack.com/api/conversations.history?channel=${SLACK_CHANNEL}")
+        echo "Slack API Response: $RESPONSE"
+
+        # Extract thread_ts if available
+        THREAD_TS=$(echo "$RESPONSE" | jq -r ".messages[] | select(.text | contains(\"PR #${PR_NUMBER}\")) | .ts")
+        echo "THREAD_TS=${THREAD_TS}"
+
+        if [ -z "$THREAD_TS" ] || [ "$THREAD_TS" == "null" ]; then
           # Send a new message if no thread_ts found
           RESPONSE=$(curl -X POST -H 'Content-type: application/json' --data "{
             \"channel\": \"${SLACK_CHANNEL}\",
             \"text\": \"Workflow for PR #${PR_NUMBER} (${PR_TITLE}) in ${REPO_NAME} started. [Workflow Details](https://github.com/${REPO_NAME}/actions/runs/${WORKFLOW_ID})\"
           }" $SLACK_WEBHOOK_URL)
           THREAD_TS=$(echo "$RESPONSE" | jq -r '.ts')
+          echo "New THREAD_TS=${THREAD_TS}"
         else
           # Send a threaded message
           curl -X POST -H 'Content-type: application/json' --data "{
@@ -49,4 +58,5 @@ jobs:
             \"text\": \"Workflow for PR #${PR_NUMBER} (${PR_TITLE}) in ${REPO_NAME} started. [Workflow Details](https://github.com/${REPO_NAME}/actions/runs/${WORKFLOW_ID})\",
             \"thread_ts\": \"$THREAD_TS\"
           }" $SLACK_WEBHOOK_URL
+          echo "Message sent to thread ${THREAD_TS}"
         fi
