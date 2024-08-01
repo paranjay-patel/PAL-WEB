@@ -24,6 +24,7 @@ jobs:
         with:
           name: slack-thread-ts
           path: .
+          github-token: ${{ secrets.WORKFLOW_TOKEN }}   
 
       - name: Read and use Slack thread timestamp
         id: read_ts
