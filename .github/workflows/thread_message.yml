@@ -11,7 +11,7 @@ on:
       - feature
 
 jobs:
-  static-code-analysis:
+  thread-msg:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,9 +24,9 @@ jobs:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       run: |
         PR_NUMBER=${{ github.event.number }}
-        PR_TITLE=$(echo "${{ github.event.pull_request.title }}")
-        REPO_NAME=$(echo "${{ github.repository }}")
-        WORKFLOW_ID=$(echo "${{ github.run_id }}")
+        PR_TITLE=${{ github.event.pull_request.title }}
+        REPO_NAME=${{ github.repository }}
+        WORKFLOW_ID=${{ github.run_id }}
         SLACK_CHANNEL="github-notification"
 
         # Check if there is a thread_ts (thread timestamp) associated with this PR
