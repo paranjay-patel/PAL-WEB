@@ -23,7 +23,7 @@ jobs:
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       run: |
-        PR_NUMBER=$(echo "${{ github.event.number }}")
+        PR_NUMBER=${{ github.event.number }}
         PR_TITLE=$(echo "${{ github.event.pull_request.title }}")
         REPO_NAME=$(echo "${{ github.repository }}")
         WORKFLOW_ID=$(echo "${{ github.run_id }}")
