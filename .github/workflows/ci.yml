@@ -47,27 +47,37 @@ jobs:
                 }
               ]
             }
+
+      - name: Save Slack thread timestamp to file
+        run: |
+          echo "slack_initial_thread_ts=${{ steps.Notify_Workflow_Starting.outputs.ts }}" > slack_thread_ts.txt
+
+      - name: Upload Slack thread timestamp artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: slack-thread-ts
+          path: slack_thread_ts.txt
+
       - name: print time stamp
-        if: success()
         id: print_time_stamp
         run: |
           echo "Slack initial thread TS: ${{ steps.Notify_workflow_starting.outputs.slack_initial_thread_ts }}"
             
-  store-info:
-    runs-on: ubuntu-latest
+  # store-info:
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+  #   steps:
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v3
 
-      - name: Capture Pull Request Information
-        run: |
-          echo "PR_TITLE=${{ github.event.pull_request.title }}" > pr_info.txt
-          echo "PR_NUMBER=${{ github.event.pull_request.number }}" >> pr_info.txt
+  #     - name: Capture Pull Request Information
+  #       run: |
+  #         echo "PR_TITLE=${{ github.event.pull_request.title }}" > pr_info.txt
+  #         echo "PR_NUMBER=${{ github.event.pull_request.number }}" >> pr_info.txt
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: pr-info
-          path: pr_info.txt
+  #     - name: Upload Artifact
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: pr-info
+  #         path: pr_info.txt
           
