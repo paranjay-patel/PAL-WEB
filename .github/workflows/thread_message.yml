@@ -24,15 +24,17 @@ jobs:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         SLACK_API_TOKEN: ${{ secrets.SLACK_API_TOKEN }}
       run: |
+        echo "###################################  start"
         PR_NUMBER="${{ github.event.number }}"
         PR_TITLE="${{ github.event.pull_request.title }}"
         REPO_NAME="${{ github.repository }}"
         WORKFLOW_ID="${{ github.run_id }}"
         SLACK_CHANNEL="#your-slack-channel"
-
+       
         # Check if there is a thread_ts (thread timestamp) associated with this PR
         THREAD_TS=$(curl -s "https://slack.com/api/conversations.history?token=${SLACK_API_TOKEN}&channel=${SLACK_CHANNEL}" | jq -r ".messages[] | select(.text | contains(\"PR #${PR_NUMBER}\")) | .ts")
-
+        
+        echo "THREAD_TS: ${THREAD_TS}"
         if [ -z "$THREAD_TS" ]; then
           # Send a new message if no thread_ts found
           RESPONSE=$(curl -X POST -H 'Content-type: application/json' --data "{
