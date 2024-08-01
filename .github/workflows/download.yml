@@ -1,6 +1,10 @@
 name: pull request reply
 
 on:
+  workflow_run:
+    workflows: ["Pull Request"]
+    types:
+      - completed
   push:
     branches:
       - reply-notification-artifact
@@ -24,11 +28,13 @@ jobs:
         with:
           name: slack-thread-ts
           path: .
-          github-token: ${{ secrets.WORKFLOW_TOKEN }}   
+          github-token: ${{ secrets.WORKFLOW_TOKEN }} 
+          run-id: ${{ github.event.workflow_run.id }}  
 
       - name: Read and use Slack thread timestamp
         id: read_ts
         run: |
+          cat slack_thread_ts.txt
           SLACK_THREAD_TS=$(cat slack_thread_ts.txt | grep slack_initial_thread_ts | cut -d'=' -f2-)
           echo "Slack initial thread TS: $SLACK_THREAD_TS"
           echo "::set-output name=slack_thread_ts::$SLACK_THREAD_TS"
