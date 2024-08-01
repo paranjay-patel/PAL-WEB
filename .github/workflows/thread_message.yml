@@ -1,0 +1,46 @@
+name: thread message
+
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+      - feature/*
+
+jobs:
+  static-code-analysis:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Send Slack Notification
+      id: slack
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      run: |
+        PR_NUMBER=$(echo "${{ github.event.number }}")
+        PR_TITLE=$(echo "${{ github.event.pull_request.title }}")
+        REPO_NAME=$(echo "${{ github.repository }}")
+        WORKFLOW_ID=$(echo "${{ github.run_id }}")
+        SLACK_CHANNEL="github-notification"
+
+        # Check if there is a thread_ts (thread timestamp) associated with this PR
+        THREAD_TS=$(curl -s "https://slack.com/api/conversations.history?token=${{ secrets.SLACK_API_TOKEN }}&channel=${SLACK_CHANNEL}" | jq -r ".messages[] | select(.text | contains(\"PR #${PR_NUMBER}\")) | .ts")
+
+        if [ -z "$THREAD_TS" ]; then
+          # Send a new message if no thread_ts found
+          RESPONSE=$(curl -X POST -H 'Content-type: application/json' --data "{
+            \"channel\": \"${SLACK_CHANNEL}\",
+            \"text\": \"Workflow for PR #${PR_NUMBER} (${PR_TITLE}) in ${REPO_NAME} started. [Workflow Details](https://github.com/${REPO_NAME}/actions/runs/${WORKFLOW_ID})\",
+          }" $SLACK_WEBHOOK_URL)
+          THREAD_TS=$(echo "$RESPONSE" | jq -r '.ts')
+        else
+          # Send a threaded message
+          curl -X POST -H 'Content-type: application/json' --data "{
+            \"channel\": \"${SLACK_CHANNEL}\",
+            \"text\": \"Workflow for PR #${PR_NUMBER} (${PR_TITLE}) in ${REPO_NAME} started. [Workflow Details](https://github.com/${REPO_NAME}/actions/runs/${WORKFLOW_ID})\",
+            \"thread_ts\": \"$THREAD_TS\"
+          }" $SLACK_WEBHOOK_URL
+        fi
