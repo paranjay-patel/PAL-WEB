@@ -5,16 +5,16 @@ on:
     workflows: ["Pull Request"]
     types:
       - completed
-  # push:
-  #   branches:
-  #     - reply-notification-artifact
-  # pull_request:
-  #   branches:
-  #     - master
-  #     - release/**
-  #     - develop
-  #     - main
-  #     - feature
+  push:
+    branches:
+      - reply-notification-artifact
+  pull_request:
+    branches:
+      - master
+      - release/**
+      - develop
+      - main
+      - feature
 jobs:
   use_slack_thread_ts:
     runs-on: ubuntu-latest
