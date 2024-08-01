@@ -1,9 +1,9 @@
 name: thread message
 
 on:
-  push:
-    branches:
-      - reply-notification-artifact
+  # push:
+  #   branches:
+  #     - reply-notification-artifact
   pull_request:
     branches:
       - main
