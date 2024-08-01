@@ -31,7 +31,7 @@ jobs:
 
         # Check if there is a thread_ts (thread timestamp) associated with this PR
         THREAD_TS=$(curl -s "https://slack.com/api/conversations.history?token=${{ secrets.SLACK_API_TOKEN }}&channel=${SLACK_CHANNEL}" | jq -r ".messages[] | select(.text | contains(\"PR #${PR_NUMBER}\")) | .ts")
-
+        ehoc "THREAD_TS: ${THREAD_TS}"
         if [ -z "$THREAD_TS" ]; then
           # Send a new message if no thread_ts found
           RESPONSE=$(curl -X POST -H 'Content-type: application/json' --data "{
