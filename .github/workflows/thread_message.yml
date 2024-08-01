@@ -38,14 +38,16 @@ jobs:
 
         # Fetch message history from Slack channel
         RESPONSE=$(curl -s -H "Authorization: Bearer ${SLACK_API_TOKEN}" "https://slack.com/api/conversations.history?channel=${SLACK_CHANNEL}")
-        echo "Slack API Response: $RESPONSE"
+        #echo "Slack API Response: $RESPONSE"
 
         # Extract thread_ts if available
+        ehco "################################################  Extract thread_ts if available  "
         THREAD_TS=$(echo "$RESPONSE" | jq -r ".messages[] | select(.text | contains(\"PR #${PR_NUMBER}\")) | .ts")
         echo "THREAD_TS=${THREAD_TS}"
 
         if [ -z "$THREAD_TS" ] || [ "$THREAD_TS" == "null" ]; then
           # Send a new message if no thread_ts found
+          echo "##########################################   no thread_ts found"
           RESPONSE=$(curl -X POST -H 'Content-type: application/json' --data "{
             \"channel\": \"${SLACK_CHANNEL}\",
             \"text\": \"Workflow for PR #${PR_NUMBER} (${PR_TITLE}) in ${REPO_NAME} started. [Workflow Details](https://github.com/${REPO_NAME}/actions/runs/${WORKFLOW_ID})\"
@@ -54,6 +56,7 @@ jobs:
           echo "New THREAD_TS=${THREAD_TS}"
         else
           # Send a threaded message
+          echo "##########################################    thread_ts found"
           curl -X POST -H 'Content-type: application/json' --data "{
             \"channel\": \"${SLACK_CHANNEL}\",
             \"text\": \"Workflow for PR #${PR_NUMBER} (${PR_TITLE}) in ${REPO_NAME} started. [Workflow Details](https://github.com/${REPO_NAME}/actions/runs/${WORKFLOW_ID})\",
