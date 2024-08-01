@@ -28,7 +28,7 @@ jobs:
         PR_TITLE=${{ github.event.pull_request.title }}
         REPO_NAME=${{ github.repository }}
         WORKFLOW_ID=${{ github.run_id }}
-        SLACK_CHANNEL="github-notification"
+        SLACK_CHANNEL="#github-notification"
         ehco "#########################  2"
 
         # Check if there is a thread_ts (thread timestamp) associated with this PR
