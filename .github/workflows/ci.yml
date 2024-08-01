@@ -51,6 +51,7 @@ jobs:
       - name: Save Slack thread timestamp to file
         run: |
           echo "slack_initial_thread_ts=${{ steps.Notify_Workflow_Starting.outputs.ts }}" > slack_thread_ts.txt
+          cat slack_thread_ts.txt
 
       - name: Upload Slack thread timestamp artifact
         uses: actions/upload-artifact@v3
