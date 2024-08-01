@@ -1,0 +1,30 @@
+name: Use Stored Slack Thread Timestamp
+
+on:
+  workflow_dispatch:
+
+jobs:
+  use_slack_thread_ts:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Download Slack thread timestamp artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: slack-thread-ts
+          path: .
+
+      - name: Read and use Slack thread timestamp
+        id: read_ts
+        run: |
+          SLACK_THREAD_TS=$(cat slack_thread_ts.txt | grep slack_initial_thread_ts | cut -d'=' -f2-)
+          echo "Slack initial thread TS: $SLACK_THREAD_TS"
+          echo "::set-output name=slack_thread_ts::$SLACK_THREAD_TS"
+
+      - name: Further Steps
+        run: |
+          # Use the SLACK_THREAD_TS as needed
+          echo "Using Slack Thread TS: ${{ steps.read_ts.outputs.slack_thread_ts }}"
