@@ -34,6 +34,7 @@ jobs:
         echo "PR_TITLE=${PR_TITLE}"
         echo "REPO_NAME=${REPO_NAME}"
         echo "WORKFLOW_ID=${WORKFLOW_ID}"
+        echo "SLACK_CHANNEL=${SLACK_CHANNEL}"
 
         # Fetch message history from Slack channel
         RESPONSE=$(curl -s -H "Authorization: Bearer ${SLACK_API_TOKEN}" "https://slack.com/api/conversations.history?channel=${SLACK_CHANNEL}")
