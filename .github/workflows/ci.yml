@@ -63,7 +63,18 @@ jobs:
         id: print_time_stamp
         run: |
           echo "Slack initial thread TS: ${{ steps.Notify_workflow_starting.outputs.slack_initial_thread_ts }}"
-            
+
+      - name: Download Slack thread timestamp artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: slack-thread-ts
+          path: .
+
+      - name: print time stamp
+        id: print_time_stampp
+        run: |
+          echo "Slack initial thread TS: ${{ steps.Notify_workflow_starting.outputs.slack_initial_thread_ts }}"
+
   # store-info:
   #   runs-on: ubuntu-latest
 
