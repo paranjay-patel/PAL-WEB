@@ -48,6 +48,7 @@ jobs:
               ]
             }
       - name: print time stamp
+        if: success()
         id: print_time_stamp
         run: |
           echo "Slack initial thread TS: ${{ steps.Notify_workflow_starting.outputs.slack_initial_thread_ts }}"
