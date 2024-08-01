@@ -23,7 +23,7 @@ jobs:
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         SLACK_API_TOKEN: ${{ secrets.SLACK_API_TOKEN }}
-        SLACK_CHANNEL: "github-notification"
+        SLACK_CHANNEL: "notes"
       run: |
         PR_NUMBER="${{ github.event.number }}"
         PR_TITLE="${{ github.event.pull_request.title }}"
