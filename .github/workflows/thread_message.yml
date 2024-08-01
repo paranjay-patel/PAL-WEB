@@ -38,7 +38,7 @@ jobs:
 
         # Fetch message history from Slack channel
         RESPONSE=$(curl -s -H "Authorization: Bearer ${SLACK_API_TOKEN}" "https://slack.com/api/conversations.history?channel=${SLACK_CHANNEL}")
-        #echo "Slack API Response: $RESPONSE"
+        echo "Slack API Response: $RESPONSE"
 
         # Extract thread_ts if available
         echo "################################################  Extract thread_ts if available  "
