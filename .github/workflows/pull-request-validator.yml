@@ -1,10 +1,10 @@
 name: Pull Request Validator
 on:
-  pull_request:
-    types: [ opened, reopened, synchronize ]
-    branches: [ reply-notification-artifact ]
+  # pull_request:
+  #   types: [ opened, reopened, synchronize ]
+  #   branches: [ reply-notification-artifact ]
   workflow_run:
-    workflows: [ Gather Pull Request Metadata ]
+    workflows: [Gather Pull Request Metadata]
     types:
       - completed
       
@@ -34,19 +34,3 @@ jobs:
           unzip pr-metadata.zip
           cat pr-metadata.json
 
-  # pull-request-validator:
-  #   needs: [ download-metadata ]
-  #   runs-on: ubuntu-latest
-
-  #   permissions:
-  #     # required for status checks
-  #     checks: write
-  #     # required for setting labels
-  #     pull-requests: write
-
-  #   steps:
-  #     - name: Pull Request Validator
-  #       uses: redhat-plumbers-in-action/pull-request-validator@v1
-  #       with:
-  #         pr-metadata: ${{ needs.download-metadata.outputs.pr-metadata }}
-  #         token: ${{ secrets.GITHUB_TOKEN }}
