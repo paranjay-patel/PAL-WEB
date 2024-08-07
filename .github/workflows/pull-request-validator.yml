@@ -1,9 +1,8 @@
 name: Pull Request Validator
 on:
-  workflow_run:
-    workflows: [ Gather Pull Request Metadata ]
-    types:
-      - completed
+  pull_request:
+    types: [ opened, reopened, synchronize ]
+    branches: [ reply-notification-artifact ]
 
 permissions:
   contents: read
@@ -24,6 +23,13 @@ jobs:
         uses: redhat-plumbers-in-action/download-artifact@v1
         with:
           name: pr-metadata
+
+      - id: view_data
+        name: view data
+        run: |
+          ls
+          unzip pr-metadata.zip
+          cat pr-metadata.json
 
   # pull-request-validator:
   #   needs: [ download-metadata ]
