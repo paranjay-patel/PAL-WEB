@@ -10,9 +10,9 @@ permissions:
 
 jobs:
   download-metadata:
-    if: >
-      github.event.workflow_run.event == 'pull_request' &&
-      github.event.workflow_run.conclusion == 'success'
+    # if: >
+    #   github.event.workflow_run.event == 'pull_request' &&
+    #   github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
 
     outputs:
