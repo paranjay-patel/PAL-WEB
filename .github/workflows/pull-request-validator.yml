@@ -1,13 +1,13 @@
 name: Pull Request Validator
 on:
-  pull_request_target:
+  pull_request:
     types: [ opened, reopened, synchronize ]
     branches: [ reply-notification-artifact ]
   workflow_run:
     workflows: [ Gather Pull Request Metadata ]
     types:
       - completed
-
+      
 permissions:
   contents: read
 
@@ -27,6 +27,7 @@ jobs:
         uses: redhat-plumbers-in-action/download-artifact@v1
         with:
           name: pr-metadata
+          run-id: ${{ github.event.workflow_run.id }}
 
       - id: view_data
         name: view data
