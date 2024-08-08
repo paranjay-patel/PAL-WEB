@@ -38,7 +38,7 @@ jobs:
         uses: slackapi/slack-github-action@v1.24.0
         with:
           channel-id: "C07B6R6NYUW"
-          slack-message:  "A *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Pull Request>* workflow initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* has failed. "
+          slack-message:  "A *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Validate PR>* workflow initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* on <${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}> for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* has failed. "
 
  
 
