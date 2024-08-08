@@ -18,5 +18,22 @@ jobs:
         run: |
           chmod +x ./validator_script.sh
           ./validator_script.sh
-        # env:
-        #   GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
+
+      - name: Notify Linter Failure
+        if: failure()
+        id: Notify_Linter_Failure
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          channel-id: "C07B6R6NYUW"
+          payload: |
+            {
+              "text": "Linting Failed! :fire_engine:",
+              "attachments": [
+                {
+                  "pretext": "A *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Validate PR>* workflow initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* has failed. ",
+                  "color": "#FF1A1A",
+                }
+              ]
+            }
+
+
