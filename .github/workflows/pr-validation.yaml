@@ -18,5 +18,5 @@ jobs:
         run: |
           chmod +x ./validator_script.sh
           ./validator_script.sh
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
+        # env:
+        #   GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
