@@ -45,7 +45,7 @@ check_commits_signed() {
 # Function to check if PR description is provided and contains the JIRA ticket reference
 check_pr_description() {
     local pr_description="$1"
-    if [[ -z "$pr_description" ]]; then
+    if [[ -z "$pr_description" || "$pr_description" == "null" ]]; then
         echo "PR description is not provided."
         exit 1
     else
