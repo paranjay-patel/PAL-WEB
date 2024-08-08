@@ -8,8 +8,19 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout Code
+        id: Checkout_Code
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 0
+
+      - name: Setup SSH
+        id: Setup_SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
 
       - name: Install jq
         run: sudo apt-get install -y jq
@@ -19,15 +30,15 @@ jobs:
           chmod +x ./validator_script.sh
           ./validator_script.sh
 
-      - name: Notify Linter Failure
+      - name: Notify Failure
         if: failure()
-        id: Notify_Linter_Failure
+        id: Notify_Failure
         uses: slackapi/slack-github-action@v1.24.0
         with:
           channel-id: "C07B6R6NYUW"
           payload: |
             {
-              "text": "Linting Failed! :fire_engine:",
+              "text": "PR Validation Failed! :fire_engine:",
               "attachments": [
                 {
                   "pretext": "A *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Validate PR>* workflow initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* has failed. ",
