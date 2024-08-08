@@ -29,8 +29,9 @@ jobs:
 
       - name: Run validation script
         run: |
-          chmod +x ./validator_script.sh
-          ./validator_script.sh
+          git clone git@github.com:paranjay-patel/testrepo.git
+          chmod +x ./pr-validation.sh
+          ./pr-validation.sh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
