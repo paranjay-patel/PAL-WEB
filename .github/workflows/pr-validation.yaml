@@ -41,12 +41,4 @@ jobs:
         with:
           channel-id: "C07B6R6NYUW"
           slack-message: |
-            A *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|PR Validation>* workflow initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* on pull request *<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>* for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* has failed! 🚨
-
-            \`\`\`
-            Repository: ${{ github.repository }}
-            Pull Request: #${{ github.event.pull_request.number }} - ${{ github.event.pull_request.title }}
-            Initiated by: ${{ github.event.pull_request.user.login }}
-            Workflow: PR Validation
-            Run ID: ${{ github.run_id }}
-            \`\`\`
+            A *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|PR Validation>* workflow initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* on pull request `*<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>*` for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* has failed! 🚨
