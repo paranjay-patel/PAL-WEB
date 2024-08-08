@@ -3,10 +3,8 @@
 # Function to check if PR title contains a JIRA ticket reference (case-insensitive)
 check_jira_ticket_reference() {
     local pr_title="$1"
-    if [[ "$pr_title" =~ ([A-Za-z]+-[0-9]+) ]]; then
-        jira_ticket="${BASH_REMATCH[1]}"
-        jira_ticket_uppercase=$(echo "$jira_ticket" | awk '{print toupper($0)}')
-        echo "PR title contains JIRA ticket reference: $jira_ticket_uppercase"
+    if [[ "$pr_title" =~ [A-Z]+-[0-9]+ ]]; then
+        echo "PR title contains a JIRA ticket reference."
     else
         echo "PR title does not contain a JIRA ticket reference."
         exit 1
@@ -53,7 +51,7 @@ check_pr_description() {
     fi
 
     # Check if JIRA ticket reference is in the description and matches the one in the title
-    if [[ "$pr_description" =~ ([A-Za-z]+-[0-9]+) ]]; then
+    if [[ "$pr_description" =~ JIRA\ Ticket\ Link:\ ([A-Za-z]+-[0-9]+) ]]; then
         jira_ticket_desc="${BASH_REMATCH[1]}"
         jira_ticket_desc_uppercase=$(echo "$jira_ticket_desc" | awk '{print toupper($0)}')
         echo "PR description contains JIRA ticket reference: $jira_ticket_desc_uppercase"
@@ -62,7 +60,7 @@ check_pr_description() {
             exit 1
         fi
     else
-        echo "PR description does not contain a JIRA ticket reference."
+        echo "PR description does not contain a JIRA ticket reference in the correct format."
         exit 1
     fi
 
