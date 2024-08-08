@@ -49,16 +49,16 @@ check_pr_description() {
     local pr_description="$1"
     local jira_ticket="${2}"
 
+    # Check if the description is provided
     if [[ -z "$pr_description" || "$pr_description" == "null" ]]; then
         echo "PR description is not provided."
         exit 1
-    else
-        echo "PR description is provided."
     fi
 
-    # Check if JIRA ticket reference is in the description and matches the one in the title
-    if [[ "$pr_description" =~ JIRA\ Ticket\ Link:\ ([A-Za-z]+-[0-9]+) ]]; then
-        jira_ticket_desc="${BASH_REMATCH[1]}"
+    # Check for JIRA ticket link format and existence
+    if [[ "$pr_description" =~ ^Description[[:space:]]+(.+)[[:space:]]+JIRA\ Ticket\ Link:\ ([A-Za-z]+-[0-9]+) ]]; then
+        description="${BASH_REMATCH[1]}"
+        jira_ticket_desc="${BASH_REMATCH[2]}"
         jira_ticket_desc_uppercase=$(echo "$jira_ticket_desc" | awk '{print toupper($0)}')
         echo "PR description contains JIRA ticket reference: $jira_ticket_desc_uppercase"
         if [[ "$jira_ticket_uppercase" != "$jira_ticket_desc_uppercase" ]]; then
@@ -66,13 +66,15 @@ check_pr_description() {
             exit 1
         fi
     else
-        echo "PR description does not contain a JIRA ticket reference in the correct format."
+        echo "PR description does not contain the required format."
         exit 1
     fi
 
-    # Ensure the description contains more than just the JIRA ticket link
-    if [[ "$pr_description" =~ ^JIRA\ Ticket\ Link:\ [A-Za-z]+-[0-9]+$ ]]; then
-        echo "PR description is not detailed enough."
+    # Ensure the description contains a brief summary
+    if [[ "$pr_description" =~ ^Description[[:space:]]+[^[:space:]] ]]; then
+        echo "PR description includes a brief description."
+    else
+        echo "PR description must contain a brief description starting with 'Description'."
         exit 1
     fi
 }
