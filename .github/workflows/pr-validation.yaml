@@ -7,6 +7,8 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    env:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}  
     steps:
       - name: Checkout Code
         id: Checkout_Code
