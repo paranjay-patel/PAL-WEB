@@ -6,7 +6,7 @@ check_jira_ticket_reference() {
     if [[ "$pr_title" =~ ^([A-Za-z]+-[0-9]+):\ (.+)$ ]]; then
         echo "PR title contains a JIRA ticket reference."
     else
-        echo "PR title does not contain a JIRA ticket reference. please add a JIRA ticket reference in proper format. ex. `HT-211: Modified info.txt` "
+        echo "PR title does not contain a JIRA ticket reference. please add a JIRA ticket reference in proper format. ex. HT-211: Modified info.txt "
         exit 1
     fi
 }
