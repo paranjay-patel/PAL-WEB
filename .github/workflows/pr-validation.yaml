@@ -14,11 +14,11 @@ jobs:
       - name: Set up GitHub CLI
         uses: actions/setup-gh@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.TOKEN_GITHUB }}
 
       - name: Run validation script
         run: |
           chmod +x .github/scripts/validate_pr.sh
           .github/scripts/validate_pr.sh
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
