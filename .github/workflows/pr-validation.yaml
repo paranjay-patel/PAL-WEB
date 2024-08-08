@@ -40,13 +40,7 @@ jobs:
           channel-id: "C07B6R6NYUW"
           payload: |
             {
-              "text": "PR Validation Failed! :fire_engine:",
-              "attachments": [
-                {
-                  "pretext": "A *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Validate PR>* workflow initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* has failed. ",
-                  "color": "#FF1A1A",
-                }
-              ]
+              "text": ""A *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Validate PR>* workflow initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* has failed. ", :fire_engine:",
             }
 
 
