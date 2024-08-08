@@ -7,7 +7,7 @@ check_jira_ticket_reference() {
         jira_ticket="${BASH_REMATCH[1]}"
         title_message="${BASH_REMATCH[2]}"
         jira_ticket_uppercase=$(echo "$jira_ticket" | awk '{print toupper($0)}')
-        echo "PR title contains JIRA ticket reference: $jira_ticket_uppercase"
+        # echo "PR title contains JIRA ticket reference: $jira_ticket_uppercase"
         echo "PR title message: $title_message"
     else
         echo "PR title does not contain a valid JIRA ticket reference in the correct format."
