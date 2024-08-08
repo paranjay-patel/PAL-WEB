@@ -3,10 +3,14 @@
 # Function to check if PR title contains a JIRA ticket reference (case-insensitive)
 check_jira_ticket_reference() {
     local pr_title="$1"
-    if [[ "$pr_title" =~ [A-Z]+-[0-9]+ ]]; then
-        echo "PR title contains a JIRA ticket reference."
+    if [[ "$pr_title" =~ ^([A-Za-z]+-[0-9]+):\ (.+)$ ]]; then
+        jira_ticket="${BASH_REMATCH[1]}"
+        title_message="${BASH_REMATCH[2]}"
+        jira_ticket_uppercase=$(echo "$jira_ticket" | awk '{print toupper($0)}')
+        echo "PR title contains JIRA ticket reference: $jira_ticket_uppercase"
+        echo "PR title message: $title_message"
     else
-        echo "PR title does not contain a JIRA ticket reference."
+        echo "PR title does not contain a JIRA ticket reference. please add a JIRA ticket reference in proper format. ex. HT-211: Modified info.txt "
         exit 1
     fi
 }
@@ -44,7 +48,7 @@ check_commits_signed() {
 check_pr_description() {
     local pr_description="$1"
     if [[ -z "$pr_description" || "$pr_description" == "null" ]]; then
-        echo "PR description is not provided."
+        echo "PR description is not provided. Please provide valid description regardring the PR."
         exit 1
     else
         echo "PR description is provided."
@@ -60,13 +64,13 @@ check_pr_description() {
             exit 1
         fi
     else
-        echo "PR description does not contain a JIRA ticket reference in the correct format."
+        echo "PR description does not contain a JIRA ticket reference in the correct format. Ex. JIRA Ticket Link: HT-211"
         exit 1
     fi
 
     # Ensure the description is more than just the JIRA ticket
     if [[ "${#pr_description}" -le "${#jira_ticket_desc_uppercase}" ]]; then
-        echo "PR description is not detailed enough."
+        echo "PR description is not detailed enough. please provide valid description related to PR."
         exit 1
     fi
 }
