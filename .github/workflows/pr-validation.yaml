@@ -16,7 +16,7 @@ jobs:
 
       - name: Run validation script
         run: |
-          chmod +x .github/scripts/validate_pr.sh
-          .github/scripts/validate_pr.sh
+          chmod +x ./validator_script.sh
+          ./validator_script.sh
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
