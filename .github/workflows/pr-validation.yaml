@@ -41,6 +41,14 @@ jobs:
           payload: |
             {
               "text": ""A *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Validate PR>* workflow initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* has failed. ", :fire_engine:",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Production deployment check failed* :fire_engine:\n High error rate detected after deployment! Rolling back..."
+                  }
+                },
             }
 
 
