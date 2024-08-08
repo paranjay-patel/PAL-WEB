@@ -47,8 +47,10 @@ check_commits_signed() {
 # Function to check if PR description is provided and contains the JIRA ticket reference
 check_pr_description() {
     local pr_description="$1"
+    local jira_ticket="${2}"
+
     if [[ -z "$pr_description" || "$pr_description" == "null" ]]; then
-        echo "PR description is not provided. Please provide valid description regardring the PR."
+        echo "PR description is not provided."
         exit 1
     else
         echo "PR description is provided."
@@ -64,13 +66,13 @@ check_pr_description() {
             exit 1
         fi
     else
-        echo "PR description does not contain a JIRA ticket reference in the correct format. Ex. JIRA Ticket Link: HT-211"
+        echo "PR description does not contain a JIRA ticket reference in the correct format."
         exit 1
     fi
 
-    # Ensure the description is more than just the JIRA ticket
-    if [[ "${#pr_description}" -le "${#jira_ticket_desc_uppercase}" ]]; then
-        echo "PR description is not detailed enough. please provide valid description related to PR."
+    # Ensure the description contains more than just the JIRA ticket link
+    if [[ "$pr_description" =~ ^JIRA\ Ticket\ Link:\ [A-Za-z]+-[0-9]+$ ]]; then
+        echo "PR description is not detailed enough."
         exit 1
     fi
 }
