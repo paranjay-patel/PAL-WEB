@@ -3,7 +3,7 @@
 # Function to check if PR title contains a JIRA ticket reference
 check_jira_ticket_reference() {
     local pr_title="$1"
-    if [[ "$pr_title" =~ ([A-Z]+-[0-9]+) ]]; then
+    if [[ "$pr_title" =~ (?i)([a-z]+-[0-9]+) ]]; then
         jira_ticket="${BASH_REMATCH[1]}"
         echo "PR title contains JIRA ticket reference: $jira_ticket"
     else
