@@ -10,7 +10,7 @@ check_jira_ticket_reference() {
         echo "PR title contains JIRA ticket reference: $jira_ticket_uppercase"
         echo "PR title message: $title_message"
     else
-        echo "PR title does not contain a JIRA ticket reference. please add a JIRA ticket reference in proper format. ex. HT-211: Modified info.txt "
+        echo "PR title does not contain a proper JIRA ticket reference. please add a JIRA ticket reference in proper format. ex. HT-211: Modified info.txt "
         exit 1
     fi
 }
@@ -89,7 +89,7 @@ REPO_FULL_NAME=$(jq --raw-output .repository.full_name "$GITHUB_EVENT_PATH")
 echo "PR Number: $PR_NUMBER"
 echo "PR Title: $PR_TITLE"
 echo "Repository: $REPO_FULL_NAME"
-echo "PR Description: $PR_DESCRIPTION"
+echo "PR Description: \n$PR_DESCRIPTION"
 
 # Perform checks
 check_jira_ticket_reference "$PR_TITLE"
