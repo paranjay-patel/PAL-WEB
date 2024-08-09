@@ -49,13 +49,13 @@ jobs:
  
           payload: |
            {
-             "text": "GitHub Action failed",
+             "text": "PR validation workflow failed 🚨",
              "blocks": [
                {
                  "type": "section",
                  "text": {
                    "type": "mrkdwn",
-                   "text": "A `<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|PR Validation>` workflow initiated by `<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>` on pull request `<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>` for `<https://github.com/${{ github.repository }}|${{ github.repository }}>` has *FAILED!* 🚨"
+                   "text": "A <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|PR Validation> workflow initiated by <https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}> on pull request <${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}> for <https://github.com/${{ github.repository }}|${{ github.repository }}> has *FAILED!* 🚨"
                  }
                },
                {
