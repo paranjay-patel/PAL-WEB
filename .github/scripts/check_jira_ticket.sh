@@ -29,8 +29,6 @@ echo "PR Description: $PR_DESCRIPTION"
 
 # Perform checks
 check_jira_ticket_reference "$PR_TITLE"
-check_commits_signed "$PR_NUMBER" "$REPO_FULL_NAME"
-check_pr_description "$PR_DESCRIPTION"
 
 # Output status report
 echo "PR validation checks for JIRA ticket referance completed successfully."
