@@ -60,7 +60,7 @@ jobs:
       - name: Check PR Description
         run: .github/scripts/check_pr_description.sh "$PR_DESCRIPTION" "$jira_ticket"
         env:
-          jira_ticket: $(echo "$PR_TITLE" | awk '{print toupper($0)}' | cut -d: -f1)
+          # jira_ticket: $(echo "$PR_TITLE" | awk '{print toupper($0)}' | cut -d: -f1)
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Notify Failure
