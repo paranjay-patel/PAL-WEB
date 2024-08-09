@@ -48,28 +48,36 @@ jobs:
           # #   A *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|PR Validation>* workflow initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* on pull request `<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>` for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* has *FAILED!* 🚨
  
           payload: |
-           {
-             "text": "GitHub Action failed",
-             "blocks": [
-               {
-                 "type": "section",
-                 "text": {
-                   "type": "mrkdwn",
-                   "text": "A `<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|PR Validation>` workflow initiated by `<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>` on pull request `<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>` for `<https://github.com/${{ github.repository }}|${{ github.repository }}>` has *FAILED!* 🚨"
-                 }
-               },
-               {
-                 "type": "actions",
-                 "elements": [
-                   {
-                     "type": "button",
-                     "text": {
-                       "type": "plain_text",
-                       "text": ":github: View workflow"
-                     },
-                     "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-                   },
-                 ]
-               }
-             ]
-           }
+            {
+              "text": "GitHub Action failed",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Production deployment check failed* :fire_engine:\n High error rate detected after deployment! Rolling back..."
+                  }
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": ":github: Failed action"
+                      },
+                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    },
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": ":grafana: Grafana dashboard"
+                      },
+                      "url": "https://<your_organization>.grafana.net/d/my-app-dashboard?from=now-1h&to=now"
+                    }
+                  ]
+                }
+              ]
+            }
