@@ -1,0 +1,120 @@
+name: PR Validation
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  Check_JIRA_Ticket_Reference:
+    runs-on: ubuntu-latest
+    env:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}  
+    steps:
+      - name: Checkout Code
+        id: Checkout_Code
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 0
+
+      - name: Setup SSH
+        id: Setup_SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - name: Check JIRA Ticket Reference
+        run: |
+          chmod +x .github/scripts/check_jira_ticket.sh
+          .github/scripts/check_jira_ticket.sh
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      # - name: Run validation script
+      #   run: |
+      #     git clone git@github.com:Healtech-Pty-Ltd/DevOps.git
+      #     cd DevOps/pr-validation-script
+      #     chmod +x ./pr_validation.sh
+      #     ./pr_validation.sh
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+  Check_Commits_Signed:
+    runs-on: ubuntu-latest
+    env:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}  
+    steps:
+      - name: Checkout Code
+        id: Checkout_Code
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 0
+
+      - name: Setup SSH
+        id: Setup_SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - name: Check JIRA Ticket Reference
+        run: |
+          chmod +x .github/scripts/check_commits_signed.sh
+          .github/scripts/check_commits_signed.sh
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      # - name: Run validation script
+      #   run: |
+      #     git clone git@github.com:Healtech-Pty-Ltd/DevOps.git
+      #     cd DevOps/pr-validation-script
+      #     chmod +x ./pr_validation.sh
+      #     ./pr_validation.sh
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+  Check_PR_Description:
+    runs-on: ubuntu-latest
+    env:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}  
+    steps:
+      - name: Checkout Code
+        id: Checkout_Code
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 0
+
+      - name: Setup SSH
+        id: Setup_SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - name: Check JIRA Ticket Reference
+        run: |
+          chmod +x .github/scripts/check_commits_signed.sh
+          .github/scripts/check_commits_signed.sh
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      # - name: Run validation script
+      #   run: |
+      #     git clone git@github.com:Healtech-Pty-Ltd/DevOps.git
+      #     cd DevOps/pr-validation-script
+      #     chmod +x ./pr_validation.sh
+      #     ./pr_validation.sh
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GH_TOKEN }}
