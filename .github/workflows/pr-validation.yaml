@@ -1,4 +1,4 @@
-name: Validate PR
+name: PR Validation
 
 on:
   pull_request:
@@ -7,13 +7,22 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
-
+    env:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}  
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout Code
+        id: Checkout_Code
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 0
 
-      - name: Set up GitHub CLI
-        uses: dawidd6/action-install-gh-cli@v1
+      - name: Setup SSH
+        id: Setup_SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
 
       - name: Install jq
         run: sudo apt-get install -y jq
@@ -33,6 +42,15 @@ jobs:
           echo "Repository: $REPO_FULL_NAME"
           echo "PR Description: $PR_DESCRIPTION"
 
+      # - name: Run validation script
+      #   run: |
+      #     git clone git@github.com:Healtech-Pty-Ltd/DevOps.git
+      #     cd DevOps/pr-validation-script
+      #     chmod +x ./pr_validation.sh
+      #     ./pr_validation.sh
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
       - name: Check JIRA Ticket Reference
         run: .github/scripts/check_jira_ticket.sh "$PR_TITLE"
 
@@ -44,3 +62,41 @@ jobs:
         env:
           jira_ticket: $(echo "$PR_TITLE" | awk '{print toupper($0)}' | cut -d: -f1)
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Notify Failure
+        if: failure()
+        id: Notify_Failure
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: "C07B6R6NYUW"
+          # slack-message: |
+          #   A `<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|PR Validation>` workflow initiated by `<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>` on pull request `<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>` for `<https://github.com/${{ github.repository }}|${{ github.repository }}>` has *FAILED!* 🚨
+          # # slack-message: |
+          # #   A *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|PR Validation>* workflow initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* on pull request `<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>` for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* has *FAILED!* 🚨
+ 
+          payload: |
+           {
+             "text": "PR validation workflow failed 🚨",
+             "blocks": [
+               {
+                 "type": "section",
+                 "text": {
+                   "type": "mrkdwn",
+                   "text": "A <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|PR Validation> workflow initiated by <https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}> on pull request <${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}> for <https://github.com/${{ github.repository }}|${{ github.repository }}> has *FAILED!* 🚨"
+                 }
+               },
+               {
+                 "type": "actions",
+                 "elements": [
+                   {
+                     "type": "button",
+                     "text": {
+                       "type": "plain_text",
+                       "text": ":github: View workflow"
+                     },
+                     "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                   }
+                 ]
+               }
+             ]
+           }
