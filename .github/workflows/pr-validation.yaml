@@ -29,12 +29,12 @@ jobs:
 
       - name: Run validation script
         run: |
-          git clone git@github.com:paranjay-patel/testrepo.git
-          cd testrepo
-          chmod +x ./pr-validation.sh
-          ./pr-validation.sh
+          git clone git@github.com:Healtech-Pty-Ltd/DevOps.git
+          cd DevOps/pr-validation-script
+          chmod +x ./pr_validation.sh
+          ./pr_validation.sh
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: Notify Failure
         if: failure()
@@ -42,8 +42,34 @@ jobs:
         uses: slackapi/slack-github-action@v1.26.0
         with:
           channel-id: "C07B6R6NYUW"
-          slack-message: |
-            A `<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|PR Validation>` workflow initiated by `<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>` on pull request `<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>` for `<https://github.com/${{ github.repository }}|${{ github.repository }}>` has *FAILED!* 🚨
           # slack-message: |
-          #   A *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|PR Validation>* workflow initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* on pull request `<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>` for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* has *FAILED!* 🚨
+          #   A `<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|PR Validation>` workflow initiated by `<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>` on pull request `<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>` for `<https://github.com/${{ github.repository }}|${{ github.repository }}>` has *FAILED!* 🚨
+          # # slack-message: |
+          # #   A *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|PR Validation>* workflow initiated by *<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>* on pull request `<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>` for *<https://github.com/${{ github.repository }}|${{ github.repository }}>* has *FAILED!* 🚨
  
+          payload: |
+           {
+             "text": "GitHub Action failed",
+             "blocks": [
+               {
+                 "type": "section",
+                 "text": {
+                   "type": "mrkdwn",
+                   "text": "A `<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|PR Validation>` workflow initiated by `<https://github.com/${{ github.event.pull_request.user.login }}|${{ github.event.pull_request.user.login }}>` on pull request `<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>` for `<https://github.com/${{ github.repository }}|${{ github.repository }}>` has *FAILED!* 🚨"
+                 }
+               },
+               {
+                 "type": "actions",
+                 "elements": [
+                   {
+                     "type": "button",
+                     "text": {
+                       "type": "plain_text",
+                       "text": ":github: View workflow"
+                     },
+                     "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                   },
+                 ]
+               }
+             ]
+           }
