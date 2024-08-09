@@ -28,7 +28,9 @@ jobs:
         run: sudo apt-get install -y jq
 
       - name: Check JIRA Ticket Reference
-        run: .github/scripts/check_jira_ticket.sh
+        run: |
+          chmod +x .github/scripts/check_jira_ticket.sh
+          .github/scripts/check_jira_ticket.sh
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
