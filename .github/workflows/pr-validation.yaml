@@ -29,6 +29,8 @@ jobs:
 
       - name: Check JIRA Ticket Reference
         run: .github/scripts/check_jira_ticket.sh
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
       # - name: Run validation script
       #   run: |
