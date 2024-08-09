@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Function to verify that all commits are signed
 check_commits_signed() {
     local pr_number="$1"
     local repo="$2"
@@ -28,4 +29,20 @@ check_commits_signed() {
     echo "All commits are signed."
 }
 
-check_commits_signed "$1" "$2"
+# Get PR details
+PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+PR_TITLE=$(jq --raw-output .pull_request.title "$GITHUB_EVENT_PATH")
+PR_DESCRIPTION=$(jq --raw-output .pull_request.body "$GITHUB_EVENT_PATH")
+REPO_FULL_NAME=$(jq --raw-output .repository.full_name "$GITHUB_EVENT_PATH")
+
+# Log PR details
+echo "PR Number: $PR_NUMBER"
+echo "PR Title: $PR_TITLE"
+echo "Repository: $REPO_FULL_NAME"
+echo "PR Description: $PR_DESCRIPTION"
+
+# Perform checks
+check_commits_signed "$PR_NUMBER" "$REPO_FULL_NAME"
+
+# Output status report
+echo "PR validation checks for signed commits completed successfully."
